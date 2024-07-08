@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <style>
+        #acaoA{
+            color: black;
+    font-weight: 700;
+    font-family: 'Poppins';
+    background-color: beige;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px dashed;
+    z-index: 1;
+    position: absolute;
+    visibility: hidden;
+        }
+        .acaodeletar{
+            position: absolute;
+    background: black;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px 1px blue;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3px;
+    margin-left: 3px;
+        }
+        .deletar{
+            color: white;
+    text-transform: uppercase;
+    font-family: serif;
+    font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="p-3 " id="header">
+        <div  class="d-flex flex-row justify-content-around align-items-center">
+            <img src="../../media/logo-asn.png" alt="" width="100px" id="logo">
+            <h1 class="d-inline ">ASN SEDU</h1>
+            
+            {% if user == 'aluno' or user == 'professor' %}
+            <a href="{% url 'logout'%}" class="btn-grad">LOGOUT</a>
+            <a href="{% url 'eletivas'%}" class="btn-grad">Eletivas</a>
+            {% else %}
+            <a href="{% url 'login'%}" class="btn-grad">LOGIN</a>
+            {% endif %}
+        </div>
+      
+      </header>
+
+    
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" onmouseenter="funcao()" onmouseleave="funcao2()">
+        <ol class="carousel-indicators"> 
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner" id="carrossel">
+            {% for i in img_carrossel%}
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="../../media/{{i.img1}}" alt="First slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="../../media/{{i.img2}}" alt="Second slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="../../media/{{i.img3}}" alt="Third slide">
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+        <div class="acao">
+            <a href="/definir_carrossel" id="acaoA">Definir Carrossel</a>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center flex-column align-items-center " id="div-alerts">
+        <h1 class="p-4 btn-grad-2 text-white" id="alerts">ALERTAS!!</h1>
+        <img src="../../media/Design_sem_nome-removebg-preview_2__1_-removebg-preview.png" id="mancha-1" alt="" width="380px">
+        <img src="../../media/Design_sem_nome-removebg-preview_2__1_-removebg-preview.png" id="mancha-2" alt="" width="380px">
+        <div class="d-flex flex-row flex-wrap">
+            {% for i in avisos %}
+            <div id="card-1" class="card mr-5 m-5" style="width: 18rem;" data-id="{{i.id}}" onmouseenter="entrou(this)" onmouseleave="saiu(this)">
+                <!-- <svg width="286" height="180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 286 180" preserveAspectRatio="none"><defs><style type="text/css">#holder_1903029d646 text { fill:rgba(255,255,255,.75);font-weight:normal;font-family:Helvetica, monospace;font-size:14pt } </style></defs><g id="holder_1903029d646"><rect width="286" height="180" fill="#777"></rect><g><text x="107.1953125" y="96.3">286x180</text></g></g></svg>  -->
+                <img src="../../media/{{i.imagem}}" alt="" width="286" height="180">
+                <div class="card-body text-center">
+                  <h5 class="card-title">{{i.titulo}}</h5>
+                  <p class="card-text">{{i.descricao}}</p>
+                </div>
+                <div class="acaodeletar" id="{{i.id}}">
+                    <a href="/deletaranuncios/{{i.id}}" class="deletar"> deletar</a>
+                </div>
+              </div>
+              {% endfor %}
+        </div>
+        
+    </div>
+
+    <footer class="" id="rodape">
+        <div class="d-flex justify-content-around">
+            <img src="../../media/logo-asn.png" class="d-inline" alt="" width="80px">
+            <div class="d-flex flex-column">
+                <h5>Empresarial</h5>
+                    <a href="#">Link1</a>
+                    <a href="#">Link2</a>
+            </div>
+
+            <div class="d-flex flex-column">
+                <h5>Informações</h5>
+                    <a href="#"> ©asnsedu</a>
+                    <a href="#">Letrus</a>
+            </div>
+        
+
+            <div>
+                <h5>Mídias</h5>
+                    <a href="#">@asn_sedu</a>
+                    
+            </div>
+    </div>
+
+    </footer>
+
+    <script>
+        // Detecta o início do toque
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            startX = event.touches[0].pageX;
+            startY = event.touches[0].pageY;
+        });
+
+        document.addEventListener('touchmove', function(event) {
+            const moveX = event.touches[0].pageX;
+            const moveY = event.touches[0].pageY;
+
+            const diffX = Math.abs(moveX - startX);
+            const diffY = Math.abs(moveY - startY);
+
+            // Se o movimento horizontal for maior que o vertical, previne o comportamento padrão
+            if (diffX > diffY) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+        </script>    
+        <script>
+            function entrou(x){
+                let div = document.querySelector(`div[id="${x.dataset.id}"]`)
+                div.style.display = 'flex'
+            }
+            function saiu(x){
+                let div = document.querySelector(`div[id="${x.dataset.id}"]`)
+                div.style.display = 'none'
+            }
+            function funcao(){
+                document.getElementById('acaoA').style.visibility = 'visible'
+            }
+            function funcao2(){
+                document.getElementById('acaoA').style.visibility = 'hidden'
+            }
+        </script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="{% static 'overflow.js' %}"></script>
+<script src="{% static 'scroll.js' %}"></script>
+</body>
+</html>
