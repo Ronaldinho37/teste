@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/tutoria.css'%}">
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <title>Document</title>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="../../media/logo-asn.png" width="90" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% include 'codigos reutilizados/links_reutilizados.html' %}
+                    {% block links %}
+                    {% endblock %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<h1 class="text-black text-center m-3 rounded-3" id="eletivas-title">TUTORES</h1>
+
+<div class="container">
+    <div class="row p-3 justify-content-around">
+        {% for i in professores %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <div class="p-2 rounded-4" id="div_tutor">
+                <div class="bg-secondary rounded-3 m-2">
+                    <img src="../../media/alef.png" alt="" width="80px" class="d-inline">
+                </div>
+                <div id="div-text">
+                    <h3>{{i.nome}}</h3>
+                    <p>{{i.eletiva}}</p>
+                    <a href="" class="btn btn-info d-block">Votar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Adicionar mais divs de tutoria conforme necessário -->
+
+    </div>
+
+    
+
+    <!-- Div com texto importante e imagem responsivo -->
+    <div class="importante d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div>
+            <h2><strong>Por que a escolha do seu tutor é tão <br> importante?</strong></h2>
+            <p class="text-importante"> <br> <br> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis. Sed cursus tempor nisi, et accumsan tortor placerat vitae. Duis erat ante, rhoncus sit amet aliquam eget, malesuada id neque. Maecenas vestibulum lacus non pretium posuere. Proin et tempor lorem, et luctus urna. Donec dui orci, aliquam ac elementum sit amet, eleifend vel diam. Ut porttitor massa quis ultrices faucibus. Sed et justo eu felis tincidunt convallis sit amet eu metus. Maecenas a finibus dui, et posuere magna. Nam condimentum metus eu lectus ultricies varius sed eu massa.</p>
+        </div>
+        <img src="../../media/moca.png" class="girl d-none d-md-block" alt="" width="450px">
+    </div>
+
+</div>
+
+{% include 'codigos reutilizados/footer.html' %}
+{% block footer %}
+{% endblock %}
+<script>
+  // Detecta o início do toque
+  let startX = 0;
+  let startY = 0;
+
+  document.addEventListener('touchstart', function(event) {
+      startX = event.touches[0].pageX;
+      startY = event.touches[0].pageY;
+  });
+
+  document.addEventListener('touchmove', function(event) {
+      const moveX = event.touches[0].pageX;
+      const moveY = event.touches[0].pageY;
+
+      const diffX = Math.abs(moveX - startX);
+      const diffY = Math.abs(moveY - startY);
+
+      // Se o movimento horizontal for maior que o vertical, previne o comportamento padrão
+      if (diffX > diffY) {
+          event.preventDefault();
+      }
+  }, { passive: false });
+  </script> 
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-d" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-" crossorigin="anonymous"></script>
+<script src="{% static 'js/tutoria.js' %}"></script>
+</body>
+</html>
