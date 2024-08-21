@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="{{ update_com_id }}" method="post" enctype="multipart/form-data"> {% csrf_token %}
+        <input type="text" name="nome" id="nome" value="{{tabela.nome}}" required>
+        <input type="email" name="email" id="email" value="{{tabela.email}}" required>
+        <input type="text" name="senha" id="senha" value="{{tabela.senha}}" required>
+        <div>
+            <input type="image" name="imagem_antiga" id="imagem_antiga" src="../../media/{{tabela.imagem}}">
+            <input type="file" name="imagem" id="imagem">
+        </div>
+        
+        <select name="eletiva" id="eletiva" required>
+            <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
+            {% for i in eletivas %}
+                <option value="{{i.titulo}}">{{i.titulo}}</option>
+            {% endfor %}
+        </select>
+        <label for="serie">Serie</label>
+            <select name="serie" id="serie" required>
+                <option value="{{tabela.serie}}" selected>{{tabela.serie}}</option>
+                <option value="8ºano">8ºano</option>
+                <option value="7ºano">7ºano</option>
+                <option value="6ºano">6ºano</option>
+                <option value="5ºano">5ºano</option>
+                <option value="4ºano">4ºano</option>
+                <option value="3ºano M">3ºano M</option>
+                <option value="2ºano M">2ºano M</option>
+                <option value="1ºano M">1ºano M</option>
+            </select>
+        <input type="submit" value="submit">
+    </form>
+</body>
+</html>
