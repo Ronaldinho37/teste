@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    {% include 'codigos reutilizados/menssage.html' %}
+    {% block menssagem %}
+    {% endblock %}
+    <form action="{% url 'add-aluno' %}" method="post"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" id="imagem" name="imagem">
+        <label for="select">Eletiva</label>
+        <select name="select" id="select" required>
+            <option value=""></option>
+            {% for i in eletivas %}
+                <option value="{{i.titulo}}">{{i.titulo}}</option>
+            {% endfor %}
+        </select>
+            <input type="text" name="nome" id="nome" placeholder="nome" required>
+            <input type="email" name="email" id="email" placeholder="email" required>
+            <label for="serie">Serie</label>
+            <select name="serie" id="serie" required>
+                <option value=""></option>
+                <option value="8ºano">8ºano</option>
+                <option value="7ºano">7ºano</option>
+                <option value="6ºano">6ºano</option>
+                <option value="5ºano">5ºano</option>
+                <option value="4ºano">4ºano</option>
+                <option value="3ºano M">3ºano M</option>
+                <option value="2ºano M">2ºano M</option>
+                <option value="1ºano M">1ºano M</option>
+            </select>
+            <input type="password" name="senha" id="senha" placeholder="senha" required>
+        <input type="submit" value="submit">
+    </form>
+</body>
+</html>

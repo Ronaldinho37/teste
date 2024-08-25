@@ -1,0 +1,41 @@
+{%block tabela_admin%}
+<div id="table-py">
+    <div id="form-div">
+        <label for="ordem">Procurar por:</label>
+        <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)">
+        <label for="coluna"> na coluna</label>
+        <select name="coluna" id="coluna">
+            <option value="id" selected>id</option>
+            <option value="nome">nome</option>
+            <option value="email">email</option>
+            <option value="acoes">acoes</option>
+        </select>
+    {%if modo == "deletar" %}
+        <h3>Selecionados: <span id="numero_selecionados">0</span></h3>
+        <button onclick="ir_para_o_site()">Submit</button>
+    {% endif %}
+    </div>
+    <table id="tabela" class="table table-dark" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="{{id_do_user_logado}}">
+        <thead>
+          <tr>
+            <th scope="col">id</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Imagem</th>
+            <th scope="col">Email</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for i in usuarios %}
+                <tr id="{{i.id}}" onclick="adicionar_linha(this)">
+                    <th scope="row" class="id" data-id="{{i.id}}">{{i.id}}</th>
+                    <td class="nome" data-id="{{i.id}}">{{i.nome}}</td>
+                    <td class="nome" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt=""></td>
+                    <td class="email" data-id="{{i.id}}">{{i.email}}</td>
+                    <td class="acoes" data-id="{{i.id}}">{{i.acoes}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}

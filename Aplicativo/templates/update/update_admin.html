@@ -1,0 +1,15 @@
+{% block acoes_do_admin %}
+<div id="div_acoes">
+    <h4>Ações:</h4>
+    <label for="deletar">Deletar</label>
+    <input type="checkbox" name="deletar" id="deletar" {{deletar}}>
+    <label for="atualizar">Update</label>
+    <input type="checkbox" name="atualizar" id="atualizar" {{atualizar}}>
+    <label for="cadastrar">Cadastrar</label>
+    <input type="checkbox" name="cadastrar" id="cadastrar" {{cadastrar}}>
+    
+</div>
+{% load static %}
+<script src="{% static 'js/validation_form.js' %}"></script>
+
+{% endblock %}

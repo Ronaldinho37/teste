@@ -1,0 +1,8 @@
+{% block eletiva %}
+<select name="eletiva" id="eletiva" required>
+    <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
+    {% for i in eletivas %}
+        <option value="{{i.titulo}}">{{i.titulo}}</option>
+    {% endfor %}
+</select>
+{% endblock %}

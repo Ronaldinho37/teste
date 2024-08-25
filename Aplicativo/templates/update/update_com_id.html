@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% include 'codigos reutilizados/menssage.html' %}
+    {% block menssagem %}
+    {% endblock %}
+    <form action="{{ update_com_id }}" method="post" enctype="multipart/form-data" > {% csrf_token %}
+        <input type="text" name="nome" id="nome" value="{{tabela.nome}}" required>
+        <input type="email" name="email" id="email" value="{{tabela.email}}" required>
+        <input type="text" name="senha" id="senha" value="{{tabela.senha}}" required>
+        <div>
+            <img src="../../media/{{tabela.imagem}}" alt="foto-perfil-user">
+            <input type="file" name="imagem" id="imagem">
+            <label for="pergunta">Deixar sem imagem</label>
+            <input type="checkbox" name="pergunta_imagem" id="">
+        </div>
+        {% if user == 'aluno' or user == 'professor' %}
+            {% include 'update/update_professor.html' %}
+            {% block eletiva %}
+            {% endblock %}
+            {% if user == 'aluno' %}
+                {% include 'update/update_aluno.html' %}
+                {% block serie %}
+                {% endblock %}
+            {% endif %}
+        {% elif user == 'admin' %}
+            {% include 'update/update_admin.html' %}
+            {% block acoes_do_admin %}
+            {% endblock %}
+        {% endif %}
+        
+        <input type="submit" value="submit">
+    </form>
+</body>
+</html>
