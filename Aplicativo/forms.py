@@ -9,6 +9,7 @@ class AddEletivaForm(forms.Form):
     titulo = forms.CharField(max_length=50)
     descricao = forms.CharField(widget=forms.Textarea(attrs={'name':'descricao'}), max_length=150)
     imagem = forms.ImageField(widget=forms.FileInput(attrs={'name':'imagem'}))
+    link = forms.URLField(widget=forms.URLInput(attrs={'name':'link'}), max_length=150)
 
 class AnuncioForm(forms.Form):
     titulo = forms.CharField(max_length=50)
