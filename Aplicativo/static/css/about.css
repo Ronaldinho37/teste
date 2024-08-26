@@ -9,7 +9,6 @@
 body, html{
     height: 100vh;
     overflow-x: hidden;
-    background: linear-gradient(to top , #2424ff, #0094FF);
 
 }
 
@@ -34,7 +33,7 @@ a{
 }
 
 .navbar{
-    background-color: #0094FF;
+    background-color: #000000;
     border-bottom: 4px solid #fbb400;
     display: flex;
     justify-content: center;

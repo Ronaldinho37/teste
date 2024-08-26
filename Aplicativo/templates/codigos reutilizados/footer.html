@@ -1,27 +1,19 @@
 
 {% block footer %}
-<footer class="" id="rodape">
-    <div class="d-flex justify-content-around">
-        <img src="../../media/logo-asn.png" class="d-inline" alt="" width="80px">
-        <div class="d-flex flex-column">
-            <h5>Empresarial</h5>
-                <a class="links" href="#">Link1</a>
-                <a class="links" href="#">Link2</a>
+<footer class="footer">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Logo -->
+            <div class="col-md-4 d-flex align-items-center">
+                <img src="../../media/logo-asn.png" alt="Logo" class="footer-logo" width="70px">
+            </div>
+            <!-- Links -->
+            <div class="col-md-8 text-md-right">
+                <a href="#" class="footer-link">Sobre Nós</a> |
+                <a href="#" class="footer-link">Serviços</a> |
+                <a href="#" class="footer-link">Contato</a>
+            </div>
         </div>
-
-        <div class="d-flex flex-column">
-            <h5>Informações</h5>
-                <a class="links" href="#"> ©asnsedu</a>
-                <a class="links" href="#">Letrus</a>
-        </div>
-    
-
-        <div>
-            <h5>Mídias</h5>
-                <a class="links" href="#">@asn_sedu</a>
-                
-        </div>
-</div>
-
-</footer>  
+    </div>
+</footer>
 {% endblock %}
