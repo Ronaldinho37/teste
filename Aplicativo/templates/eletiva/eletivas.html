@@ -36,6 +36,8 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">{{i.titulo}}</h5>
                         <p class="card-text">{{i.descricao}}</p>
+                        {% load pesquisa_de_professores %}
+                        <p>{{todos_professores|pesquisar_professor:i.titulo}}</p>
                     </div>
                 </div>
             </div>

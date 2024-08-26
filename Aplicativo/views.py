@@ -176,6 +176,10 @@ def eletivas(request):
     dados = dados_universsais.copy()
     dados['pagina'] = "eletivas"
     dados['eletivas'] = Eletivas.objects.all().values()
+    todos_professores = {}
+    for i in dados['eletivas']:
+        todos_professores[f'professor_de_{i['titulo']}'] = Professores.objects.filter(eletiva=f'{i['titulo']}').values()
+    dados['todos_professores'] = todos_professores
     dados['user'] = request.session['user']
     return render(request,'eletiva/eletivas.html',dados)
 
@@ -275,11 +279,13 @@ def add_eletivas(request):
         if form.is_valid():
             #variável que armazena o nome da eletiva
             eletiva = form.cleaned_data.get('titulo')
+            imagem = checar_imagem_existente(form.cleaned_data.get("imagem"),"img_eletivas",None)
             #criando a nova eletiva
-            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
+            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=imagem,link=form.cleaned_data.get("link"))
             #salvando-a
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
+            excluir_imagem("img_eletivas",Eletivas.objects.all().values())
             return redirect(add_professor)
     else:
         dados = {}
@@ -307,7 +313,7 @@ def add_professor(request):
         eletiva = request.POST.get('eletiva')
         email = request.POST.get('email')
         senha = request.POST.get('password')
-        imagem = request.FILES.get('imagem')
+        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos','cadastrar')
         form = [nome,eletiva,email,senha]
         for i in form:
             if i == '':
@@ -514,7 +520,7 @@ def add_admin(request):
         nome = request.POST.get('nome')
         email = request.POST.get('email')
         senha = request.POST.get('senha')
-        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_admins','cadastrar')
+        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_admins', None)
         
 
         #checkboxes
