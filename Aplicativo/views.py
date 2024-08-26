@@ -276,7 +276,7 @@ def add_eletivas(request):
             #variável que armazena o nome da eletiva
             eletiva = form.cleaned_data.get('titulo')
             #criando a nova eletiva
-            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"))
+            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
             #salvando-a
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva

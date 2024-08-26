@@ -1,72 +1,62 @@
 {% block links %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/links_reutilizados.css'%}">
-<nav class="navbar navbar-expand-lg navbar-dark ">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'index'%}">
-            <img src="../../media/logo-asn.png" width="50" alt="">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    {% if pagina == 'eletivas' %}
-                        <a class="nav-link text-warning" href="{% url 'eletivas'%}">ELETIVAS</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'eletivas'%}">ELETIVAS</a>
-                    {% endif %}
-                </li>
-                <li class="nav-item">
-                    {% if pagina == 'tutoria' %}
-                        <a class="nav-link text-warning" href="{% url 'tutoria'%}">TUTORIA</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'tutoria'%}">TUTORIA</a>
-                    {% endif %}
-                </li>
-                <li class="nav-item">
-                    {% if pagina == 'sobre' %}
-                        <a class="nav-link text-warning" href="{% url 'sobre'%}">SOBRE</a>
-                    {% else %}
-                        <a class="nav-link" href="{% url 'sobre'%}">SOBRE</a>
-                    {% endif %}
-                </li>
-                {% if user != None%}
-                    {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
-                        <li class="nav-item" id="all-deletar">
-                            <p class="nav-link" id="botao-oculto-deletar" onclick="desocultar(this)" onblur="desocultar(this)" data-id="deletar">DELETAR</p>
-                            <div id="botoes-deletar" style="display: none;">
-                                <a class="nav-link acoes" href="{% url 'deletar' user='aluno'%}">deletar aluno</a>
-                                <a class="nav-link acoes" href="{% url 'deletar' user='professor'%}">deletar professor</a>
-                            </div>
-                        </li>
-                    {% endif %}
-                    {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
-                        <li class="nav-item" id="all-adicionar">
-                            <p class="nav-link" id="botao-oculto-adicionar" onclick="desocultar(this)" onblur="desocultar(this)" data-id="adicionar">ADICIONAR</p>
-                            <div id="botoes-adicionar" style="display: none;">
-                                <a class="nav-link acoes" href="{% url 'add-aluno'%}">adicionar aluno</a>
-                                <a class="nav-link acoes" href="{% url 'add-eletiva'%}">adicionar eletiva</a>
-                
-                            </div>
-                        </li>
-                    {% endif %}
-                    
-                    <li class="nav-item">
-                        <a href="{% url 'logout'%}" class="nav-link">LOGOUT</a>
-                    </li>
-                    
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login'%}">LOGIN</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
+{% comment %} <link rel="stylesheet" href="{% static 'css/links_reutilizados.css'%}"> {% endcomment %}
+<header class="navbar navbar-expand-lg  p-3 d-flex justify-content-around default-colors" id="header">
+
+    <style>
+        .logo-asn{
+            color: #0194FF;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
+        }
+        #header{
+            background-color: white;
+        }
+        </style>
+
+    <h1 class="logo-asn">ASN</h1>
+    <nav id="">
+        {% if user != None%}
+            {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
+                <div class="btn-group">
+                    <button type="button" id="Deletar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Deletar
+                    </button>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'deletar' user='aluno'%}">Deletar Aluno</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'deletar' user='professor'%}">Deletar Professor</a>
+                    </div>
+                </div>
+            {% endif %}
+            {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
+            <div class="btn-group">
+                <button type="button" id="Cadastrar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Cadastrar
+                </button>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'add-aluno'%}">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'add-eletiva'%}">Separated link</a>
+                    </div>
+            </div>
+            {% endif %}
+            <a class="mx-2 text-white btn btn-danger" href="{% url 'logout'%}">Sair</a>
+        {% else %}
+            <a class="mx-2 text-white btn btn-danger" href="{% url 'login'%}">Entrar</a>
+        {% endif %}
+        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'sobre'%}">Sobre</a>
+        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'eletivas'%}">Eletiva</a>
+        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'tutoria'%}">Tutoria</a>
+        
 </nav>
+
+<div style="text-align: center; margin-top: 20px;">
+    <label class="switch">
+        <input type="checkbox" id="colorToggleSwitch">
+        <span class="slider"></span>
+    </label>
+</div>
+</header>
 <script src="{% static 'js/links_reutilizados.js' %}"></script>
 {% endblock %}
 
