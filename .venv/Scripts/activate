@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Aluno\Desktop\tcc_dev_dynasty\tcc-2024\.venv"
+VIRTUAL_ENV="C:\Users\Aluno\Desktop\tcc_devdynasty\tcc-2024\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
