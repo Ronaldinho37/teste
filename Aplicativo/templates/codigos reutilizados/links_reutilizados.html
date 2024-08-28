@@ -8,13 +8,14 @@
             color: #0194FF;
             font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
         }
-        #header{
-            background-color: white;
-        }
+        
         </style>
 
     <h1 class="logo-asn">ASN</h1>
     <nav id="">
+        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'sobre'%}">Sobre</a>
+        <a class="mx-2 text-dark" id="link-eletiva" href="{% url 'eletivas'%}">Eletiva</a>
+        <a class="mx-2 text-dark" id="link-tutoria" href="{% url 'tutoria'%}">Tutoria</a>
         {% if user != None%}
             {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
                 <div class="btn-group">
@@ -52,9 +53,6 @@
         {% else %}
             <a class="mx-2 text-white btn btn-danger" href="{% url 'login'%}">Entrar</a>
         {% endif %}
-        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'sobre'%}">Sobre</a>
-        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'eletivas'%}">Eletiva</a>
-        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'tutoria'%}">Tutoria</a>
         
 </nav>
 

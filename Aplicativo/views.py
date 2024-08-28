@@ -366,33 +366,76 @@ def tutoria(request):
     return render(request,'principais/tutoria.html',dados)
 
 
-def addanuncio(request):
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-        return redirect(retornar_index)
-    else:
-        if request.method == 'POST':
-            form = AnuncioForm(request.POST, request.FILES)
-            if form.is_valid():
-                anuncio = Anuncio(titulo=form.cleaned_data.get('titulo'),descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
-                anuncio.save()
-                return redirect(retornar_index)
+# def addanuncio(request):
+#     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
+#         return redirect(retornar_index)
+#     else:
+#         if request.method == 'POST':
+#             form = AnuncioForm(request.POST, request.FILES)
+#             if form.is_valid():
+#                 anuncio = Anuncio(titulo=form.cleaned_data.get('titulo'),descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
+#                 anuncio.save()
+#                 return redirect(retornar_index)
             
-        else:
-            form = AnuncioForm()
-            return render(request, 'anuncio/addanuncio.html', {'form': form})
+#         else:
+#             form = AnuncioForm()
+#             return render(request, 'anuncio/addanuncio.html', {'form': form})
     
 
-def deletar_anuncio(request, anuncio_id):
-        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
-            return redirect(retornar_index)
-        anuncio = Anuncio.objects.get(id=anuncio_id)
-        if request.method == 'POST':
-            sim = request.POST.get('sim')
-            if sim == 'on':
-                anuncio.delete()
-            return redirect(retornar_index)
-        else:
-            return render (request, 'anuncio/deletaranuncio.html')
+# def deletar_anuncio(request, anuncio_id):
+#         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
+#             return redirect(retornar_index)
+#         anuncio = Anuncio.objects.get(id=anuncio_id)
+#         if request.method == 'POST':
+#             sim = request.POST.get('sim')
+#             if sim == 'on':
+#                 anuncio.delete()
+#             return redirect(retornar_index)
+#         else:
+#             return render (request, 'anuncio/deletaranuncio.html')
+
+def editar_aviso(request,id):
+    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
+        return redirect(retornar_index)
+    anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
+    titulo_antigo = anuncio_a_ser_atualizado.titulo
+    descricao_antiga = anuncio_a_ser_atualizado.descricao
+    imagem_antiga = anuncio_a_ser_atualizado.imagem
+    link_antigo = anuncio_a_ser_atualizado.link
+    
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo')
+        descricao = request.POST.get('descricao')
+        imagem = request.FILES.get('imagem')
+        link = request.POST.get('link')
+        campos_novos = [titulo,descricao,imagem,link]
+        campos_antigos = [titulo_antigo,descricao_antiga,imagem_antiga,link_antigo]
+        tam = 0
+        for i in campos_novos:
+            if tam == 0 and i != campos_antigos[tam]:
+                anuncio_a_ser_atualizado.titulo = i
+            elif tam == 1 and i != campos_antigos[tam]:
+                anuncio_a_ser_atualizado.descricao = i
+            elif tam == 2 and i != None:
+                imagem_final = checar_imagem_existente(imagem,'img_anuncio',None)
+                anuncio_a_ser_atualizado.imagem = imagem_final
+                excluir_imagem('img_anuncio',Anuncio.objects.all().values())
+            elif tam == 3 and i != campos_antigos[tam]:
+                anuncio_a_ser_atualizado.link = i
+            tam += 1
+        
+        anuncio_a_ser_atualizado.save()
+        
+        
+        return redirect(retornar_index)
+    else:
+        dados = {}
+        dados['form'] = AnuncioForm()
+        dados['titulo'] = anuncio_a_ser_atualizado.titulo
+        dados['descricao'] = anuncio_a_ser_atualizado.descricao
+        dados['imagem'] = anuncio_a_ser_atualizado.imagem
+        dados['link'] = anuncio_a_ser_atualizado.link
+        return render(request, 'anuncio/addanuncio.html', dados)
 
 def update_eletiva(request,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:

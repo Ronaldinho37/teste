@@ -50,7 +50,16 @@
                   </svg></a>
             </div>
         </div>
+        {% if user == 'ADMIN' or 'cadastrar' in lista_de_acoes%}
+            <div id="acao_editar" style="    position: absolute;
+        margin-top: -52px;
+        margin-left: 43px;
+        text-transform: uppercase;">
+                <a href="/editar_aviso/{{i.id}}">Editar</a>
+            </div>
+        {% endif %}
     </div>
+
     {% endfor %}
 </div>
 </footer>
@@ -78,6 +87,12 @@
                 btn_sobre = document.getElementById('link-sobre');
                 btn_sobre.classList.remove('text-dark');
                 btn_sobre.classList.add('text-white');
+                btn_eletiva = document.getElementById('link-eletiva');
+                btn_eletiva.classList.remove('text-dark');
+                btn_eletiva.classList.add('text-white');
+                btn_tutoria = document.getElementById('link-tutoria');
+                btn_tutoria.classList.remove('text-dark');
+                btn_tutoria.classList.add('text-white');
                 
 
             } else {
@@ -98,6 +113,12 @@
                 btn_sobre = document.getElementById('link-sobre');
                 btn_sobre.classList.remove('text-white');
                 btn_sobre.classList.add('text-dark');
+                btn_eletiva = document.getElementById('link-eletiva');
+                btn_eletiva.classList.remove('text-white');
+                btn_eletiva.classList.add('text-dark');
+                btn_tutoria = document.getElementById('link-tutoria');
+                btn_tutoria.classList.remove('text-white');
+                btn_tutoria.classList.add('text-dark');
             }
         }
 

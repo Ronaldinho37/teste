@@ -1,5 +1,5 @@
 from django import forms
-from .models import Eletivas
+from .models import Eletivas, Anuncio
 
 class LoginForm(forms.Form):
     nome = forms.CharField(widget=forms.TextInput(attrs={'name':'nome'}),label="Nome Completo")
@@ -12,10 +12,11 @@ class AddEletivaForm(forms.Form):
     link = forms.URLField(widget=forms.URLInput(attrs={'name':'link'}), max_length=150)
 
 class AnuncioForm(forms.Form):
-    titulo = forms.CharField(max_length=50)
-    descricao = forms.CharField(widget=forms.Textarea(attrs={'name':'descricao'}), max_length=150)
+    titulo = forms.CharField(max_length=100)
+    descricao = forms.CharField(widget=forms.Textarea(attrs={'name':'descricao'}), max_length=400)
     imagem = forms.ImageField(widget=forms.FileInput(attrs={'name':'imagem'}))
-    link = forms.URLField(widget=forms.URLInput(attrs={'name':'link'}))
+    link = forms.URLField(widget=forms.URLInput(attrs={'name':'link'}), max_length=150)
+    
 
 class UpdateEletiva(forms.ModelForm):
     class Meta:
