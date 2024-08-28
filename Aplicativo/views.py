@@ -115,6 +115,8 @@ def retornar_index(request):
     
     dados['img_carrossel'] = ImgCarrossel.objects.all()[:1]
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:3]
+    for i in dados['avisos']:
+        print(i.imagem)
     return render(request,'principais/index.html',dados)
 
 def login_viwes(request):
@@ -178,7 +180,7 @@ def eletivas(request):
     dados['eletivas'] = Eletivas.objects.all().values()
     todos_professores = {}
     for i in dados['eletivas']:
-        todos_professores[f'professor_de_{i['titulo']}'] = Professores.objects.filter(eletiva=f'{i['titulo']}').values()
+        todos_professores[f"professor_de_{i['titulo']}"] = Professores.objects.filter(eletiva=f"{i['titulo']}").values()
     dados['todos_professores'] = todos_professores
     dados['user'] = request.session['user']
     return render(request,'eletiva/eletivas.html',dados)
@@ -371,7 +373,7 @@ def addanuncio(request):
         if request.method == 'POST':
             form = AnuncioForm(request.POST, request.FILES)
             if form.is_valid():
-                anuncio = Anuncio(titulo=form.cleaned_data.get('titulo'),descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"))
+                anuncio = Anuncio(titulo=form.cleaned_data.get('titulo'),descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
                 anuncio.save()
                 return redirect(retornar_index)
             
@@ -406,10 +408,11 @@ def update_eletiva(request,id):
                     professores = Professores.objects.filter(eletiva=eletiva_1)
                     alunos = Alunos.objects.filter(eletiva=eletiva_1)
                     if len(professores) != 0:
-        
-                        prof_atualizar = Professores.objects.get(eletiva=eletiva_1)
-                        prof_atualizar.eletiva = form.cleaned_data.get('titulo')
-                        prof_atualizar.save()
+                        prof_atualizar = Professores.objects.filter(eletiva=eletiva_1)
+                        for professor in prof_atualizar:
+                            professor.eletiva = form.cleaned_data.get('titulo')
+                            professor.save()
+                       
                     if len(alunos) != 0:
                         alunos = Alunos.objects.filter(eletiva=eletiva_1)
                         for aluno in alunos:
@@ -455,6 +458,9 @@ def deletar(request,user):
             if dados['user'] != 'ADMIN': 
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
             return render(request,'deletar/deletar.html', dados)
+        elif user.lower() == 'eletiva':
+            dados['usuarios'] = Eletivas.objects.all().values()
+            return render(request,'deletar/deletar.html', dados)
         else:
             messages.info(request,'Usuário não identificado')
             return redirect(retornar_index)
@@ -498,6 +504,25 @@ def deletar_com_ids(request,user,id):
                     dados['user'] = 'professor(es)'
                     for i in dados['lista_id']:
                         Professores.objects.get(id=i).delete()
+
+                elif user == "eletiva":
+                    eletiva_a_ser_deletada = Eletivas.objects.get(id=id)
+                    
+                    dados['model_user'] = Eletivas.objects.all().values()
+                    dados['diretorio_user'] = "img_eletivas"
+                    dados['user'] = 'eletiva(s)'
+                    for i in dados['lista_id']:
+                        eletiva_a_ser_deletada = Eletivas.objects.get(id=i) #.delete()
+                        alunos_e_professores = [Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo),Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo)]
+                        for i in alunos_e_professores:
+                            for e in i:
+                                e.eletiva = None
+                                e.save()
+
+                        eletiva_a_ser_deletada.delete()
+                
+                        
+
             
             elif nao != "on" and sim != "on":
                 messages.info(request,"selecione um dos valores")

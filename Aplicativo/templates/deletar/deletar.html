@@ -15,6 +15,10 @@
         {% include 'tabelas/admin_tabela.html' %}
         {% block tabela_admin %}
         {% endblock %}
+    {% elif tabela_user_passado_como_parametro == 'eletiva' %}
+        {% include 'tabelas/eletiva_tabela.html' %}
+        {% block tabela_eletiva %}
+        {% endblock %}
     {% else %}
         {% include 'tabelas/aluno_professor_tabela.html' %}
         {% block tabela_aluno_professor %}

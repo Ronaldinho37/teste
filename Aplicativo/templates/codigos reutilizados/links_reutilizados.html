@@ -25,6 +25,10 @@
                     <a class="dropdown-item" href="{% url 'deletar' user='aluno'%}">Deletar Aluno</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'deletar' user='professor'%}">Deletar Professor</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'deletar' user='admin'%}">Deletar Admin</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'deletar' user='eletiva'%}">Deletar Eletiva</a>
                     </div>
                 </div>
             {% endif %}
@@ -34,9 +38,13 @@
                 Cadastrar
                 </button>
                     <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'add-aluno'%}">Something else here</a>
+                    <a class="dropdown-item" href="{% url 'add-aluno'%}">Adicionar Aluno</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add-eletiva'%}">Separated link</a>
+                    <a class="dropdown-item" href="{% url 'add-professor'%}">Adicionar Professor</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'add-admin'%}">Adicionar Admin</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'add-eletiva'%}">Adicionar Eletiva</a>
                     </div>
             </div>
             {% endif %}
