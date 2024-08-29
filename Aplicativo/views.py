@@ -111,12 +111,11 @@ def retornar_index(request):
         if dados['user'] == 'admin':
             dados['lista_de_acoes'] = request.session['lista_de_acoes']
         #atualizando a variável dos dados universsais
-        dados_universsais.update(dados)
+    dados_universsais.update(dados)
     
     
-    dados['avisos'] = Anuncio.objects.all().order_by("-id")[:3]
-    for i in dados['avisos']:
-        print(i.imagem)
+    dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
+   
     return render(request,'principais/index.html',dados)
 
 def login_viwes(request):
@@ -464,6 +463,9 @@ def deletar_com_ids(request,user,id):
         dados = dados_universsais.copy()
         dados['lista_id'] = id.split(',')
         dados['tam_lista_id'] = len(dados['lista_id'])
+
+
+        #if que verifica  se os id entre usuario e admin sao iguais e se for ira ser apresentada a menssagem de que o usuario nao pode se auto-deletar
         if dados['user'] == 'admin' and user == 'admin':
             id_do_user_logado = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
             for i in dados['lista_id']:
@@ -475,6 +477,7 @@ def deletar_com_ids(request,user,id):
             sim = request.POST.get('sim')
             nao = request.POST.get('nao')
             if sim == 'on' and nao != 'on':
+                #ifs que deletam pelo id de acordo com o models escolhido: user=models='aluno,eletivas,admin ou professor' 
                 if user == "aluno":
                     dados['model_user'] = Alunos.objects.all().values()
                     dados['diretorio_user'] = "imagem_alunos"
@@ -516,6 +519,7 @@ def deletar_com_ids(request,user,id):
 
             
             elif nao != "on" and sim != "on":
+
                 messages.info(request,"selecione um dos valores")
                 return redirect(deletar_com_ids, user=user,id=id)
             else:
@@ -539,7 +543,7 @@ def add_admin(request):
         imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_admins', None)
         
 
-        #checkboxes
+        #checkboxes= inputs do html
         checkboxes = ['deletar','atualizar','cadastrar']
         acoes_permitidas = ""
         for i in checkboxes:
@@ -557,7 +561,7 @@ def update(request,user):
         return redirect(retornar_index)
     dados = {}
     dados['tabela_user_passado_como_parametro'] = user
-   
+    #ifs usados para identificar os usuarios 
     if user.lower() == 'aluno':
         dados['usuarios'] = Alunos.objects.all().values()
         return render(request,'update/update.html', dados)
@@ -577,7 +581,8 @@ def update_com_id(request,user,id):
     user_a_ser_atualizado = []
     campos_atigos_do_user = []
     model = []
-    
+
+    #ifs para adcionar valores antigos do usuario
     if user == 'aluno':
         user_a_ser_atualizado.append(Alunos.objects.get(id=id))
         model.append(Alunos.objects.all().values())
@@ -609,6 +614,7 @@ def update_com_id(request,user,id):
         pergunta_imagem = request.POST.get('pergunta_imagem')
             
         campos_atualizados_do_user = []
+        #ifs que pegamm valores atuais dos usuarios
         if user == 'aluno' or user == 'professor':
             eletiva = request.POST.get('eletiva')
             campos_atualizados_do_user = [nome,email,senha,imagem,eletiva]
@@ -628,6 +634,7 @@ def update_com_id(request,user,id):
 
         tam = 0
         
+        #for que percorre os valores do usuario e checa se o nome atual do usuario e uigual ao antigo e se for diferente altera ele 
         for i in campos_atualizados_do_user:
             if i != campos_atigos_do_user[0]:
                 if tam == 0:
@@ -641,8 +648,6 @@ def update_com_id(request,user,id):
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
                     elif imagem != None and pergunta_imagem == None:
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(imagem,model[1],'atualizar')
-                    
-
                 elif tam == 4 and user != 'admin':
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':

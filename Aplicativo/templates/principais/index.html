@@ -62,7 +62,9 @@
 
     {% endfor %}
 </div>
-</footer>
+{% include 'codigos reutilizados/footer.html' %}
+    {% block footer %}
+    {% endblock %}
 
 <script>
        // Função para alternar as cores da página
