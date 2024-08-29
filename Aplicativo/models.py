@@ -27,11 +27,6 @@ class Admins(models.Model):
     acoes = models.CharField(max_length=100,null=True, blank=False)
     imagem = models.FileField(upload_to='imagem_admins', null=True, blank=False)
 
-class ImgCarrossel(models.Model):
-    img1 = models.FileField(upload_to="img_carrosssel/")
-    img2 = models.FileField(upload_to="img_carrosssel/")
-    img3 = models.FileField(upload_to="img_carrosssel/")
-
 class Eletivas(models.Model):
     titulo = models.CharField(max_length=50)
     descricao = models.TextField(max_length=150)

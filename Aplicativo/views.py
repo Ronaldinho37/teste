@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .forms import LoginForm,AddEletivaForm, AnuncioForm, UpdateEletiva
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
-from .models import Alunos,Admins,Professores,ImgCarrossel,Eletivas,Anuncio
+from .models import Alunos,Admins,Professores,Eletivas,Anuncio
 from django.contrib import messages
 import os
 from PIL import Image
@@ -113,7 +113,7 @@ def retornar_index(request):
         #atualizando a variável dos dados universsais
         dados_universsais.update(dados)
     
-    dados['img_carrossel'] = ImgCarrossel.objects.all()[:1]
+    
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:3]
     for i in dados['avisos']:
         print(i.imagem)
@@ -204,71 +204,6 @@ def logout_viwes(request):
     request.session['user'] = None
     return redirect(retornar_index)
 
-def definir_carrossel(request):
-        if request.method == 'POST':
-            img1 = request.FILES.get('img1')
-            img2 = request.FILES.get('img2')
-            img3 = request.FILES.get('img3')
-            #colocando os arquivos em uma lista, assim posso percorrer seu valores
-            imagens = [img1,img2,img3]
-            #variável que irá armazenar as imagens finais
-            imagens_finais = []
-            #pegando as imagens da pasta img_carrosssel
-            diretorio_carrossel = os.listdir(f'{os.getcwd()}/media/img_carrosssel')
-            #deletando os valores velhos
-            ImgCarrossel.objects.all().delete()
-            #percorre as imagens do form
-            for img in imagens:
-                #imagem da vez
-                imagem_inserida = Image.open(img)
-                #byte da imagem da vez
-                imagem_inserida_bytes = imagem_inserida.tobytes("xbm", "rgb")
-                tam = 0
-                #percorre os valores da  pasta img_carrosssel
-                for i in diretorio_carrossel:
-                    tam += 1
-                    #transforma o arquivo da pasta em bytes
-                    img_do_diretorio = Image.open(f'{os.getcwd()}/media/img_carrosssel/{i}').tobytes("xbm", "rgb")
-                    #se a imagem já foi adicionada adicionará seu respectivo caminho
-                    if imagem_inserida_bytes == img_do_diretorio or img in imagens_finais:
-                        imagens_finais.append(f'img_carrosssel/{i}')
-                        break
-                    #se a imagem não foi adicionada e o loop não quebrou então adicionará uma imagem 
-                    if tam == len(diretorio_carrossel):
-                        imagens_finais.append(img)
-                        break
-            '''variável que armazena as imagens da variavel "imagens_finais". Essas imagens passarão por uma consulta
-            para que seja sertificado que ambas não são iguai'''
-            verificacao = []
-            verificacao_bytes = []
-            #esse loop adiciona somente as imagens na variavel "verificacao"
-            for i in imagens_finais:
-                if str(type(i)) != "<class 'str'>":
-                    verificacao.append([i,imagens_finais.index(i)])
-            #esse loop passará para a variável "imagen_finais" a imagem se ela não existir e se ela existir então passará seu respectivo caminho
-            for i in verificacao:
-            #para ter com quem comparar essa variável armazenará os outros valores da lista verificacao
-                verificacao_bytes = imagens_finais.copy()
-                verificacao_bytes.remove(i[0])
-                for e in verificacao_bytes:
-                    #se não for uma string como no caso do caminho da imagem
-                    if str(type(e)) != "<class 'str'>":
-                        #consegui diferenciar as imagens somente passando-as para bytes
-                        if Image.open(i[0]).tobytes("xbm","rgb") == Image.open(e).tobytes("xbm","rgb"):
-                            #remove o antigo valor
-                            imagens_finais.pop(i[1])
-                            #e coloca um caminho no lugar da imagen coso ela já exista
-                            imagens_finais.insert(i[1],f"img_carrosssel/{Image.open(e).fp}".replace(" ","_"))
-            print(imagens_finais)
-            carrossel = ImgCarrossel(img1=imagens_finais[0],img2=imagens_finais[1],img3=imagens_finais[2])
-            carrossel.save()
-            model = ImgCarrossel.objects.all().values()
-            excluir_imagem("img_carrosssel",model)
-
-            return redirect(retornar_index)
-        else:
-            return render(request,'principais/imgcarrossel.html')
-
 
 def add_eletivas(request):
     #chama a função que verifica se o usuário está apto ou não à adicionar eletivas
@@ -315,9 +250,10 @@ def add_professor(request):
         eletiva = request.POST.get('eletiva')
         email = request.POST.get('email')
         senha = request.POST.get('password')
-        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos','cadastrar')
+        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_professores','cadastrar')
         form = [nome,eletiva,email,senha]
         for i in form:
+            #este bloco serve para checar se algumas das variaveis presentes no form e nula
             if i == '':
                 dados = {}
                 dados['eletivas'] = Eletivas.objects.all().values()
@@ -341,18 +277,21 @@ def add_aluno(request):
             email=request.POST.get('email')
             senha=request.POST.get('senha')
             eletiva=request.POST.get('select')
+            imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
+            
 
-            campos = [serie,nome,email,senha,eletiva]
+            campos = [serie,nome,email,senha,eletiva]# checa se alguns dos valores acima e nulo
             for i in campos:
+                
                 if i == '':
                     dados={}
                     dados['eletivas'] = Eletivas.objects.all().values()
                     messages.info(request,'A imagem de perfil é opcional porém os outros campos são obrigatórios')
                 
                     return render(request,'aluno/addaluno.html',dados)
-            aluno = Alunos(imagem=request.FILES.get('imagem'),serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva)
+            aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
             aluno.save()
-            return redirect(ver_eletiva,eletiva=request.POST.get('select'))
+            return redirect(ver_eletiva,eletiva=eletiva)
         else:
             dados={}
             dados['eletivas'] = Eletivas.objects.all().values()
@@ -360,6 +299,7 @@ def add_aluno(request):
             return render(request,'aluno/addaluno.html',dados)
 
 def tutoria(request):
+
     dados=dados_universsais.copy()
     dados['pagina'] = 'tutoria'
     dados['professores'] = Professores.objects.all().values()
@@ -402,31 +342,34 @@ def editar_aviso(request,id):
     descricao_antiga = anuncio_a_ser_atualizado.descricao
     imagem_antiga = anuncio_a_ser_atualizado.imagem
     link_antigo = anuncio_a_ser_atualizado.link
-    
+    #Pega valores presentes no form
     if request.method == 'POST':
         titulo = request.POST.get('titulo')
         descricao = request.POST.get('descricao')
         imagem = request.FILES.get('imagem')
         link = request.POST.get('link')
+        #esta variavel contem todos os valores que forem inseridos  
         campos_novos = [titulo,descricao,imagem,link]
+        #esta variavel contem todos os valores antigos do aviso
         campos_antigos = [titulo_antigo,descricao_antiga,imagem_antiga,link_antigo]
         tam = 0
+        #for usado para checar se alguns dos anuncios e igual ao inserido na variavel campos novos
         for i in campos_novos:
             if tam == 0 and i != campos_antigos[tam]:
                 anuncio_a_ser_atualizado.titulo = i
             elif tam == 1 and i != campos_antigos[tam]:
                 anuncio_a_ser_atualizado.descricao = i
             elif tam == 2 and i != None:
+                #checa se ja existe uma imagem na variavel
                 imagem_final = checar_imagem_existente(imagem,'img_anuncio',None)
                 anuncio_a_ser_atualizado.imagem = imagem_final
-                excluir_imagem('img_anuncio',Anuncio.objects.all().values())
             elif tam == 3 and i != campos_antigos[tam]:
                 anuncio_a_ser_atualizado.link = i
             tam += 1
         
         anuncio_a_ser_atualizado.save()
-        
-        
+        excluir_imagem('img_anuncio',Anuncio.objects.all().values())
+
         return redirect(retornar_index)
     else:
         dados = {}
@@ -438,6 +381,7 @@ def editar_aviso(request,id):
         return render(request, 'anuncio/addanuncio.html', dados)
 
 def update_eletiva(request,id):
+    
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
     else:
@@ -476,7 +420,8 @@ def update_eletiva(request,id):
             dados['modo'] = "update"
             dados['form'] = UpdateEletiva(instance=eletiva)
             return render(request,'eletiva/addeletiva.html',dados)
-
+        
+#função para mostrar os dados existentes pagina sobre
 def sobre(request):
     dados = dados_universsais.copy()
     dados['pagina'] = 'sobre'
@@ -490,6 +435,8 @@ def deletar(request,user):
         dados['tabela_user_passado_como_parametro'] = user
 
         dados['modo'] = 'deletar'
+
+        #esses ifs checam a qual models o user que será deletado pertence e a partir daí retorna o models deste como uma variável intitulada "usuarios"
         if user.lower() == 'aluno':
             dados['usuarios'] = Alunos.objects.all().values()
             return render(request,'deletar/deletar.html', dados)
@@ -498,7 +445,8 @@ def deletar(request,user):
             return render(request,'deletar/deletar.html', dados)
         elif user.lower() == 'admin':
             dados['usuarios'] = Admins.objects.all().values()
-            if dados['user'] != 'ADMIN': 
+            #if direcionado ao admin com o intuito de pegar o id de usuario ja logado e a partir dai sera verificado se o usuario ja esta logado
+            if dados['user'] == 'admin': 
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
             return render(request,'deletar/deletar.html', dados)
         elif user.lower() == 'eletiva':

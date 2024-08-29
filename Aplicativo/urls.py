@@ -1,5 +1,5 @@
 from django.urls import path,include
-from Aplicativo.views import editar_aviso,update_com_id,update,add_admin,deletar_com_ids,deletar,sobre,login_viwes,tutoria,add_aluno,add_professor,retornar_index,eletivas,logout_viwes,definir_carrossel,add_eletivas,ver_eletiva,update_eletiva
+from Aplicativo.views import editar_aviso,update_com_id,update,add_admin,deletar_com_ids,deletar,sobre,login_viwes,tutoria,add_aluno,add_professor,retornar_index,eletivas,logout_viwes,add_eletivas,ver_eletiva,update_eletiva
 
 urlpatterns = [
     path('', retornar_index,name='index'),
@@ -7,7 +7,6 @@ urlpatterns = [
     path('sobre/',sobre,name='sobre'),
     path('logout/',logout_viwes ,name='logout'),
     path('eletivas/', eletivas,name='eletivas'),
-    path('definir_carrossel/', definir_carrossel,name='definir_carrossel'),
     path('add-eletiva/', add_eletivas,name='add-eletiva'),
     path('add-professor/', add_professor,name='add-professor'),
     path('eletiva/<str:eletiva>',ver_eletiva,name='ver-eletiva'),
