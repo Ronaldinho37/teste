@@ -20,11 +20,11 @@
 
 <div class="container">
     <div class="row p-3 justify-content-around">
-        {% for i in professores %}
+        {% for i in tutores %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
             <div class="p-2 rounded-4" id="div_tutor">
                 <div class="bg-secondary rounded-3 m-2">
-                    <img src="../../media/alef.png" alt="" width="80px" class="d-inline">
+                    <img src="../../media/{{i.imagem}}" alt="" width="80px" class="d-inline">
                 </div>
                 <div id="div-text">
                     <h3>{{i.nome}}</h3>

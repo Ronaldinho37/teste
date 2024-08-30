@@ -238,31 +238,44 @@ def ver_eletiva(request,eletiva):
     if len(dados['alunos']) == 0:
         messages.info(request,'Não há alunos nesta eletiva')
     return  render(request,'eletiva/eletiva.html',dados)
-    
 
-def add_professor(request):
+
+def add_professor(request, tipo_de_user):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
 
     if request.method == 'POST':
-        nome = request.POST.get('nome')
-        eletiva = request.POST.get('eletiva')
-        email = request.POST.get('email')
-        senha = request.POST.get('password')
-        imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_professores','cadastrar')
-        form = [nome,eletiva,email,senha]
-        for i in form:
-            #este bloco serve para checar se algumas das variaveis presentes no form e nula
-            if i == '':
-                dados = {}
-                dados['eletivas'] = Eletivas.objects.all().values()
-                messages.info(request,'Nenhum campo pode ser deixado em branco exceto o de imagem')
-                return render(request,'addprofessor.html',dados)
-        professor = Professores(eletiva=eletiva,nome=nome,email=email,senha=senha,imagem=imagem)
+        dados_do_ser_a_ser_adicionado = {}
+        campos_universais = ['nome','email','password','descricao','eletiva']
+        dados_do_ser_a_ser_adicionado['imagem'] = checar_imagem_existente(request.FILES.get('imagem'),'imagem_professores','cadastrar')
+        for i in campos_universais:
+            if tipo_de_user == 'professor' and i == 'descricao':
+                dados_do_ser_a_ser_adicionado[f'{i}'] = ''
+            elif tipo_de_user == 'tutor'and i == 'eletiva':
+                dados_do_ser_a_ser_adicionado[f'{i}'] = ''
+            else:
+                dados_do_ser_a_ser_adicionado[f'{i}'] = request.POST.get(f'{i}')
+
+
+        if tipo_de_user == 'professor':
+            dados_do_ser_a_ser_adicionado['professor'] = True
+            dados_do_ser_a_ser_adicionado['tutor'] = False
+        elif tipo_de_user == 'tutor':
+            dados_do_ser_a_ser_adicionado['tutor'] = True
+            dados_do_ser_a_ser_adicionado['professor'] = False
+        elif tipo_de_user == 'professor-tutor':
+            dados_do_ser_a_ser_adicionado['tutor'] = True
+            dados_do_ser_a_ser_adicionado['professor'] = True
+
+        professor = Professores(eletiva=dados_do_ser_a_ser_adicionado['eletiva'],nome=dados_do_ser_a_ser_adicionado['nome'],email=dados_do_ser_a_ser_adicionado['email'],senha=dados_do_ser_a_ser_adicionado['password'],imagem=dados_do_ser_a_ser_adicionado['imagem'],professor=dados_do_ser_a_ser_adicionado['professor'],tutor=dados_do_ser_a_ser_adicionado['tutor'],descricao=dados_do_ser_a_ser_adicionado['descricao'])
         professor.save()
         return redirect(eletivas)
     else:
         dados={}
+        if tipo_de_user != 'professor' and tipo_de_user != 'tutor' and tipo_de_user != 'professor-tutor':
+            return redirect(retornar_index)
+        
+        dados['tipo_de_user'] = tipo_de_user
         dados['eletivas'] = Eletivas.objects.all().values()
         return render(request,'professor/addprofessor.html',dados)
 
@@ -298,10 +311,9 @@ def add_aluno(request):
             return render(request,'aluno/addaluno.html',dados)
 
 def tutoria(request):
-
     dados=dados_universsais.copy()
     dados['pagina'] = 'tutoria'
-    dados['professores'] = Professores.objects.all().values()
+    dados['tutores'] = Professores.objects.filter(tutor=True)
     return render(request,'principais/tutoria.html',dados)
 
 
@@ -440,7 +452,7 @@ def deletar(request,user):
             dados['usuarios'] = Alunos.objects.all().values()
             return render(request,'deletar/deletar.html', dados)
         elif user.lower() == 'professor':
-            dados['usuarios'] = Professores.objects.all().values()
+            dados['usuarios'] = Professores.objects.exclude(professor=False,tutor=True)
             return render(request,'deletar/deletar.html', dados)
         elif user.lower() == 'admin':
             dados['usuarios'] = Admins.objects.all().values()
@@ -450,6 +462,9 @@ def deletar(request,user):
             return render(request,'deletar/deletar.html', dados)
         elif user.lower() == 'eletiva':
             dados['usuarios'] = Eletivas.objects.all().values()
+            return render(request,'deletar/deletar.html', dados)
+        elif user.lower() == 'tutor':
+            dados['usuarios'] = Professores.objects.exclude(professor=True,tutor=False)
             return render(request,'deletar/deletar.html', dados)
         else:
             messages.info(request,'Usuário não identificado')
@@ -492,7 +507,7 @@ def deletar_com_ids(request,user,id):
                     for i in dados['lista_id']:
                         Admins.objects.get(id=i).delete()
 
-                elif user == "professor":
+                elif user == "professor" or user == "tutor":
                     dados['model_user'] = Professores.objects.all().values()
                     dados['diretorio_user'] = "imagem_professores"
                     dados['user'] = 'professor(es)'
@@ -566,7 +581,7 @@ def update(request,user):
         dados['usuarios'] = Alunos.objects.all().values()
         return render(request,'update/update.html', dados)
     elif user.lower() == 'professor':
-        dados['usuarios'] = Professores.objects.all().values()
+        dados['usuarios'] = Professores.objects.exclude(tutor=True,professor=False)
         return render(request,'update/update.html', dados)
     elif user.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()

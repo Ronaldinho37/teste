@@ -41,11 +41,15 @@
                     <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'add-aluno'%}">Adicionar Aluno</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add-professor'%}">Adicionar Professor</a>
+                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='professor'%}">Adicionar Professor</a>
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='tutor'%}">Adicionar Tutor</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='professor-tutor'%}">Adicionar Professor/tutor</a>
+                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'add-admin'%}">Adicionar Admin</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add-eletiva'%}">Adicionar Eletiva</a>
+                    <a class="dropdown-item" href="{% url 'add-eletiva' %}">Adicionar Eletiva</a>
                     </div>
             </div>
             {% endif %}
