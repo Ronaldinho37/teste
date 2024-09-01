@@ -12,7 +12,7 @@
     <form action="{{ update_com_id }}" method="post" enctype="multipart/form-data" > {% csrf_token %}
         <input type="text" name="nome" id="nome" value="{{tabela.nome}}" required>
         <input type="email" name="email" id="email" value="{{tabela.email}}" required>
-        <input type="text" name="senha" id="senha" value="{{tabela.senha}}" required>
+        <input type="password" name="senha" id="senha" value="{{tabela.senha}}" required>
         <div>
             <img src="../../media/{{tabela.imagem}}" alt="foto-perfil-user">
             <input type="file" name="imagem" id="imagem">
@@ -31,6 +31,10 @@
         {% elif user == 'admin' %}
             {% include 'update/update_admin.html' %}
             {% block acoes_do_admin %}
+            {% endblock %}
+        {% elif user == 'tutor' %}
+            {% include 'update/update_tutor.html' %}
+            {% block descricao %}
             {% endblock %}
         {% endif %}
         

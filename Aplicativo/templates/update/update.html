@@ -11,7 +11,7 @@
     {% include 'codigos reutilizados/menssage.html' %}
     {% block menssagem %}
     {% endblock %}
-    {% if user == 'admin'%}
+    {% if tabela_user_passado_como_parametro == 'admin'%}
         {% include 'tabelas/admin_tabela.html' %}
         {% block tabela_admin %}
         {% endblock %}

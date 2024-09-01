@@ -23,13 +23,15 @@
                     Deletar
                     </button>
                     <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'deletar' user='aluno'%}">Deletar Aluno</a>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'deletar' user='professor'%}">Deletar Professor</a>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='professor'%}">Deletar Professor</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'deletar' user='admin'%}">Deletar Admin</a>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='tutor'%}">Deletar Tutor</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'deletar' user='eletiva'%}">Deletar Eletiva</a>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='admin'%}">Deletar Admin</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='eletiva'%}">Deletar Eletiva</a>
                     </div>
                 </div>
             {% endif %}

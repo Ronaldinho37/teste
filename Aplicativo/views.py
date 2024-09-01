@@ -52,7 +52,7 @@ def excluir_imagem(dir,model):
     imagens_usuarios = []
     #variável que guarda todas imagens da pasta media
     imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
-    #adiciona as imagens que estão sendo usadas á variável imagens_usuarios
+    #adiciona as imagens que estão sendo usadas á variável imagens_usuario
 
     for i in model:
         if i['imagem'] != None and i['imagem'] not in imagens_usuarios:
@@ -437,39 +437,6 @@ def sobre(request):
     dados = dados_universsais.copy()
     dados['pagina'] = 'sobre'
     return render(request,'principais/about.html',dados)
-
-def deletar(request,user): 
-        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
-            return redirect(retornar_index)
-        
-        dados = dados_universsais
-        dados['tabela_user_passado_como_parametro'] = user
-
-        dados['modo'] = 'deletar'
-
-        #esses ifs checam a qual models o user que será deletado pertence e a partir daí retorna o models deste como uma variável intitulada "usuarios"
-        if user.lower() == 'aluno':
-            dados['usuarios'] = Alunos.objects.all().values()
-            return render(request,'deletar/deletar.html', dados)
-        elif user.lower() == 'professor':
-            dados['usuarios'] = Professores.objects.exclude(professor=False,tutor=True)
-            return render(request,'deletar/deletar.html', dados)
-        elif user.lower() == 'admin':
-            dados['usuarios'] = Admins.objects.all().values()
-            #if direcionado ao admin com o intuito de pegar o id de usuario ja logado e a partir dai sera verificado se o usuario ja esta logado
-            if dados['user'] == 'admin': 
-                dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
-            return render(request,'deletar/deletar.html', dados)
-        elif user.lower() == 'eletiva':
-            dados['usuarios'] = Eletivas.objects.all().values()
-            return render(request,'deletar/deletar.html', dados)
-        elif user.lower() == 'tutor':
-            dados['usuarios'] = Professores.objects.exclude(professor=True,tutor=False)
-            return render(request,'deletar/deletar.html', dados)
-        else:
-            messages.info(request,'Usuário não identificado')
-            return redirect(retornar_index)
-
         
 def deletar_com_ids(request,user,id):
         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
@@ -486,7 +453,7 @@ def deletar_com_ids(request,user,id):
             for i in dados['lista_id']:
                 if int(i) == id_do_user_logado:
                     messages.info(request,'Você não pode se auto deletar')
-                    return redirect(deletar,user=user)
+                    return redirect(update_or_delete,u_or_d='deletar', user=user)
         
         if request.method == 'POST':
             sim = request.POST.get('sim')
@@ -510,10 +477,26 @@ def deletar_com_ids(request,user,id):
                 elif user == "professor" or user == "tutor":
                     dados['model_user'] = Professores.objects.all().values()
                     dados['diretorio_user'] = "imagem_professores"
-                    dados['user'] = 'professor(es)'
-                    for i in dados['lista_id']:
-                        Professores.objects.get(id=i).delete()
-
+                    if user == 'tutor':
+                        os_que_podem_ser_deletados = Professores.objects.filter(tutor=True)
+                        dados['user'] = 'tutor(es)'
+                        for i in dados['lista_id']:
+                            user_da_vez = os_que_podem_ser_deletados.filter(id=i)
+                            if len(user_da_vez) == 0:
+                                messages.info(request,'User não é um tutor')
+                                return redirect(update_or_delete,u_or_d='deletar',user=user)
+                            else:
+                                Professores.objects.get(id=i).delete()
+                    else:
+                        dados['user'] = 'professor(es)'
+                        os_que_podem_ser_deletados = Professores.objects.filter(professor=True)
+                        for i in dados['lista_id']:
+                            user_da_vez = os_que_podem_ser_deletados.filter(id=i)
+                            if len(user_da_vez) == 0:
+                                messages.info(request,'User não é um professor')
+                                return redirect(update_or_delete,u_or_d='deletar',user=user)
+                            else:
+                                Professores.objects.get(id=i).delete()
                 elif user == "eletiva":
                     eletiva_a_ser_deletada = Eletivas.objects.get(id=id)
                     
@@ -538,12 +521,25 @@ def deletar_com_ids(request,user,id):
                 messages.info(request,"selecione um dos valores")
                 return redirect(deletar_com_ids, user=user,id=id)
             else:
-                return redirect(deletar,user=user)
+                return redirect(update_or_delete,u_or_d='deletar',user=user)
             
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
             messages.info(request,f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)')
-            return redirect(deletar,user=user)
+            return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
+            if user == 'professor' or user == 'tutor':
+                for i in dados['lista_id']:
+                    professor_ou_tutor = Professores.objects.get(id=i)
+                    user_da_vez = ''
+        
+                    if user == 'professor':
+                        user_da_vez += 'tutor'
+                        
+                    else:
+                        user_da_vez += 'professor'
+                    if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True: 
+                        messages.info(request,f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}')
+                        break
             return render(request,'deletar/deletar_com_ids.html',dados)
 
 def add_admin(request):
@@ -570,25 +566,30 @@ def add_admin(request):
         return redirect(retornar_index)
     else:
         return render(request,'acoes_principais/template_add.html')
-    
-def update(request,user):
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
+def update_or_delete(request,u_or_d,user):
+    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True or u_or_d != 'deletar' and u_or_d != 'update':
         return redirect(retornar_index)
-    dados = {}
+    dados = dados_universsais
     dados['tabela_user_passado_como_parametro'] = user
-    #ifs usados para identificar os usuarios 
+
+    dados['modo'] = f'{u_or_d}'
     if user.lower() == 'aluno':
         dados['usuarios'] = Alunos.objects.all().values()
-        return render(request,'update/update.html', dados)
     elif user.lower() == 'professor':
-        dados['usuarios'] = Professores.objects.exclude(tutor=True,professor=False)
-        return render(request,'update/update.html', dados)
+        dados['usuarios'] = Professores.objects.exclude(professor=False)
     elif user.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()
-        return render(request,'update/update.html', dados)
+        if dados['user'] == 'admin' and u_or_d == 'deletar' : 
+                dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
+    elif user.lower() == 'eletiva' and u_or_d == 'deletar':
+            dados['usuarios'] = Eletivas.objects.all().values()
+            return render(request,'deletar/deletar.html', dados)
+    elif user.lower() == 'tutor':
+        dados['usuarios'] = Professores.objects.filter(tutor=True)
     else:
         messages.info(request,'Usuário não identificado')
         return redirect(retornar_index)
+    return render(request,f'{u_or_d}/{u_or_d}.html', dados)
 
 def update_com_id(request,user,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
@@ -604,23 +605,24 @@ def update_com_id(request,user,id):
         model.append("imagem_alunos")
         campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva,user_a_ser_atualizado[0].serie]
 
-    elif user == 'professor':
+    elif user == 'professor' or user == 'tutor':
         user_a_ser_atualizado.append(Professores.objects.get(id=id))
         model.append(Professores.objects.all().values())
         model.append("imagem_professores")
-        campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
-
+        if user == 'tutor':
+            campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].descricao]
+        else:
+            campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
     elif user == 'admin':
         admin_a_ser_atualizado = Admins.objects.get(id=id)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
             messages.info(request,"Você não pode se auto atualizar")
-            return redirect(update, user=user)
+            return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Admins.objects.all().values())
         model.append("imagem_admins")
         user_a_ser_atualizado.append(admin_a_ser_atualizado)
         campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].acoes]
  
-    
     if request.method == 'POST':
         nome = request.POST.get('nome')
         email = request.POST.get('email')
@@ -636,6 +638,9 @@ def update_com_id(request,user,id):
             if user == 'aluno':
                 serie = request.POST.get('serie')
                 campos_atualizados_do_user = [nome,email,senha,imagem,eletiva,serie]
+        elif user == 'tutor':
+            descricao = request.POST.get('descricao')
+            campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
         elif user == 'admin':
             checkboxes = ['deletar','atualizar','cadastrar']
             acoes_permitidas = ""
@@ -663,16 +668,18 @@ def update_com_id(request,user,id):
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
                     elif imagem != None and pergunta_imagem == None:
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(imagem,model[1],'atualizar')
-                elif tam == 4 and user != 'admin':
+                elif tam == 4 and user != 'admin' and user != 'tutor':
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':
                     user_a_ser_atualizado[0].acoes = i
+                elif tam == 4 and user == 'tutor':
+                    user_a_ser_atualizado[0].descricao = i
                 elif tam == 5:
                     user_a_ser_atualizado[0].serie = i
             tam += 1
         user_a_ser_atualizado[0].save()
         excluir_imagem(model[1],model[0])
-        return redirect(update,user=user)
+        return redirect(update_or_delete,u_or_d='update',user=user)
 
         
 
@@ -686,7 +693,6 @@ def update_com_id(request,user,id):
             acoes_lista = campos_atigos_do_user[4].split()
             for i in acoes_lista:
                 dados[f'{i}'] = 'checked'
-        
         return render(request, 'update/update_com_id.html', dados)
 
 
