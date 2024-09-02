@@ -407,13 +407,11 @@ def update_eletiva(request,id):
                     professores = Professores.objects.filter(eletiva=eletiva_1)
                     alunos = Alunos.objects.filter(eletiva=eletiva_1)
                     if len(professores) != 0:
-                        prof_atualizar = Professores.objects.filter(eletiva=eletiva_1)
-                        for professor in prof_atualizar:
+                        for professor in professores:
                             professor.eletiva = form.cleaned_data.get('titulo')
                             professor.save()
                        
                     if len(alunos) != 0:
-                        alunos = Alunos.objects.filter(eletiva=eletiva_1)
                         for aluno in alunos:
                             aluno.eletiva = form.cleaned_data.get('titulo')
                             aluno.save()
@@ -646,6 +644,11 @@ def update_com_id(request,user,id):
         elif user == 'tutor':
             descricao = request.POST.get('descricao')
             campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
+        elif user == 'eletiva':
+            titulo = request.POST.get('titulo')
+            link = request.POST.get('link')
+            descricao = request.POST.get('descricao')
+            campos_atualizados_do_user = [titulo,descricao,imagem,link]
         elif user == 'admin':
             checkboxes = ['deletar','atualizar','cadastrar']
             acoes_permitidas = ""
@@ -663,12 +666,26 @@ def update_com_id(request,user,id):
         for i in campos_atualizados_do_user:
             if i != campos_atigos_do_user[0]:
                 if tam == 0:
-                    user_a_ser_atualizado[0].nome = i
-                elif tam == 1:
+                    if user == 'eletiva':
+                        professores = Professores.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
+                        alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
+                        if len(professores) != 0:
+                            for e in professores:
+                                e.eletiva = i
+                                e.save()
+
+                        if len(alunos) != 0:
+                            for e in alunos:
+                                e.eletiva = i
+                                e.save()
+                        user_a_ser_atualizado[0].titulo = i
+                    else:
+                        user_a_ser_atualizado[0].nome = i
+                elif tam == 1 and user != 'eletiva':
                     user_a_ser_atualizado[0].email = i
-                elif tam == 2:
+                elif tam == 2 and user != 'eletiva':
                     user_a_ser_atualizado[0].senha = i
-                elif tam == 3:
+                elif tam == 3 and user != 'eletiva' or tam == 2 and user == 'eletiva' :
                     if imagem != None and pergunta_imagem == 'on' or imagem == None and pergunta_imagem == 'on':
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
                     elif imagem != None and pergunta_imagem == None:
@@ -677,7 +694,7 @@ def update_com_id(request,user,id):
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':
                     user_a_ser_atualizado[0].acoes = i
-                elif tam == 4 and user == 'tutor':
+                elif tam == 4 and user == 'tutor' or user == 'eletiva' and tam == 1:
                     user_a_ser_atualizado[0].descricao = i
                 elif tam == 5:
                     user_a_ser_atualizado[0].serie = i
