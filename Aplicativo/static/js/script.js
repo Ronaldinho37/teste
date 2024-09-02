@@ -1,4 +1,3 @@
-document.write('ljljkdlejkedce')
 const textElement = document.getElementById('tecnologia');
 const phrases = ['Desenvolvedor Web', 'Programador', 'Criador de Conteúdo', 'Entusiasta de Tecnologia'];
 const typingSpeed = 100; // Velocidade de digitação em milissegundos

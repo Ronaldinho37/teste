@@ -123,13 +123,17 @@ def login_viwes(request):
         return redirect(retornar_index)
     
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            nome = form.cleaned_data.get('nome').lower()
-            password = form.cleaned_data.get('senha')
-            if request.session['user'] == 'ADMIN':
-                logout(request)
-            
+        nome = request.POST.get('nome').lower()
+        password = request.POST.get('password')
+    
+        checkboxes = {}
+        lista_checkboxes = ['ADMIN','Admin','Professor','Aluno','Tutor']
+        for i in lista_checkboxes:
+            checkboxes[f'{i}'] = request.POST.get(f'{i}')
+        
+        if request.session['user'] == 'ADMIN':
+            logout(request)
+        if checkboxes['ADMIN'] == 'on':
             usuario = authenticate(username=nome,password=password)
             if usuario is not None:
                 login(request,usuario)
@@ -137,7 +141,7 @@ def login_viwes(request):
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
                 return redirect(retornar_index)
-            
+        if checkboxes['Admin'] == 'on':
             admins = Admins.objects.all().values()
             for i in admins:
                 if i['nome'].lower() == nome and i['senha'] == password:
@@ -147,6 +151,8 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
+        
+        if checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
             #irá checar se o usuário é um professor
             professor = Professores.objects.all().values()
             for i in professor:
@@ -155,6 +161,7 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
+        if checkboxes['Aluno'] == 'on':
             #irá checar se o usuário é um alunos
             alunos = Alunos.objects.all().values()
             for i in alunos:
@@ -163,14 +170,15 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
-                
-            messages.info(request,"Usuário ou senha inválidos!")
-            dados = {}
-            dados['form'] = LoginForm()
-            return render(request,'principais/login.html',dados)
-    else:
+            
+        messages.info(request,"Usuário ou senha inválidos!")
         dados = {}
         dados['form'] = LoginForm()
+        dados['nome'] = nome
+        dados['password'] = password
+        return render(request,'principais/login.html',dados)
+    else:
+        dados = {}
         return render(request,'principais/login.html',dados)
 
 def eletivas(request):

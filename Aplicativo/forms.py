@@ -2,7 +2,7 @@ from django import forms
 from .models import Eletivas, Anuncio
 
 class LoginForm(forms.Form):
-    nome = forms.CharField(widget=forms.TextInput(attrs={'name':'nome'}),label="Nome Completo")
+    nome = forms.CharField(widget=forms.TextInput(attrs={'name':'nome','value':'{{nome}}'}),label="Nome Completo")
     senha = forms.CharField(widget=forms.PasswordInput(attrs={'name':'senha'}))
 
 class AddEletivaForm(forms.Form):
