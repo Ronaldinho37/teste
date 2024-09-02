@@ -14,9 +14,9 @@
     <a href="{% url 'index' %}">cancelar</a>
     <div>
         <label for="titulo">Título</label>
-        <input type="text" name="titulo" id="titulo" value="{{titulo}}">
+        <input type="text" name="titulo" id="titulo" value="{{titulo}}" maxlength="40">
         <label for="descricao">Descrição</label>
-        <textarea name="descricao" id="descricao" cols="20" rows="20">{{descricao}}</textarea>
+        <textarea name="descricao" id="descricao" cols="20" rows="20" maxlength="127">{{descricao}}</textarea>
         <div>
             <img src="../../../media/{{imagem}}" alt="" srcset="">
             <input type="file" name="imagem" id="imagem">

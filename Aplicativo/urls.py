@@ -1,9 +1,9 @@
-from django.urls import path,include
+from django.urls import path
 from Aplicativo.views import update_or_delete,editar_aviso,update_com_id,add_admin,deletar_com_ids,sobre,login_viwes,tutoria,add_aluno,add_professor,retornar_index,eletivas,logout_viwes,add_eletivas,ver_eletiva,update_eletiva
 
 urlpatterns = [
     path('', retornar_index,name='index'),
-    path('<str:u_or_d>/<str:user>',update_or_delete,name="update_or_delete"),
+    path('update_or_delete/<str:u_or_d>/<str:user>',update_or_delete,name="update_or_delete"),
     path('login/',login_viwes ,name='login'),
     path('sobre/',sobre,name='sobre'),
     path('logout/',logout_viwes ,name='logout'),

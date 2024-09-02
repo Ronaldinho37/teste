@@ -26,7 +26,7 @@ dados_universsais = {}
 # print(ciphertext)
 def checar_imagem_existente(imagem,pasta,acao):
     if imagem == None:
-        return 'anonimo.png'
+        return 'img_fixas/anonimo.png'
     
     nova_imagem = Image.open(imagem).tobytes("xbm", "rgb")
     pasta_da_velha_imagem = os.listdir(f'{os.getcwd()}/media/{pasta}')
@@ -346,8 +346,9 @@ def tutoria(request):
 #             return render (request, 'anuncio/deletaranuncio.html')
 
 def editar_aviso(request,id):
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-        return redirect(retornar_index)
+    # if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
+    #     return redirect(retornar_index)
+    print("okokokok")
     anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
     titulo_antigo = anuncio_a_ser_atualizado.titulo
     descricao_antiga = anuncio_a_ser_atualizado.descricao
@@ -583,7 +584,6 @@ def update_or_delete(request,u_or_d,user):
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
     elif user.lower() == 'eletiva' and u_or_d == 'deletar':
             dados['usuarios'] = Eletivas.objects.all().values()
-            return render(request,'deletar/deletar.html', dados)
     elif user.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
     else:

@@ -55,7 +55,7 @@
         margin-top: -52px;
         margin-left: 43px;
         text-transform: uppercase;">
-                <a href="/editar_aviso/{{i.id}}">Editar</a>
+                <a href="{% url 'editar_aviso' id=i.id %}">Editar</a>
             </div>
         {% endif %}
     </div>
