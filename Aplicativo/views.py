@@ -582,7 +582,7 @@ def update_or_delete(request,u_or_d,user):
         dados['usuarios'] = Admins.objects.all().values()
         if dados['user'] == 'admin' and u_or_d == 'deletar' : 
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
-    elif user.lower() == 'eletiva' and u_or_d == 'deletar':
+    elif user.lower() == 'eletiva':
             dados['usuarios'] = Eletivas.objects.all().values()
     elif user.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
@@ -613,6 +613,11 @@ def update_com_id(request,user,id):
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].descricao]
         else:
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
+    elif user == 'eletiva':
+        user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
+        model.append(Eletivas.objects.all().values())
+        model.append("img_eletivas")
+        campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].link]
     elif user == 'admin':
         admin_a_ser_atualizado = Admins.objects.get(id=id)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
