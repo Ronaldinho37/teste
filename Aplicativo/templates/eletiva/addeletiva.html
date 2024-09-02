@@ -19,6 +19,9 @@
     <form action="{% url 'add-eletiva' %}" method="post"  enctype="multipart/form-data">
         {% csrf_token %}
        {{form.as_p}}
+       <label for="imagem_p">Imagem dos Professores</label>
+       <input type="file" name="imagem_p">
+
         <input type="submit" value="submit">
     </form>
     

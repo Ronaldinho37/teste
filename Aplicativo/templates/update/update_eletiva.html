@@ -1,3 +1,10 @@
 {% block eletiva_da_eletiva %}
+<div>
+    <img src="../../../media/{{tabela.img_professores_eletiva}}" alt="">
+    <label for="img_professores">Imagem dos professores</label>
+    <input type="file" name="img_professores" id="img_professores">
+    <label for="pergunta">Deixar sem imagem</label>
+    <input type="checkbox" name="pergunta_imagem_professores" id="pergunta_imagem_professores">
+</div>
 <input type="url" name="link" id="link" value="{{tabela.link}}">
 {% endblock %}

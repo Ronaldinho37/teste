@@ -35,13 +35,13 @@
                     </div>
                 </div>
             {% endif %}
-            {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
+            {% if user == 'ADMIN'  or  'atualizar' in lista_de_acoes%}
             <div class="btn-group">
                 <button type="button" id="Cadastrar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Update
                 </button>
                     <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Update Aluno</a>
+                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='aluno'%}">Update Aluno</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Update Professor</a>
                     <div class="dropdown-divider"></div>
@@ -53,7 +53,7 @@
                     </div>
             </div>
             {% endif %}
-            {% if user == 'ADMIN'  or  'update' in lista_de_acoes%}
+            {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
             <div class="btn-group">
                 <button type="button" id="Cadastrar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Cadastrar

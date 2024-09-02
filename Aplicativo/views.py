@@ -26,20 +26,26 @@ dados_universsais = {}
 # print(ciphertext)
 def checar_imagem_existente(imagem,pasta,acao):
     if imagem == None:
-        return 'img_fixas/anonimo.png'
+        if pasta == 'img_eletivas/img_professores_eletiva':
+            return 'img_eletivas/img_professores_eletiva/dupla1.png'
+        else:
+            return 'img_fixas/anonimo.png'
     
     nova_imagem = Image.open(imagem).tobytes("xbm", "rgb")
-    pasta_da_velha_imagem = os.listdir(f'{os.getcwd()}/media/{pasta}')
-    
+    try:
+        pasta_da_velha_imagem = os.listdir(f'{os.getcwd()}/media/{pasta}')
+    except:
+        return imagem
     tam = 0
     
     
     for e in pasta_da_velha_imagem:
-        imagem_da_pasta = Image.open(f'{os.getcwd()}/media/{pasta}/{e}').tobytes("xbm", "rgb")
-        
-        if nova_imagem == imagem_da_pasta:
-            tam = 0
-            return f'{pasta}/{e}'
+        if e !=  'img_professores_eletiva':
+            imagem_da_pasta = Image.open(f'{os.getcwd()}/media/{pasta}/{e}').tobytes("xbm", "rgb")
+            
+            if nova_imagem == imagem_da_pasta:
+                tam = 0
+                return f'{pasta}/{e}'
         
         tam += 1
 
@@ -48,15 +54,22 @@ def checar_imagem_existente(imagem,pasta,acao):
   
 #dir = Diretório que está localizado a imagem a ser excluída
 def excluir_imagem(dir,model):
+   
     #variável que guarda as imagens que estão sendo utilizadas
     imagens_usuarios = []
     #variável que guarda todas imagens da pasta media
     imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+    if dir == 'img_eletivas':
+        imagens_da_pasta_solicitada.remove('img_professores_eletiva')
+    coluna_da_vez = ''
     #adiciona as imagens que estão sendo usadas á variável imagens_usuario
-
+    if dir == 'img_eletivas/img_professores_eletiva':
+        coluna_da_vez += 'img_professores_eletiva'
+    else:
+        coluna_da_vez += 'imagem'
     for i in model:
-        if i['imagem'] != None and i['imagem'] not in imagens_usuarios:
-            img = i['imagem'].replace(f'{dir}/','')
+        if i[coluna_da_vez] != None and i[coluna_da_vez] not in imagens_usuarios:
+            img = i[coluna_da_vez].replace(f'{dir}/','')
             imagens_usuarios.append(img)
     #deleta as imagens que não estão sendo usadas: se a imagem não estiver em imagens_usuarios então a delete
     for i in imagens_da_pasta_solicitada:
@@ -224,13 +237,14 @@ def add_eletivas(request):
             #variável que armazena o nome da eletiva
             eletiva = form.cleaned_data.get('titulo')
             imagem = checar_imagem_existente(form.cleaned_data.get("imagem"),"img_eletivas",None)
+            imagem_p = checar_imagem_existente(request.FILES.get("imagem_p"),"img_eletivas/img_professores_eletiva",None)
             #criando a nova eletiva
-            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=imagem,link=form.cleaned_data.get("link"))
+            new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=imagem,img_professores_eletiva=imagem_p,link=form.cleaned_data.get("link"))
             #salvando-a
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
             excluir_imagem("img_eletivas",Eletivas.objects.all().values())
-            return redirect(add_professor)
+            return redirect(add_professor,tipo_de_user='professor')
     else:
         dados = {}
         dados['form'] = AddEletivaForm()
@@ -505,8 +519,6 @@ def deletar_com_ids(request,user,id):
                             else:
                                 Professores.objects.get(id=i).delete()
                 elif user == "eletiva":
-                    eletiva_a_ser_deletada = Eletivas.objects.get(id=id)
-                    
                     dados['model_user'] = Eletivas.objects.all().values()
                     dados['diretorio_user'] = "img_eletivas"
                     dados['user'] = 'eletiva(s)'
@@ -522,7 +534,7 @@ def deletar_com_ids(request,user,id):
                 
                         
 
-            
+                            
             elif nao != "on" and sim != "on":
 
                 messages.info(request,"selecione um dos valores")
@@ -531,6 +543,8 @@ def deletar_com_ids(request,user,id):
                 return redirect(update_or_delete,u_or_d='deletar',user=user)
             
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
+            if dados['diretorio_user'] == 'img_eletivas':
+                excluir_imagem(f'{dados['diretorio_user']}/img_professores_eletiva',dados['model_user'])
             messages.info(request,f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)')
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
@@ -623,7 +637,7 @@ def update_com_id(request,user,id):
         user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
         model.append(Eletivas.objects.all().values())
         model.append("img_eletivas")
-        campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].link]
+        campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].img_professores_eletiva,user_a_ser_atualizado[0].link]
     elif user == 'admin':
         admin_a_ser_atualizado = Admins.objects.get(id=id)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
@@ -640,6 +654,7 @@ def update_com_id(request,user,id):
         senha = request.POST.get('senha')
         imagem = request.FILES.get('imagem')
         pergunta_imagem = request.POST.get('pergunta_imagem')
+        pergunta_imagem_professores = request.POST.get('pergunta_imagem_professores')
             
         campos_atualizados_do_user = []
         #ifs que pegamm valores atuais dos usuarios
@@ -656,7 +671,8 @@ def update_com_id(request,user,id):
             titulo = request.POST.get('titulo')
             link = request.POST.get('link')
             descricao = request.POST.get('descricao')
-            campos_atualizados_do_user = [titulo,descricao,imagem,link]
+            img_professores = request.FILES.get('img_professores')
+            campos_atualizados_do_user = [titulo,descricao,imagem,img_professores,link]
         elif user == 'admin':
             checkboxes = ['deletar','atualizar','cadastrar']
             acoes_permitidas = ""
@@ -698,6 +714,12 @@ def update_com_id(request,user,id):
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
                     elif imagem != None and pergunta_imagem == None:
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(imagem,model[1],'atualizar')
+                elif tam == 3 and user == 'eletiva':
+                    if img_professores != None and pergunta_imagem_professores == 'on' or img_professores == None and pergunta_imagem_professores == 'on':
+                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(None,f'{model[1]}/img_professores_eletiva','atualizar')
+                    elif img_professores != None and pergunta_imagem_professores == None:
+                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(img_professores,f'{model[1]}/img_professores_eletiva','atualizar')
+                  
                 elif tam == 4 and user != 'admin' and user != 'tutor':
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':
@@ -709,6 +731,8 @@ def update_com_id(request,user,id):
             tam += 1
         user_a_ser_atualizado[0].save()
         excluir_imagem(model[1],model[0])
+        if user == 'eletiva':
+            excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
         return redirect(update_or_delete,u_or_d='update',user=user)
 
         
@@ -723,6 +747,7 @@ def update_com_id(request,user,id):
             acoes_lista = campos_atigos_do_user[4].split()
             for i in acoes_lista:
                 dados[f'{i}'] = 'checked'
+            
         return render(request, 'update/update_com_id.html', dados)
 
 
