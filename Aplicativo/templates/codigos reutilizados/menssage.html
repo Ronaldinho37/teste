@@ -60,7 +60,7 @@
             background-color: #0056b3;
         }
 </style>
-{% if messages %}
+{% if message != '' %}
 <div id="errorModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -69,16 +69,14 @@
         </div>
         
         <div class="modal-body">
-            {% for message in messages %}
             <p>{{message}}</p>
-            {% endfor %}
-            
         </div>
         <div class="modal-footer">
             <button id="closeModal"></button>
         </div>
     </div>
 </div>
+{% endif %}
 <script>
      const modal = document.getElementById('errorModal');
         const closeModalButton = document.getElementById('closeModal');
@@ -103,6 +101,6 @@
             }
         }
 </script>
-{% endif %}
+
 
 {% endblock %}

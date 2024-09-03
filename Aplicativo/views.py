@@ -1,3 +1,6 @@
+import django
+import django.contrib
+import django.contrib.messages
 from django.shortcuts import render,redirect,get_object_or_404
 from .forms import LoginForm,AddEletivaForm, AnuncioForm, UpdateEletiva
 from django.http import HttpResponse
@@ -184,14 +187,16 @@ def login_viwes(request):
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
             
-        messages.info(request,"Usuário ou senha inválidos!")
+        
         dados = {}
+        dados['message'] = "Usuário ou senha inválidos!"
         dados['form'] = LoginForm()
         dados['nome'] = nome
         dados['password'] = password
         return render(request,'principais/login.html',dados)
     else:
         dados = {}
+        dados['message'] = ''
         return render(request,'principais/login.html',dados)
 
 def eletivas(request):
@@ -243,11 +248,13 @@ def add_eletivas(request):
             #salvando-a
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
+            
             excluir_imagem("img_eletivas",Eletivas.objects.all().values())
             return redirect(add_professor,tipo_de_user='professor')
     else:
         dados = {}
         dados['form'] = AddEletivaForm()
+        dados['message'] = ''
         return render(request,'eletiva/addeletiva.html',dados)
 
 def ver_eletiva(request,eletiva):
@@ -256,9 +263,9 @@ def ver_eletiva(request,eletiva):
     try:
         dados['professor'] = Professores.objects.filter(eletiva=eletiva)
     except:
-        messages.info(request,'Não professor responsável por essa eletiva')
+        dados['message'] = 'Não professor responsável por essa eletiva'
     if len(dados['alunos']) == 0:
-        messages.info(request,'Não há alunos nesta eletiva')
+        dados['message'] = 'Não há alunos nesta eletiva'
     return  render(request,'eletiva/eletiva.html',dados)
 
 
@@ -298,7 +305,19 @@ def add_professor(request, tipo_de_user):
             return redirect(retornar_index)
         
         dados['tipo_de_user'] = tipo_de_user
-        dados['eletivas'] = Eletivas.objects.all().values()
+        dados['eletivas'] = Eletivas.objects
+        dados['eletivas_para_for'] = Eletivas.objects.all().values()
+        if tipo_de_user != 'tutor':
+            for i in dados['eletivas_para_for']:
+                p = Professores.objects.filter(eletiva=i['titulo'])
+                if len(p) == 2:
+                    dados['eletivas'] = dados['eletivas'].exclude(titulo=i['titulo'])
+                    if len(dados['eletivas']) == 0:
+                        dados['message'] = "Todas as eletivas possuem seus respectivos professores"
+                        return redirect(retornar_index)
+                elif len(p) == 0:
+                    dados['eletivas'] = dados['eletivas'].all().values()
+            
         return render(request,'professor/addprofessor.html',dados)
 
 def add_aluno(request):
@@ -320,7 +339,7 @@ def add_aluno(request):
                 if i == '':
                     dados={}
                     dados['eletivas'] = Eletivas.objects.all().values()
-                    messages.info(request,'A imagem de perfil é opcional porém os outros campos são obrigatórios')
+                    dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
                 
                     return render(request,'aluno/addaluno.html',dados)
             aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
@@ -329,7 +348,7 @@ def add_aluno(request):
         else:
             dados={}
             dados['eletivas'] = Eletivas.objects.all().values()
-            messages.info(request,'A imagem de perfil é opcional')
+            dados['message'] = 'A imagem de perfil é opcional'
             return render(request,'aluno/addaluno.html',dados)
 
 def tutoria(request):
@@ -444,7 +463,7 @@ def update_eletiva(request,id):
                 dados = {}
                 dados['eletiva'] = Eletivas.objects.values().get(id=id)
                 dados['modo'] = "update"
-                messages.info(request,'Dados inválidos')
+                dados['message'] = 'Dados inválidos'
                 return render(request,'eletiva/addeletiva.html',dados)
         else:
             dados = dados_universsais.copy()
@@ -473,7 +492,7 @@ def deletar_com_ids(request,user,id):
             id_do_user_logado = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
             for i in dados['lista_id']:
                 if int(i) == id_do_user_logado:
-                    messages.info(request,'Você não pode se auto deletar')
+                    dados['message'] = 'Você não pode se auto deletar'
                     return redirect(update_or_delete,u_or_d='deletar', user=user)
         
         if request.method == 'POST':
@@ -504,7 +523,7 @@ def deletar_com_ids(request,user,id):
                         for i in dados['lista_id']:
                             user_da_vez = os_que_podem_ser_deletados.filter(id=i)
                             if len(user_da_vez) == 0:
-                                messages.info(request,'User não é um tutor')
+                                dados['message'] = 'User não é um tutor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
                                 Professores.objects.get(id=i).delete()
@@ -514,7 +533,7 @@ def deletar_com_ids(request,user,id):
                         for i in dados['lista_id']:
                             user_da_vez = os_que_podem_ser_deletados.filter(id=i)
                             if len(user_da_vez) == 0:
-                                messages.info(request,'User não é um professor')
+                                dados['message'] = 'User não é um professor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
                                 Professores.objects.get(id=i).delete()
@@ -537,7 +556,7 @@ def deletar_com_ids(request,user,id):
                             
             elif nao != "on" and sim != "on":
 
-                messages.info(request,"selecione um dos valores")
+                dados['message'] = "selecione um dos valores"
                 return redirect(deletar_com_ids, user=user,id=id)
             else:
                 return redirect(update_or_delete,u_or_d='deletar',user=user)
@@ -545,7 +564,7 @@ def deletar_com_ids(request,user,id):
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
             if dados['diretorio_user'] == 'img_eletivas':
                 excluir_imagem(f'{dados['diretorio_user']}/img_professores_eletiva',dados['model_user'])
-            messages.info(request,f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)')
+            dados['message'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
             if user == 'professor' or user == 'tutor':
@@ -559,7 +578,7 @@ def deletar_com_ids(request,user,id):
                     else:
                         user_da_vez += 'professor'
                     if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True: 
-                        messages.info(request,f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}')
+                        dados['message'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
                         break
             return render(request,'deletar/deletar_com_ids.html',dados)
 
@@ -607,7 +626,7 @@ def update_or_delete(request,u_or_d,user):
     elif user.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
     else:
-        messages.info(request,'Usuário não identificado')
+        dados['message'] = 'Usuário não identificado'
         return redirect(retornar_index)
     return render(request,f'{u_or_d}/{u_or_d}.html', dados)
 
@@ -641,7 +660,7 @@ def update_com_id(request,user,id):
     elif user == 'admin':
         admin_a_ser_atualizado = Admins.objects.get(id=id)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
-            messages.info(request,"Você não pode se auto atualizar")
+            dados['message'] = "Você não pode se auto atualizar"
             return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Admins.objects.all().values())
         model.append("imagem_admins")
@@ -747,7 +766,7 @@ def update_com_id(request,user,id):
             acoes_lista = campos_atigos_do_user[4].split()
             for i in acoes_lista:
                 dados[f'{i}'] = 'checked'
-            
+        dados['message'] = ''
         return render(request, 'update/update_com_id.html', dados)
 
 
