@@ -567,6 +567,7 @@ def deletar_com_ids(request,user,id):
             dados['message'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
+            dados['message'] = ''
             if user == 'professor' or user == 'tutor':
                 for i in dados['lista_id']:
                     professor_ou_tutor = Professores.objects.get(id=i)
@@ -580,6 +581,7 @@ def deletar_com_ids(request,user,id):
                     if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True: 
                         dados['message'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
                         break
+            
             return render(request,'deletar/deletar_com_ids.html',dados)
 
 def add_admin(request):
@@ -762,6 +764,7 @@ def update_com_id(request,user,id):
         dados['user'] = user
         dados['tabela'] = user_a_ser_atualizado[0]
         dados['eletivas'] = Eletivas.objects.all().values()
+        dados['message'] = ''
         if user == 'admin':
             acoes_lista = campos_atigos_do_user[4].split()
             for i in acoes_lista:

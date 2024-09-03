@@ -164,7 +164,7 @@
 <body>
     <div class="container">
         <div class="login-container">
-            <h1>Add Professor</h1>
+            <h1>Adicionar {{tipo_de_user}}</h1>
             <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}           
                 {% if tipo_de_user == 'professor' or tipo_de_user == 'professor-tutor' %}
                 <label for="eletiva">Eletiva</label>
@@ -175,7 +175,7 @@
                         {% endfor %}
                     </select>
                 {% endif %}
-                <label for="nome">Nome do Professor</label>
+                <label for="nome">Nome do {{tipo_de_user}}</label>
                 <input type="text" name="nome" id="nome" placeholder="Insira o seu nome" required>
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" placeholder="email" required>
@@ -189,7 +189,7 @@
                     <textarea name="descricao" id="descricao" required></textarea>
                 {% endif %}
                 <div class="error-message" id="errorMessage">Por favor, preencha todos os campos corretamente.</div>
-                <input type="submit" value="Submit">
+                <input type="submit" value="Enviar">
             </form>
         </div>
 
