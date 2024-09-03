@@ -9,6 +9,7 @@ from .models import Alunos,Admins,Professores,Eletivas,Anuncio
 from django.contrib import messages
 import os
 from PIL import Image
+#pip freeze > requiriments.txt
 #colocar mais de um professor da eletiva
 #criar um models para tutores
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
@@ -30,7 +31,7 @@ dados_universsais = {}
 def checar_imagem_existente(imagem,pasta,acao):
     if imagem == None:
         if pasta == 'img_eletivas/img_professores_eletiva':
-            return f'{pasta}/Professorpadrao.png'
+            return f'{pasta}/Professorpadrao.jpg'
         else:
             return 'img_fixas/anonimo.png'
     
@@ -51,7 +52,6 @@ def checar_imagem_existente(imagem,pasta,acao):
                 return f'{pasta}/{e}'
         
         tam += 1
-
     if tam != 0 or len(pasta_da_velha_imagem) == 0:
         return imagem
   
@@ -69,7 +69,7 @@ def excluir_imagem(dir,model):
    
     #adiciona as imagens que estão sendo usadas á variável imagens_usuario
     if dir == 'img_eletivas/img_professores_eletiva':
-        imagens_da_pasta_solicitada.remove('Professorpadrao.png')
+        imagens_da_pasta_solicitada.remove('Professorpadrao.jpg')
         coluna_da_vez += 'img_professores_eletiva'
         
         
@@ -82,8 +82,7 @@ def excluir_imagem(dir,model):
     #deleta as imagens que não estão sendo usadas: se a imagem não estiver em imagens_usuarios então a delete
     for i in imagens_da_pasta_solicitada:
         if i not in imagens_usuarios:
-            print('ff')
-            #os.remove(f'{os.getcwd()}/media/{dir}/{i}')
+            os.remove(f'{os.getcwd()}/media/{dir}/{i}')
          
    
     return
@@ -139,7 +138,7 @@ def retornar_index(request):
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
    
     return render(request,'principais/index.html',dados)
-
+    
 def login_viwes(request):
     if request.session['user'] == 'ADMIN':
         return redirect(retornar_index)
@@ -641,6 +640,7 @@ def update_or_delete(request,u_or_d,user):
 def update_com_id(request,user,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
+    dados = {}
     user_a_ser_atualizado = []
     campos_atigos_do_user = []
     model = []
@@ -759,7 +759,6 @@ def update_com_id(request,user,id):
         user_a_ser_atualizado[0].save()
         
         if user == 'eletiva':
-            print(model[1])
             excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
         excluir_imagem(model[1],model[0])
         return redirect(update_or_delete,u_or_d='update',user=user)
@@ -768,7 +767,7 @@ def update_com_id(request,user,id):
 
 
     else:
-        dados = {}
+        
         dados['user'] = user
         dados['tabela'] = user_a_ser_atualizado[0]
         dados['eletivas'] = Eletivas.objects.all().values()
@@ -777,7 +776,7 @@ def update_com_id(request,user,id):
             acoes_lista = campos_atigos_do_user[4].split()
             for i in acoes_lista:
                 dados[f'{i}'] = 'checked'
-        dados['message'] = ''
+        
         return render(request, 'update/update_com_id.html', dados)
 
 
