@@ -30,7 +30,7 @@ dados_universsais = {}
 def checar_imagem_existente(imagem,pasta,acao):
     if imagem == None:
         if pasta == 'img_eletivas/img_professores_eletiva':
-            return 'img_eletivas/img_professores_eletiva/dupla1.png'
+            return f'{pasta}/Professorpadrao.png'
         else:
             return 'img_fixas/anonimo.png'
     
@@ -62,12 +62,17 @@ def excluir_imagem(dir,model):
     imagens_usuarios = []
     #variável que guarda todas imagens da pasta media
     imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+   
     if dir == 'img_eletivas':
         imagens_da_pasta_solicitada.remove('img_professores_eletiva')
     coluna_da_vez = ''
+   
     #adiciona as imagens que estão sendo usadas á variável imagens_usuario
     if dir == 'img_eletivas/img_professores_eletiva':
+        imagens_da_pasta_solicitada.remove('Professorpadrao.png')
         coluna_da_vez += 'img_professores_eletiva'
+        
+        
     else:
         coluna_da_vez += 'imagem'
     for i in model:
@@ -77,7 +82,8 @@ def excluir_imagem(dir,model):
     #deleta as imagens que não estão sendo usadas: se a imagem não estiver em imagens_usuarios então a delete
     for i in imagens_da_pasta_solicitada:
         if i not in imagens_usuarios:
-            os.remove(f'{os.getcwd()}/media/{dir}/{i}')
+            print('ff')
+            #os.remove(f'{os.getcwd()}/media/{dir}/{i}')
          
    
     return
@@ -737,9 +743,9 @@ def update_com_id(request,user,id):
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(imagem,model[1],'atualizar')
                 elif tam == 3 and user == 'eletiva':
                     if img_professores != None and pergunta_imagem_professores == 'on' or img_professores == None and pergunta_imagem_professores == 'on':
-                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(None,f'{model[1]}/img_professores_eletiva','atualizar')
+                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(None,f'img_eletivas/img_professores_eletiva','atualizar')
                     elif img_professores != None and pergunta_imagem_professores == None:
-                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(img_professores,f'{model[1]}/img_professores_eletiva','atualizar')
+                        user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(img_professores,f'img_eletivas/img_professores_eletiva','atualizar')
                   
                 elif tam == 4 and user != 'admin' and user != 'tutor':
                     user_a_ser_atualizado[0].eletiva = i
@@ -751,9 +757,11 @@ def update_com_id(request,user,id):
                     user_a_ser_atualizado[0].serie = i
             tam += 1
         user_a_ser_atualizado[0].save()
-        excluir_imagem(model[1],model[0])
+        
         if user == 'eletiva':
+            print(model[1])
             excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
+        excluir_imagem(model[1],model[0])
         return redirect(update_or_delete,u_or_d='update',user=user)
 
         
