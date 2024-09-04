@@ -1,0 +1,383 @@
+/*body {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.card {
+    width: 220px;
+    height: 320px;
+    background-color: #1f1f1f;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgb(0 0 0 / 0.4);
+    
+}
+
+.card .top-section {
+    background-color: white;
+    padding: 20px;
+    height: 40px;
+    background-size: cover;
+    
+}
+
+.card img {
+    margin-top: 4%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.card h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 40px;
+}
+
+.card p {
+    margin-top: 10%;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #cfcfcf;
+    padding: 0 10px;
+}
+
+.card button {
+    margin-top: 10%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 70px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.card button:hover {
+    background-color: #0056b3;
+}
+
+.casdds {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 48px;
+    margin-top: 15%;
+    
+}
+
+.botao-ver-mais {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botao-ver-mais:hover {
+    background-color: #0056b3;
+}
+
+.part{
+    margin-top: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.textt{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.content {
+    border: 1px solid #ccc;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.content h1 {
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+}
+
+.content p {
+    font-family: inter;
+    font-style: italic;
+    text-align: center;
+    justify-content: center;
+    font-size: 2em;
+    color: #555;
+}
+
+.alinha {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+
+
+.ini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.ini h1 {
+    font-size: 80px;
+    margin: 0;
+}
+
+.ini h2 {
+    font-size: 40px;
+    margin: 2;
+}
+
+.eleti {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 48px;
+    padding: 10%;
+}
+
+.div1, .div2, .div3, .div4 {
+    position: relative;
+    border-radius: 40px;
+    overflow: hidden;
+    width: 600px;
+    height: 300px;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.div1, .div2, .div3, .div4 {
+    background-color: rgb(0, 0, 0); /* Pode ser removido, o overlay será usado */
+}
+
+.div1 img, .div2 img, .div3 img, .div4 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Fundo preto com opacidade */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1; /* Garante que a sobreposição fique acima da imagem */
+}
+
+.div1:hover .overlay, .div2:hover .overlay, .div3:hover .overlay, .div4:hover .overlay {
+    opacity: 1;
+}
+
+.div1:hover img, .div2:hover img, .div3:hover img, .div4:hover img {
+    transform: scale(1.1); /* Zoom na imagem */
+}
+
+.div1:hover, .div2:hover, .div3:hover, .div4:hover {
+    transform: scale(1.05); /* Zoom no contêiner da imagem */
+    box-shadow: 4px 4px 20px rgb(71, 71, 71); /* Sombra mais intensa no hover */
+}
+
+.text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 2; /* Garante que o texto fique acima da sobreposição */
+}
+
+.div1:hover .text, .div2:hover .text, .div3:hover .text, .div4:hover .text {
+    opacity: 1;
+   
+}
+
+
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+  
+  
+}
+
+/* Hide the images by default */
+.mySlides {
+  display: none;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 1px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+ 
+:target {
+  scroll-margin-top: .8em;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+
+@media (min-width: 360px) and (max-width: 1025px){
+    .casdds {
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        gap: 48px;
+        margin-top: 15%;
+        
+    }
+
+    .div1, .div2, .div3, .div4 {
+        position: relative;
+        border-radius: 40px;
+        overflow: hidden;
+        width: 400px;
+        height: 400px;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .ini h1 {
+        font-size: 40px;
+        margin: 0;
+    }
+
+}
+
+@media (min-width: 1023px) and (max-width: 1440px){
+    .casdds {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 48px;
+        margin-top: 15%;
+        
+    }
+
+}

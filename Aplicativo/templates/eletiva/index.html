@@ -1,16 +1,22 @@
+{% load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styler.css">
+    <link rel="stylesheet" href="{% static 'css/styler.css'%} ">
+    
     <title>Document</title>
 </head>
 <body>
+    {% include 'codigos reutilizados/links_reutilizados.html' %}
+    {% block links %}
+    {% endblock %}
     <div class="casdds">
+    
     <div class="card">
         <div class="top-section" style=" background-image: url(livros-antigos.webp);">
-            <img src="IMG_20240826_083227.jpg" alt="Wilmeika and Juliano">
+            <img src="../../../media/img_eletivas/img_professores_eletiva/Professorpadrao.jpg" alt="Wilmeika and Juliano">
         </div>
         <h2>Wilmeika and Juliano</h2>
         <p>wilmeika e juliano, tem cores preferidas verde e mareio, e tem a eletiva de literatura</p>
