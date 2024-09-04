@@ -1,29 +1,45 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>add anuncio</title>
+    <link rel="stylesheet" href="{% static 'css/add_users.css' %}">
 </head>
 <body>
-    <h1> tem certeza que quer Adicionar Anuncios?</h1>
-
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-    <button type="submit"> sim, adicionar anuncio</button>
-
-    <a href="{% url 'index' %}">cancelar</a>
-    <div>
-        <label for="titulo">Título</label>
-        <input type="text" name="titulo" id="titulo" value="{{titulo}}" maxlength="40">
-        <label for="descricao">Descrição</label>
-        <textarea name="descricao" id="descricao" cols="20" rows="20" maxlength="127">{{descricao}}</textarea>
-        <div>
-            <img src="../../../media/{{imagem}}" alt="" srcset="">
-            <input type="file" name="imagem" id="imagem">
+    <div class="container">
+        <div class="login-container">
+            <h1>Adicionar Avoso</h1>
+            <form method="post" enctype="multipart/form-data" style="    width: 100%;
+    height: 100%;">{% csrf_token %}
+                <button type="submit"> sim, adicionar anuncio</button>
+            
+                <a href="{% url 'index' %}">cancelar</a>
+                    <label for="titulo">Título</label>
+                    <input type="text" name="titulo" id="titulo" value="{{titulo}}" maxlength="40">
+                    <label for="descricao">Descrição</label>
+                    <textarea name="descricao" id="descricao" maxlength="127" rows="10" placeholder="Máximo de caracteres: 127">{{descricao}}</textarea>
+                    <div>
+                        <label for="imagemantiga">Imagem Antiga</label>
+                        <img id="imagemantiga" src="../../../media/{{imagem}}" alt="" srcset="" style="width: 100%;">
+                        <label for="imagem">Nova Imagem</label>
+                        <input type="file" name="imagem" id="imagem">
+                    </div>
+                    <label for="link">Link</label>
+                    <input type="url" name="link" id="link" value="{{link}}">
+                
+                
+                </form>
         </div>
-        <input type="url" name="link" id="link" value="{{link}}">
+        <div class="background">
+            <div class="background-content">
+                <img src="../../../media/img_fixas/logo-asn.png" width="340px" alt="">
+                <h2>Minha Eletiva será sobre:</h2>
+                <p class="eletiva"><strong></strong><span class="cursor">&nbsp;</span></p>
+            </div>
+        </div>
     </div>
-    
-    </form>
+    <script src="{% static 'js/add_users.js' %}"></script>
 </body>
 </html>

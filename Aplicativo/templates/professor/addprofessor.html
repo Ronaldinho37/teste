@@ -1,175 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #007bff; /* Azul de fundo */
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* Impede a rolagem da página principal */
-        }
-
-        .container {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px; /* Limita a largura máxima do formulário */
-            background-color: #ffffff; /* Fundo branco para o formulário */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 50px;
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-            border: 2px solid #007bff; /* Bordas azuis */
-            position: relative;
-            z-index: 2; /* Garante que o formulário fique sobre o fundo */
-            max-height: 90vh; /* Limita a altura máxima do formulário */
-            overflow-y: auto; /* Permite rolar verticalmente se o conteúdo for maior */
-        }
-
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        select, input[type="text"], input[type="email"], input[type="password"], textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 20px;
-            resize: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        select:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-
-        input[type="submit"] {
-            background-color: #f3e350; /* Botão amarelo */
-            color: #007bff; /* Texto do botão azul */
-            border: none;
-            border-radius: 5px;
-            padding: 15px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #e2c100; /* Amarelo mais escuro ao passar o mouse */
-        }
-
-        .background {
-            flex: 1; /* Permite que a div de fundo ocupe o espaço restante */
-            background: linear-gradient(to bottom right, #007bff, #509cf3); /* Gradiente azul */
-            padding: 20px;
-            color: white;
-            text-align: center;
-            position: relative;
-            z-index: 1; /* Fica atrás do formulário */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .background::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(135deg, #5b50f3 25%, transparent 25%) -50px 0,
-                        linear-gradient(225deg, #ffffff 25%, transparent 25%) -50px 0,
-                        linear-gradient(315deg, #5053f3 25%, transparent 25%),
-                        linear-gradient(45deg, #ffffff 25%, transparent 25%);
-            background-size: 100px 100px;
-            z-index: -1; /* Fica atrás do conteúdo */
-            opacity: 0.2;
-        }
-
-        .eletiva {
-            color: #ffffff;
-            font-size: 3rem; /* Ajustado para dispositivos menores */
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 5px;
-            background-color: #ffffff;
-            margin-left: 2px;
-            animation: blink 0.7s steps(1) infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% {
-                opacity: 1;
-            }
-            50.1%, 100% {
-                opacity: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .login-container {
-                width: 100%;
-                box-shadow: none;
-            }
-
-            .background {
-                display: none;
-            }
-        }
-
-        /* Estilo para a pré-visualização da imagem */
-        .image-preview {
-            margin: 15px 0;
-            text-align: center;
-            width: 100%;
-        }
-
-        .image-preview img {
-            max-width: 100%; /* Ajusta a largura máxima da imagem */
-            max-height: 150px; /* Ajusta a altura máxima da imagem */
-            width: auto; /* Mantém a proporção da imagem */
-            height: auto; /* Mantém a proporção da imagem */
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-            background-color: #f9f9f9;
-            box-sizing: border-box;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none; /* Inicialmente escondido */
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/add_users.css' %}">
 </head>
 <body>
     <div class="container">
@@ -196,7 +32,7 @@
                 <div class="image-preview" id="imagePreview"></div>
                 {% if tipo_de_user == 'tutor' or tipo_de_user == 'professor-tutor' %}
                     <label for="descricao">Descrição</label>
-                    <textarea name="descricao" id="descricao" required></textarea>
+                    <textarea name="descricao" id="descricao" required placeholder="Máximo de caracteres: 100" maxlength="100"></textarea>
                 {% endif %}
                 <div class="error-message" id="errorMessage">Por favor, preencha todos os campos corretamente.</div>
                 <input type="submit" value="Enviar">
@@ -212,55 +48,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const eletivaElement = document.querySelector(".eletiva strong");
-            const cursorElement = document.querySelector(".cursor");
-            const palavras = ["Matemática", "Física", "Química", "Biologia"]; // Palavras a serem digitadas
-            let palavraIndex = 0;
-            let letraIndex = 0;
-
-            function digitarPalavra() {
-                if (letraIndex < palavras[palavraIndex].length) {
-                    eletivaElement.textContent += palavras[palavraIndex].charAt(letraIndex);
-                    letraIndex++;
-                    setTimeout(digitarPalavra, 150); // Atraso entre cada letra (150ms)
-                } else {
-                    setTimeout(apagarPalavra, 1000); // Atraso antes de apagar a palavra (1000ms)
-                }
-            }
-
-            function apagarPalavra() {
-                if (letraIndex > 0) {
-                    eletivaElement.textContent = palavras[palavraIndex].substring(0, letraIndex - 1);
-                    letraIndex--;
-                    setTimeout(apagarPalavra, 100); // Atraso entre cada letra ao apagar (100ms)
-                } else {
-                    palavraIndex = (palavraIndex + 1) % palavras.length;
-                    setTimeout(digitarPalavra, 500); // Atraso antes de iniciar a próxima palavra (500ms)
-                }
-            }
-
-            digitarPalavra();
-        });
-
-        function previewImage() {
-            const input = document.getElementById('imagem');
-            const preview = document.getElementById('imagePreview');
-
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    preview.innerHTML = '';
-                    preview.appendChild(img);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
+    <script src="{% static 'js/add_users.js' %}"></script>
 </body>
 </html>

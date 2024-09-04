@@ -1,30 +1,38 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/add_users.css' %}">
 </head>
 <body>
     {% include 'codigos reutilizados/menssage.html' %}
     {% block menssagem %}
     {% endblock %}
-    {% if modo == "update" %}
-    <form action="{{update_eletiva}}" method="post"  enctype="multipart/form-data">
-        {% csrf_token %}
-        {{form.as_p}}
-        <input type="submit" value="submit">
-    </form>
-    {% else %}
-    <form action="{% url 'add-eletiva' %}" method="post"  enctype="multipart/form-data">
-        {% csrf_token %}
-       {{form.as_p}}
-       <label for="imagem_p">Imagem dos Professores</label>
-       <input type="file" name="imagem_p">
-
-        <input type="submit" value="submit">
-    </form>
+    <div class="container">
+        <div class="login-container">
+            <h1>Adicionar Eletiva</h1>
+            <form action="{% url 'add-eletiva' %}" method="post"  enctype="multipart/form-data">
+                {% csrf_token %}
+               {{form.as_p}}
+               <label for="imagem_p">Imagem dos Professores</label>
+               <input type="file" name="imagem_p">
+        
+                <input type="submit" value="submit">
+            </form>
+        </div>
+        <div class="background">
+            <div class="background-content">
+                <img src="../../../media/img_fixas/logo-asn.png" width="340px" alt="">
+                <h2>Minha Eletiva será sobre:</h2>
+                <p class="eletiva"><strong></strong><span class="cursor">&nbsp;</span></p>
+            </div>
+        </div>
+    </div>
     
-    {% endif %}
+    
+<script src="{% static 'js/add_users.js' %}"></script>
 </body>
 </html>
