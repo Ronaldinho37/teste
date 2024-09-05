@@ -8,10 +8,15 @@
 }
 
 body{
+    width: 100vw;
     height: 100vh;
-    background-color: #cfcfcf1b;
+    background-color: #968b8b1b;
     transition: background-color 0.3s, color 0.3s;
     
+}
+
+html{
+    width: auto;
 }
 
 header{
@@ -21,6 +26,7 @@ header{
 
 ::-webkit-scrollbar{
     scroll-behavior: smooth;
+    display: none;
 }
 
 .default-colors {
@@ -221,4 +227,54 @@ input:checked + .slider:before {
 #informations{
     padding-top: 15%;
     padding-bottom: 15%;
+}
+
+.cursor {
+    display: inline-block;
+    width: 5px;
+    background-color: #0f6eda;
+    margin-left: 2px;
+    animation: blink 0.7s steps(1) infinite;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    50.1%, 100% {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    #informations h1 {
+        font-size: 1rem; /* Ajuste o tamanho da fonte em dispositivos menores */
+    }
+
+    .btn-more {
+        font-size: 0.8rem; /* Ajuste o tamanho do botão */
+    }
+}
+
+@media (max-width: 576px) {
+    #informations h1 {
+        font-size: 1.2rem; /* Ajuste o tamanho da fonte para telas muito pequenas */
+    }
+
+    .card{
+        background-color: #000;
+        border-radius: 56px;
+        width: 323px;
+        height: 478px;
+        margin-top: 24px;;
+    }
+
+    .circle{
+        width: 100px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #D4E6F0;
+        display: inline;
+    }
+    
 }

@@ -1,38 +1,33 @@
-const textElement = document.getElementById('tecnologia');
-const phrases = ['Desenvolvedor Web', 'Programador', 'Criador de Conteúdo', 'Entusiasta de Tecnologia'];
-const typingSpeed = 100; // Velocidade de digitação em milissegundos
-const erasingSpeed = 50; // Velocidade de apagamento em milissegundos
-const delayBetweenPhrases = 1500; // Tempo de espera entre frases em milissegundos
 
-let currentPhraseIndex = 0;
-let currentCharIndex = 0;
-let isErasing = false;
+document.addEventListener("DOMContentLoaded", function() {
+    const textElement = document.getElementById('tecnologia');
+    const palavras = ["Matemática", "Física", "Química", "Biologia"]; // Palavras a serem digitadas
+    let palavraIndex = 0;
+    let letraIndex = 0;
 
-function type() {
-    const currentPhrase = phrases[currentPhraseIndex];
-    if (!isErasing) {
-        if (currentCharIndex < currentPhrase.length) {
-            textElement.textContent += currentPhrase.charAt(currentCharIndex);
-            currentCharIndex++;
-            setTimeout(type, typingSpeed);
+    function digitarPalavra() {
+        if (letraIndex < palavras[palavraIndex].length) {
+            textElement.textContent += palavras[palavraIndex].charAt(letraIndex);
+            letraIndex++;
+            setTimeout(digitarPalavra, 150); // Atraso entre cada letra (150ms)
         } else {
-            isErasing = true;
-            setTimeout(type, delayBetweenPhrases);
-        }
-    } else {
-        if (currentCharIndex > 0) {
-            textElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
-            currentCharIndex--;
-            setTimeout(type, erasingSpeed);
-        } else {
-            isErasing = false;
-            currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
-            setTimeout(type, delayBetweenPhrases);
+            setTimeout(apagarPalavra, 1000); // Atraso antes de apagar a palavra (1000ms)
         }
     }
-}
 
-// Iniciar o efeito de digitação quando a página carregar
-window.onload = () => {
-    type();
-};
+    function apagarPalavra() {
+        if (letraIndex > 0) {
+            textElement.textContent = palavras[palavraIndex].substring(0, letraIndex - 1);
+            letraIndex--;
+            setTimeout(apagarPalavra, 100); // Atraso entre cada letra ao apagar (100ms)
+        } else {
+            palavraIndex = (palavraIndex + 1) % palavras.length;
+            setTimeout(digitarPalavra, 500); // Atraso antes de iniciar a próxima palavra (500ms)
+        }
+    }
+
+    digitarPalavra();
+});
+
+
+   
