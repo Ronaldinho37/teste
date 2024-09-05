@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/styler.css'%} ">
+    <link rel="stylesheet" href="{% static 'css/styler_2.css'%} ">
     <link rel="stylesheet" href="{% static 'css/links_reutilizados.css'%} ">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 
     <title>Document</title>
 </head>
@@ -15,14 +17,14 @@
     {% endblock %}
     <div class="casdds">
         {% for i in eletivas %}
-            <div class="card" data-materia="{{i.titulo}}" data-id="{{i.id}}" data-url="{{i.link}}" onclick="vai(this)" onmouseenter="entrou(this)" onmouseleave="saiu(this)">
-                <div class="top-section" style=" background-image: url(../../../media/img_fixas/);">
+            <div class="card-1" data-materia="{{i.titulo}}" data-id="{{i.id}}" onmouseenter="entrou(this)" onmouseleave="saiu(this)">
+                <div class="top-section" style=" background-image: url('../../../media/{{i.imagem}}');">
                     <img src="../../../media/{{i.img_professores_eletiva}}" alt="Wilmeika and Juliano">
                 </div>
                 {% load pesquisa_de_professores %}
                 <h2>{{todos_professores|pesquisar_professor:i.titulo}}</h2>
                 <p>{{i.descricao}}</p>
-                <button>votar</button>
+                <button onclick="vai(this)" data-link="{{i.link}}">Escolher</button>
             </div>
         {% endfor%}
     
@@ -127,6 +129,11 @@ function showSlides(n) {
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
 }
+  </script>
+  <script>
+    function vai(x){
+        window.location.href = `${x.dataset.link}`
+    }
   </script>
 <script src="{% static 'js/mouse_funcoes.js' %}"></script>
 <script src="{% static 'js/links_reutilizados.js' %}"></script>

@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/styler.css'%} ">
+
     
-    <title>Document</title>
+    <title>index</title>
 </head>
 <body>
     {% include 'codigos reutilizados/links_reutilizados.html' %}
@@ -137,5 +138,7 @@ function showSlides(n) {
   dots[slideIndex-1].className += " active";
 }
   </script>
+  <script src="{% static 'js/mouse_funcoes.js' %}"></script>
+  <script src="{% static 'js/links_reutilizados.js' %}"></script>
 </body>
 </html>
