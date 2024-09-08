@@ -140,7 +140,7 @@ def retornar_index(request):
     return render(request,'principais/index.html',dados)
     
 def login_viwes(request):
-    if request.session['user'] == 'ADMIN':
+    if request.session['user'] == 'ADMIN'or request.session['user'] != None:
         return redirect(retornar_index)
     
     if request.method == 'POST':
@@ -595,7 +595,7 @@ def add_admin(request):
             return redirect(retornar_index)
     
     if request.method == 'POST':
-        nome = request.POST.get('nome')
+        nome = request.POST.get('nome').lower()
         email = request.POST.get('email')
         senha = request.POST.get('senha')
         imagem = checar_imagem_existente(request.FILES.get('imagem'),'imagem_admins', None)
@@ -614,11 +614,18 @@ def add_admin(request):
     else:
         return render(request,'acoes_principais/template_add.html')
 def update_or_delete(request,u_or_d,user):
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True or u_or_d != 'deletar' and u_or_d != 'update':
+    if u_or_d != 'deletar' and u_or_d != 'update':
         return redirect(retornar_index)
+
+    if u_or_d == 'update': 
+        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
+            return redirect(retornar_index)
+    else:
+        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
+            return redirect(retornar_index)
     dados = dados_universsais
     dados['tabela_user_passado_como_parametro'] = user
-
+    print(dados)
     dados['modo'] = f'{u_or_d}'
     if user.lower() == 'aluno':
         dados['usuarios'] = Alunos.objects.all().values()
@@ -647,13 +654,20 @@ def update_com_id(request,user,id):
 
     #ifs para adcionar valores antigos do usuario
     if user == 'aluno':
-        user_a_ser_atualizado.append(Alunos.objects.get(id=id))
+        try:
+            user_a_ser_atualizado.append(Alunos.objects.get(id=id))
+        except:
+            return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Alunos.objects.all().values())
         model.append("imagem_alunos")
         campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva,user_a_ser_atualizado[0].serie]
 
     elif user == 'professor' or user == 'tutor':
-        user_a_ser_atualizado.append(Professores.objects.get(id=id))
+        try:
+            user_a_ser_atualizado.append(Professores.objects.get(id=id))
+        except:
+            dados['message'] = "User não encontrado"
+            return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Professores.objects.all().values())
         model.append("imagem_professores")
         if user == 'tutor':
@@ -661,12 +675,18 @@ def update_com_id(request,user,id):
         else:
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
     elif user == 'eletiva':
-        user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
+        try:
+            user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
+        except:
+            return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Eletivas.objects.all().values())
         model.append("img_eletivas")
         campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].img_professores_eletiva,user_a_ser_atualizado[0].link]
     elif user == 'admin':
-        admin_a_ser_atualizado = Admins.objects.get(id=id)
+        try:
+            admin_a_ser_atualizado = Admins.objects.get(id=id)
+        except:
+            return redirect(update_or_delete,u_or_d='update', user=user)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
             dados['message'] = "Você não pode se auto atualizar"
             return redirect(update_or_delete,u_or_d='update', user=user)

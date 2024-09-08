@@ -25,7 +25,7 @@ function adicionar_linha(x){
 
 function ir_para_o_site(){
     if(users_a_serem_excluidos.length >= 1){
-        window.location.href = `/deletar/${tabela}/${users_a_serem_excluidos}`
+        window.location.href = `/area-restrita/deletar/${tabela}/${users_a_serem_excluidos}`
     } else {
         window.alert("Selecione pelo menos um usuário")
     }

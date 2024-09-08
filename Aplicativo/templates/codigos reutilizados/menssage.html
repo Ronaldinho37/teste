@@ -69,7 +69,7 @@
         </div>
         
         <div class="modal-body">
-            <p>{{message}}</p>
+            <p id="mensagem-final">{{message}}</p>
         </div>
         <div class="modal-footer">
             <button id="closeModal"></button>
@@ -78,28 +78,35 @@
 </div>
 {% endif %}
 <script>
-     const modal = document.getElementById('errorModal');
-        const closeModalButton = document.getElementById('closeModal');
-        const closeSpan = document.querySelector('.modal .close');
+    let p = document.querySelector('p[id="mensagem-final"]').innerText
+    const modal = document.getElementById('errorModal');
+    if(p != ''){
+        modal.style.display = 'flex';
+    } else {
+        modal.style.display = 'none';
+    }
+     
+        // const closeModalButton = document.getElementById('closeModal');
+        // const closeSpan = document.querySelector('.modal .close');
 
-        function showErrorModal() {
-            modal.style.display = 'flex';
-        }
+        // function showErrorModal() {
+        //     modal.style.display = 'flex';
+        // }
 
-        function hideErrorModal() {
-            modal.style.display = 'none';
-        }
+        // function hideErrorModal() {
+        //     modal.style.display = 'none';
+        // }
 
-        // Add event listeners to close the modal
-        closeModalButton.onclick = hideErrorModal;
-        closeSpan.onclick = hideErrorModal;
+        // // Add event listeners to close the modal
+        // closeModalButton.onclick = hideErrorModal;
+        // closeSpan.onclick = hideErrorModal;
 
-        // Close the modal if the user clicks outside of it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                hideErrorModal();
-            }
-        }
+        // // Close the modal if the user clicks outside of it
+        // window.onclick = function(event) {
+        //     if (event.target == modal) {
+        //         hideErrorModal();
+        //     }
+        // }
 </script>
 
 
