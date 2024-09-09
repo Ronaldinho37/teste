@@ -1,9 +1,8 @@
 {% block descricao %}
 <label for="descricao">Descrição</label>
-{% if user == 'eletiva' %}
-    <textarea name="descricao" id="descricao" required maxlength="150" rows="15" placeholder="Max-Lenght:150">{{tabela.descricao}}</textarea>
-{% elif user == 'tutor' %}
-    <textarea name="descricao" id="descricao" required maxlength="100" rows="10" placeholder="Max-Lenght:100">{{tabela.descricao}}</textarea>
-{% endif %}
-
+    {% if user == 'eletiva' %}
+        <textarea name="descricao" id="descricao" required maxlength="150" rows="15" placeholder="Max-Lenght:150">{{tabela.descricao}}</textarea>
+    {% elif user == 'tutor' %}
+        <textarea name="descricao" id="descricao" required maxlength="100" rows="10" placeholder="Max-Lenght:100">{{tabela.descricao}}</textarea>
+    {% endif %}
 {% endblock %}
