@@ -22,8 +22,12 @@
                     <img src="../../../media/{{i.img_professores_eletiva}}" alt="Wilmeika and Juliano">
                 </div>
                 {% load pesquisa_de_professores %}
-                <h2>{{todos_professores|pesquisar_professor:i.titulo}}</h2>
-                <p>{{i.descricao}}</p>
+                <div class="align">
+                    <h2>{{todos_professores|pesquisar_professor:i.titulo}}</h2>
+                    <p>{{i.descricao}}</p>
+                </div>
+                
+
                 <button onclick="vai(this)" data-link="{{i.link}}">Escolher</button>
             </div>
         {% endfor%}
@@ -135,6 +139,8 @@ function showSlides(n) {
         window.location.href = `${x.dataset.link}`
     }
   </script>
+
+  
 <script src="{% static 'js/mouse_funcoes.js' %}"></script>
 <script src="{% static 'js/links_reutilizados.js' %}"></script>
 </body>

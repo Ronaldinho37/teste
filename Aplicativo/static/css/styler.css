@@ -45,6 +45,7 @@
 }
 
 .card-1 p {
+    display: flex;
     margin-top: 10%;
     font-size: 14px;
     margin-bottom: 20px;
