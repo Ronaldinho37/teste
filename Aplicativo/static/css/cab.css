@@ -1,226 +1,225 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-*{
+body {
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: poppins;
+    font-family: Arial, sans-serif;
+    transition: margin-left 0.3s, background-color 0.3s;
+    background-color: #eae9e9; /* Cor de fundo padrão */
 }
 
-body{
-    height: 100vh;
-    background-color: #cfcfcf1b;
-    transition: background-color 0.3s, color 0.3s;
-    
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    color: #fff;
+    padding: 2rem;
 }
 
-header{
-    box-shadow: -6px -10px 30px 0px #000;
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0194FF;
 }
 
-::-webkit-scrollbar{
-    scroll-behavior: smooth;
+.header-controls {
+    display: flex;
+    align-items: center;
 }
 
-.default-colors {
-    background-color: rgba(255, 255, 255, 0.177); /* Cor de fundo padrão */
-    color: #000000; /* Cor do texto padrão */
-}
-.alternate-colors {
-    background-color: #353333; /* Cor de fundo alternada */
-    color: #ffffff; /* Cor do texto alternada */
-    accent-color:#ffffff ;
-}
-
-.default-a{
-    color: #0000;
-}
-
-.alternate-a{
-    color: #ffffff;
-}
-
-.div-cards-alternate{
-    background-color: #19191A;
-    color: #ffffff;
-}
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
+button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+    margin-left: 1rem;
 }
 
-.slider:before {
+button#theme-switcher {
+    font-size: 1.2rem;
+}
+
+nav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px; /* Oculta o menu inicialmente */
+    background-color: #111;
+    color: #fff;
+    transition: left 0.3s;
+    z-index: 1000;
+    padding-top: 60px;
+}
+
+
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li > a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul li .dropdown-content {
+    max-height: 0; /* Começa com altura 0 */
+    opacity: 0; /* Começa com opacidade 0 */
+    background-color: #222;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    overflow: hidden; /* Oculta o conteúdo fora da altura definida */
+    transition: max-height 0.5s ease, opacity 0.5s ease; /* Transição suave */
+}
+
+nav ul li .dropdown-content li {
+    padding: 10px 15px;
+}
+
+nav ul li .dropdown-content li a {
+    color: #ddd;
+}
+
+nav ul li.active .dropdown-content {
+    max-height: 1000px; /* Ajuste conforme necessário para acomodar o conteúdo */
+    opacity: 1; /* Torna visível */
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 999;
+}
+
+#overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-btn{
+    transition: .5s;
+}
+
+
+.dropdown-btn-delete{
+    transition: .5s;
+}
+
+.dropdown-btn-delete:hover{
+    border:1px solid #e01c1c;
+    transition: .5s;
+    color: #e01c1c;
+    
+
+    
+}
+
+.dropdown-btn-add{
+    transition: .5s;
+}
+
+.dropdown-btn-add:hover{
+    border:1px solid #17c125;
+    transition: .5s;
+    color: #17c125;
+    
+
+    
+}
+
+.dropdown-btn-update{
+    transition: .5s;
+}
+
+.dropdown-btn-update:hover{
+    border:1px solid #1752c1;
+    transition: .5s;
+    color: #1752c1
+}
+
+
+#close-btn {
     position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    border-radius: 50%;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
+    top: 10px;
+    right: 20px;
+    font-size: 1.5rem;
 }
 
-input:checked + .slider {
-    background-color: #007bff;
+main {
+    padding: 1rem;
+    transition: margin-left 0.3s;
 }
 
-input:checked + .slider:before {
-    transform: translateX(26px);
+.dark-theme {
+    background-color: #333;
+    color: #fff;
 }
 
-.login {
-    color: #0000;
-
+.dark-theme header {
+    background-color: #222;
 }
 
-#radios{
-    border-radius: 50%;
+.dark-theme nav {
+    background-color: #222;
 }
 
-.div-cards{
-    background-color: #fafafa;
-    padding-top: 10%;
-    padding-bottom: 10%;
-    
+.dark-theme #overlay {
+    background: rgba(0, 0, 0, 0.7);
 }
 
-
-.logo-asn{
-    color: #0194FF;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
+.dark-theme nav ul li a {
+    color: #ddd;
 }
 
-#tecnologia{
-    color: #0194FF;
-}
-
-#div-tec{
-    font-size: 520%;
-}
-
-.card{
-    
-    background-color: #000;
-    border-radius: 56px;
-    width: 423px;
-    height: 578px;
-}
-
-.card-header{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    justify-content: center;
-}
-
-
-
-.tre-dot{
-    rotate: 90deg;
-}
-
-.circle{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #D4E6F0;
-    display: inline;
-}
-
-.meio {
-    background-color: red;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
+nav{
     height: 100%;
-    position: relative; /* Para o posicionamento absoluto da imagem */
-    overflow: hidden; /* Garante que a imagem não ultrapasse o contêiner */
-}
-
-.meio img {
-    position: absolute; /* Para ajustar a imagem sem alterar o fluxo do layout */
+    width: 250px;
+    position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Faz a imagem cobrir o contêiner sem distorção */
-    z-index: 1; /* Coloca a imagem atrás dos outros elementos */
+    left: -250px; /* Oculta o menu inicialmente */
+    background-color: #111;
+    color: #fff;
+    transition: left 0.3s;
+    z-index: 1000;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Espaçar o conteúdo e a logo */
 }
 
-.texto-materia {
-    display: flex;
-    justify-content: center;
-    background-color: #0194FF;
-    width: 100%;
-    height: 30%;
-    font-size: 22px;
-    align-items: center;
-    position: relative; /* Para que o z-index funcione */
-    z-index: 2; /* Garante que o texto esteja acima da imagem */
-}
 
-.text-menor {
-    top: 3%;
-    position: relative; /* Para ajustar a posição em relação ao contêiner */
-    display: flex;
-    background-color: #D4E6F0;
-    box-shadow: -1px 2px 20px 2px #000;
-    filter: opacity(90%);
-    width: 40%;
-    height: 10%;
-    margin-left: -50%;
+
+.logo-container {
+    margin-bottom: 20px; /* Distância da logo para o fundo */
     text-align: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 14px;
-    align-items: center;
-    z-index: 3; /* Garante que este elemento esteja acima da imagem */
+    
 }
 
-.btn-more:hover{
-    text-decoration: none;
-    color: #fffcfc;
-
+.logo-container img {
+    display: block;
+    margin: 55px auto;
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast; /* Suaviza a imagem */
+    image-rendering: crisp-edges; /* Tenta suavizar as bordas */
+    filter:drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) ; /* Adiciona uma sombra sutil */
+    border-radius: 8px; /* Suaviza as bordas */
+    padding: 5px;
 }
 
-.footer {
-    background-color: #f8f9fa;
-    padding: 20px 0;
-}
-.footer-logo {
-    max-height: 50px;
-}
-.footer-link {
-    color: #343a40;
-    text-decoration: none;
-}
-.footer-link:hover {
-    text-decoration: underline;
-}
-
-#informations{
-    padding-top: 15%;
-    padding-bottom: 15%;
-}
