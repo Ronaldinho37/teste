@@ -10,8 +10,7 @@ from django.contrib import messages
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
-#colocar mais de um professor da eletiva
-#criar um models para tutores
+
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
 dados_universsais = {}
@@ -28,88 +27,109 @@ dados_universsais = {}
 # ciphertext = rsa.encrypt(m, publickey)
 # m2 = rsa.decrypt(ciphertext, privatekey)
 # print(ciphertext)
+#esta função serve para verificar se a imagem a ser adicionada é existente se não for a adicionará 
+#se for então será adicionado o caminho referente a ela
 def checar_imagem_existente(imagem,pasta,acao):
+    #este if adiciona as imagens padrões caso a variável "imagem" seja igual a None 
     if imagem == None:
+        #caso seja uma imagem da dupla de professores
         if pasta == 'img_eletivas/img_professores_eletiva':
             return f'{pasta}/Professorpadrao.jpg'
+        #caso seja um user
         else:
             return 'img_fixas/anonimo.png'
-    
+    #se chegou até aqui é porque nenhum dos ifs acima foi verdadeiro, logo a imagem inserida não é igual a None
+    #o único jeito que consegui verificar se a imagem não é igual às demais foi transformando-as em bytes
+    #esta variável recebe os bytes equivalentes a imagem inserida
     nova_imagem = Image.open(imagem).tobytes("xbm", "rgb")
+    #esse try server para pegar todas as imagens da pasta passada como parâmetro
+    #se a pasta não existir então irá retornar a imagem
     try:
+        #variável que contém todos os itens da pasta requisitada, em forma de lista
         pasta_da_velha_imagem = os.listdir(f'{os.getcwd()}/media/{pasta}')
     except:
         return imagem
+    #essa variável serve para eu ter um controle do que esta acontecendo, mais a frente ele dirá se eu tenho ou não de adicionar a imagem
     tam = 0
-    
-    
+    #for que percorre a variável "pasta_da_velha_imagem"
     for e in pasta_da_velha_imagem:
+        #esse if é importante pois "img_professores_eletiva" não é uma imagem mas sim uma pasta
         if e !=  'img_professores_eletiva':
+            #essa variável receberá todas as imagens da pasta em forma de bytes, uma por vez 
             imagem_da_pasta = Image.open(f'{os.getcwd()}/media/{pasta}/{e}').tobytes("xbm", "rgb")
-            
+            #caso a "imagem_da_pasta" for igual a "nova_imagem" esse if retornará o caminho referente a mesma
             if nova_imagem == imagem_da_pasta:
-                tam = 0
                 return f'{pasta}/{e}'
-        
+        #se as imagens não forem iguais então será agregado valor à variável de controle
         tam += 1
+    #se a variável de controle for igual a 0 é porque nenhuma das imagens é igual a imagem inserida pelo user
+    #se a quantidade de itens da variável "pasta_da_velha_imagem" for igual a 0 é porque não tem imagem na pasta
+    #logo se ambas ou apenas uma for verdadeira o código retornará a imagem 
     if tam != 0 or len(pasta_da_velha_imagem) == 0:
         return imagem
-  
-#dir = Diretório que está localizado a imagem a ser excluída
+#esta função excluirá as imagens inutilizadas
+#dir = Pasta que está localizado a imagem a ser excluída
+#model = Valores do model django passado como parâmetro
 def excluir_imagem(dir,model):
-   
     #variável que guarda as imagens que estão sendo utilizadas
     imagens_usuarios = []
     #variável que guarda todas imagens da pasta media
     imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
-   
+    #caso a pasta passada como parâmetro seja a 'pasta_da_velha_imagem' é necessário que se exclua a sub-pasta 'img_professores_eletiva', pois eu só preciso das imagens
     if dir == 'img_eletivas':
         imagens_da_pasta_solicitada.remove('img_professores_eletiva')
+    #essa variável tem nome de 'coluna_da_vez' pois na maioria dos models o nome da coluna referente a imagem é 'imagem'
+    #e em Eletivas o nome é 'img_professores_eletiva'
     coluna_da_vez = ''
-   
-    #adiciona as imagens que estão sendo usadas á variável imagens_usuario
+    #esse if remove a imagem padrão da lista caso a pasta(dir) for 'img_eletivas/img_professores_eletiva'
+    #e atribui a variável 'coluna_da_vez' o nome da coluna 'img_professores_eletiva'
     if dir == 'img_eletivas/img_professores_eletiva':
         imagens_da_pasta_solicitada.remove('Professorpadrao.jpg')
         coluna_da_vez += 'img_professores_eletiva'
-        
-        
+    #como só é um model que usa um nome de coluna diferente então se o if acima for False será atribuído a variável 'coluna_da_vez' o valor 'imagem'   
     else:
         coluna_da_vez += 'imagem'
+    #for que percorre o model possibilitando obter cada imagem usada no moedel
     for i in model:
+        #if que atribui a variável 'imagens_usuarios' as imagens que estão sendo usadas
         if i[coluna_da_vez] != None and i[coluna_da_vez] not in imagens_usuarios:
+            #ao ser adicionado uma imagem ela receberá o seguinte valor: pasta/imagem(pasta: para onde ele vai; imagem: a imagem)
+            #porém como eu só quero a imagem, essa linha exclui o nome da pasta e adiciona somente o nome da imagem a variável 'imagens_usuarios'
             img = i[coluna_da_vez].replace(f'{dir}/','')
             imagens_usuarios.append(img)
-    #deleta as imagens que não estão sendo usadas: se a imagem não estiver em imagens_usuarios então a delete
+    #for que percorre as imagens da pasta(dir)
     for i in imagens_da_pasta_solicitada:
+        #se a imagem da pasta não esta em 'imagens_usuarios', então ela esta inutilizada portanto apague-a
         if i not in imagens_usuarios:
             os.remove(f'{os.getcwd()}/media/{dir}/{i}')
-         
-   
     return
+
 #funcao que verifica se o usuário da vez pode deletar,cadastrar ou atualizar
 def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
     #recebe a classificação do user da vez. Classificação: ADMIN, admin, professor ou Aluno
     user = request.session['user']
     #True: sim saia do código e retorne ao index
-    #False: não saia pois, o usuário está abilitado a fazer seja lá o que foi requisitado
+    #False: não saia, pois, o usuário está abilitado a fazer seja lá o que foi requisitado
     #se o usuário não estiver logado retorna True ou seja: o usuário não pode fazer nada pois ainda não está logado
     if user == None:
         return True
     #caso o usuário for um admin tem que ser verificado se ele pode realizar a ação requisitada
     elif user == 'admin':
-        #verifica se a ação existe, se existir o fluxo do código não é alterado, se não existir retorna false
+        #verifica se a ação existe, se existir o fluxo do código não é alterado, se não existir retorna True
         #ou seja: o usuário não pode realizar a ação pois ação não existe
         if acao in request.session['lista_de_acoes']:
             return False
         else: 
             return True
+    #caso o user seja o ADMIN ele poderá fazer qualquer coisa independentemente da ação requisitada
     elif user == 'ADMIN':
         return False
     else:
-        #se nenhuma dos ifs anteriores der certo então retorne false
+        #se nenhuma dos ifs anteriores der certo então retorne True
         return True
     
 def retornar_index(request):
+    #############################################################
     #if que verifica se o admin já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
