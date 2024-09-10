@@ -394,7 +394,6 @@ def tutoria(request):
 def editar_aviso(request,id):
     # if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
     #     return redirect(retornar_index)
-    print("okokokok")
     anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
     titulo_antigo = anuncio_a_ser_atualizado.titulo
     descricao_antiga = anuncio_a_ser_atualizado.descricao
@@ -625,7 +624,7 @@ def update_or_delete(request,u_or_d,user):
             return redirect(retornar_index)
     dados = dados_universsais
     dados['tabela_user_passado_como_parametro'] = user
-    print(dados)
+
     dados['modo'] = f'{u_or_d}'
     if user.lower() == 'aluno':
         dados['usuarios'] = Alunos.objects.all().values()

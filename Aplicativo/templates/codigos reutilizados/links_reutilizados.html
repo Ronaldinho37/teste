@@ -1,93 +1,69 @@
 {% block links %}
+{% load static%}
+<link rel="stylesheet" href="{% static 'css/cab.css' %}">
+    <header>
+        <div class="logo">ASN</div>
+        <div class="header-controls">
+            <button id="menu-btn">☰ Menu</button>
+            <button id="theme-switcher">🔆</button>
+        </div>
+    </header>
 
-<header class="navbar navbar-expand-lg  p-3 d-flex justify-content-around default-colors" id="header">
-
-    <style>
-        .logo-asn{
-            color: #0194FF;
-            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
-        }
-    
-    </style>
-
-    <h1 class="logo-asn">ASN</h1>
-    <nav id="">
-        <a class="mx-2 text-dark" id="link-sobre" href="{% url 'sobre'%}">Sobre</a>
-        <a class="mx-2 text-dark" id="link-eletiva" href="{% url 'eletivas'%}">Eletiva</a>
-        <a class="mx-2 text-dark" id="link-tutoria" href="{% url 'tutoria'%}">Tutoria</a>
-        {% if user != None%}
-            {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
-                <div class="btn-group">
-                    <button type="button" id="Deletar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Deletar
-                    </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='professor'%}">Deletar Professor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='tutor'%}">Deletar Tutor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='admin'%}">Deletar Admin</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='deletar' user='eletiva'%}">Deletar Eletiva</a>
-                    </div>
-                </div>
+    <nav id="side-nav">
+        <button id="close-btn">&times;</button>
+        <ul>
+            {% if user != None%}
+                
+                {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
+                <li class="menu-item">
+                    <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
+                    <ul class="dropdown-content" id="home-dropdown">
+                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno </a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='professor'%}">Deletar Professor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='tutor'%}">Deletar Tutor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='eletiva'%}">Deletar Eletiva</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='admin'%}">Deletar Admin</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
+                    <li class="menu-item">
+                        <a href="" class="dropdown-btn-add dropdown-btn" data-target="services-dropdown">Adicionar</a>
+                        <ul class="dropdown-content" id="services-dropdown">
+                            <li><a href="{% url 'add-aluno'%}">Adcionar Aluno</a></li>
+                            <li><a href="{% url 'add' tipo_de_user='professor'%}">Adcionar Professor</a></li>
+                            <li><a href="{% url 'add' tipo_de_user='tutor'%}">Adcionar Tutor</a></li>
+                            <li><a href="{% url 'add' tipo_de_user='professor-tutor'%}">Adcionar Professor/Tutor</a></li>
+                            <li><a href="{% url 'add-admin'%}">Adcionar Admin</a></li>
+                            <li><a href="{% url 'add-eletiva' %}">Adcionar Eletiva</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if user == 'ADMIN'  or  'atualizar' in lista_de_acoes%}
+                <li class="menu-item">
+                    <a href="#" class="dropdown-btn-update dropdown-btn" data-target="contact-dropdown">Atualizar</a>
+                    <ul class="dropdown-content" id="contact-dropdown">
+                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='aluno'%}">Atualizar  Aluno</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Atualizar  Professor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='tutor'%}">Atualizar  Tutor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='admin'%}">Atualizar  Admin</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='eletiva'%}">Atualizar  Eletiva</a></li>
+                    </ul>
+                </li>
+                {% endif %}
             {% endif %}
-            {% if user == 'ADMIN'  or  'atualizar' in lista_de_acoes%}
-            <div class="btn-group">
-                <button type="button" id="Cadastrar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Update
-                </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='aluno'%}">Update Aluno</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Update Professor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='tutor'%}">Update Tutor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='admin'%}">Update Admin</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'update_or_delete' u_or_d='update' user='eletiva'%}">Update Eletiva</a>
-                    </div>
-            </div>
-            {% endif %}
-            {% if user == 'ADMIN'  or  'cadastrar' in lista_de_acoes%}
-            <div class="btn-group">
-                <button type="button" id="Cadastrar" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Cadastrar
-                </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'add-aluno'%}">Adicionar Aluno</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='professor'%}">Adicionar Professor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='tutor'%}">Adicionar Tutor</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add' tipo_de_user='professor-tutor'%}">Adicionar Professor/tutor</a>
-                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add-admin'%}">Adicionar Admin</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'add-eletiva' %}">Adicionar Eletiva</a>
-                    </div>
-            </div>
-            {% endif %}
-            <a class="mx-2 text-white btn btn-danger" href="{% url 'logout'%}">Sair</a>
-        {% else %}
-            <!--<a class="mx-2 text-white btn btn-danger" href="{% url 'login'%}">Entrar</a>-->
-        {% endif %}
-        
-</nav>
+            <li><a href="{% url 'eletivas' %}">Eletiva</a></li>
+            <li><a href="{% url 'tutoria' %}">Tutores</a></li>
+            <li><a href="{% url 'sobre'%}">Sobre</a></li>
+        </ul>
 
-<div style="text-align: center; margin-top: 20px;">
-    <label class="switch">
-        <input type="checkbox" id="colorToggleSwitch">
-        <span class="slider"></span>
-    </label>
-</div>
-</header>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-{% endblock %}
+        <div class="logo-container">
+            <img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" >
+        </div>
+    </nav>
+
+    <div id="overlay"></div>
+
+    <script src="{% static 'js/cab.js' %}"></script>
+    {% endblock %}
 

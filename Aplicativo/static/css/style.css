@@ -15,14 +15,11 @@ body{
     
 }
 
+
 html{
     width: auto;
 }
 
-header{
-    box-shadow: -6px -10px 30px 0px #000;
-    background-color: #f0f0f0;
-}
 
 ::-webkit-scrollbar{
     scroll-behavior: smooth;
