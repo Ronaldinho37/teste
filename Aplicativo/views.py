@@ -129,8 +129,8 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
         return True
     
 def retornar_index(request):
-    #############################################################
-    #if que verifica se o admin já estava logado
+    
+    #if que verifica se o ADMIN já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
 
@@ -145,80 +145,99 @@ def retornar_index(request):
         dados['user'] = request.session['user']
     
     if dados_universsais != dados and dados['user'] != None:
+        #caso o user logado seja um admin precisarei da senha e do nome dele, para impedir que ele se auto atualize ou delete
         dados['nome_user_logado'] = request.session['nome_user_logado']
         dados['senha_user_logado'] = request.session['senha_user_logado']
-        #caso o usuário for um admin então eu preciso de uma session pra cada ação que ele pode realizar
-        #e esse if e for criam elas pra mim
+        #caso o usuário for um admin então eu preciso de uma variável com todas as ações que ele pode realizar
         if dados['user'] == 'admin':
             dados['lista_de_acoes'] = request.session['lista_de_acoes']
-        #atualizando a variável dos dados universsais
+    #atualizando a variável dos dados universsais para que eu possa acessar os valores adicionados de outras fuções
     dados_universsais.update(dados)
-    
-    
+    #variável que contém os cards de avisos
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
-   
+    print(dados_universsais)
     return render(request,'principais/index.html',dados)
-    
+
+#nesta função é feito o login dos usuários 
 def login_viwes(request):
+    #esse if verifica se já tem um usuário logado, se tiver é necessário que deslogue para logar de novo
     if request.session['user'] == 'ADMIN'or request.session['user'] != None:
         return redirect(retornar_index)
     
     if request.method == 'POST':
+        #variável que guarda o valor do nome inserido no input do login
         nome = request.POST.get('nome').lower()
+        #variável que guarda a senha inserida no input do login
         password = request.POST.get('password')
-    
+        #guardará o valor inserido pelo usuário referente a cada checkbox
         checkboxes = {}
+        #lista de nomes de cada checkbox do html
         lista_checkboxes = ['ADMIN','Admin','Professor','Aluno','Tutor']
+        #for que armazena na variável 'checkboxes' os valores referentes a cada input do html
         for i in lista_checkboxes:
             checkboxes[f'{i}'] = request.POST.get(f'{i}')
-        
-        if request.session['user'] == 'ADMIN':
-            logout(request)
+        #caso o usuário a ser logado seja o ADMIN
         if checkboxes['ADMIN'] == 'on':
+            #verifique se ele existe no Django
             usuario = authenticate(username=nome,password=password)
+            #se existir
             if usuario is not None:
+                #logue-o no Django
                 login(request,usuario)
                 request.session['user'] = 'ADMIN'
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
                 return redirect(retornar_index)
-        if checkboxes['Admin'] == 'on':
+        #caso o usuário a ser logado seja o Admin
+        elif checkboxes['Admin'] == 'on':
+            #pegue todos os admin do meu site
             admins = Admins.objects.all().values()
+            #percorra-os
             for i in admins:
+                #se o nome e senha pegados do html forem iguais à nome e senha de algum admin então logue-o
                 if i['nome'].lower() == nome and i['senha'] == password:
                     request.session['user'] = 'admin'
+                    #a lista de ações permitidas ao usuário estão no models com string, o split() transforma a string em uma lista
                     acoes_lista = i['acoes'].split()
                     request.session['lista_de_acoes'] = acoes_lista
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
-        
-        if checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
-            #irá checar se o usuário é um professor
+        #caso o usuário a ser logado seja o professor
+        elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
+            #pegue todos os professores do meu site
             professor = Professores.objects.all().values()
+            #percorra-os
             for i in professor:
+                #se o nome e senha pegados do html forem iguais à nome e senha de algum professor então logue-o
                 if i['nome'].lower() == nome and i['senha'] == password:
                     request.session['user'] = 'professor'
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
-        if checkboxes['Aluno'] == 'on':
-            #irá checar se o usuário é um alunos
+        #caso o usuário a ser logado seja o aluno
+        elif checkboxes['Aluno'] == 'on':
+            #pegue todos os alunos do meu site
             alunos = Alunos.objects.all().values()
+            #percorra-os
             for i in alunos:
+                #se o nome e senha pegados do html forem iguais à nome e senha de algum aluno então logue-o
                 if i['nome'].lower() == nome and i['senha'] == password:
                     request.session['user'] = 'aluno'
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
+                    
             
-        
+        #se chegou até aqui é porque nenhum dos ifs anteriores foram iguais a True, logo a senha ou nome ou usuário escolhidos não coincidem
         dados = {}
         dados['message'] = "Usuário ou senha inválidos!"
         dados['form'] = LoginForm()
         dados['nome'] = nome
         dados['password'] = password
         return render(request,'principais/login.html',dados)
+        
+        
     else:
         dados = {}
         dados['message'] = ''
