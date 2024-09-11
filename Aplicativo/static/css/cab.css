@@ -11,7 +11,7 @@ header {
     justify-content: space-between;
     background-color: transparent;
     color: #fff;
-    padding: 2rem;
+    padding: 2rem 8rem;
 }
 
 .logo {
@@ -227,7 +227,15 @@ nav{
     border-radius: 8px; /* Suaviza as bordas */
     padding: 5px;
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> f32e21eb8934b64210a25799310c30050e34feeb
+@media (min-width: 320px) and (max-width:425px) {
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: transparent;
+        color: #fff;
+        padding: 2rem 3rem;
+    }
+}
+

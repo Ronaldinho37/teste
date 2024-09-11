@@ -1,13 +1,14 @@
 
 document.addEventListener("DOMContentLoaded", function() {
-    const textElement = document.getElementById('tecnologia');
-    const palavras = ["Matemática", "Física", "Química", "Biologia"]; // Palavras a serem digitadas
+    const eletivaElement = document.querySelector("#tecnologia strong");
+    const cursorElement = document.querySelector(".cursor");
+    const palavras = ["Programação", "Desenvolvimento Web", "Design", "Full-stack"]; // Palavras a serem digitadas
     let palavraIndex = 0;
     let letraIndex = 0;
 
     function digitarPalavra() {
         if (letraIndex < palavras[palavraIndex].length) {
-            textElement.textContent += palavras[palavraIndex].charAt(letraIndex);
+            eletivaElement.textContent += palavras[palavraIndex].charAt(letraIndex);
             letraIndex++;
             setTimeout(digitarPalavra, 150); // Atraso entre cada letra (150ms)
         } else {
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function apagarPalavra() {
         if (letraIndex > 0) {
-            textElement.textContent = palavras[palavraIndex].substring(0, letraIndex - 1);
+            eletivaElement.textContent = palavras[palavraIndex].substring(0, letraIndex - 1);
             letraIndex--;
             setTimeout(apagarPalavra, 100); // Atraso entre cada letra ao apagar (100ms)
         } else {

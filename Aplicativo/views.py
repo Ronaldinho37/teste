@@ -587,7 +587,7 @@ def deletar_com_ids(request,user,id):
             
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
             if dados['diretorio_user'] == 'img_eletivas':
-                excluir_imagem(f'{dados['diretorio_user']}/img_professores_eletiva',dados['model_user'])
+               excluir_imagem(f"{dados['diretorio_user']}/img_professores_eletiva", dados['model_user'])
             dados['message'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:

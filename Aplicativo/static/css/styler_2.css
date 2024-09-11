@@ -80,6 +80,7 @@
 .botao-ver-mais {
     display: inline-block;
     padding: 10px 20px;
+    margin: 20px 10px;
     font-size: 16px;
     font-weight: bold;
     color: white;
@@ -94,6 +95,8 @@
 
 .botao-ver-mais:hover {
     background-color: #0056b3;
+    text-decoration: none;
+    color: #fff;
 }
 
 .align p {

@@ -228,7 +228,7 @@ input:checked + .slider:before {
 
 .cursor {
     display: inline-block;
-    width: 5px;
+    width: 2px;
     background-color: #0f6eda;
     margin-left: 2px;
     animation: blink 0.7s steps(1) infinite;
@@ -250,6 +250,15 @@ input:checked + .slider:before {
 
     .btn-more {
         font-size: 0.8rem; /* Ajuste o tamanho do botão */
+    }
+
+    .card{
+    
+        background-color: #000;
+        border-radius: 56px;
+        width: 423px;
+        height: 578px;
+        margin-top:20px ;
     }
 }
 
