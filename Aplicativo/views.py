@@ -242,23 +242,28 @@ def login_viwes(request):
         dados = {}
         dados['message'] = ''
         return render(request,'principais/login.html',dados)
-
+    
+#função que retorna para a página das eletivas com as eletivas presentes no site
 def eletivas(request):
     dados = dados_universsais.copy()
     dados['pagina'] = "eletivas"
     dados['eletivas'] = Eletivas.objects.all().values()
+    #essa variável recebe as duplas de professores por eletivas
     todos_professores = {}
+    #for que percorre as eletivas existente
     for i in dados['eletivas']:
+        #filtra os professores que dão aula na eletiva
+        #e adiciona-os na variável "todos_professores" com uma key referente ao nome da eletiva 
         todos_professores[f"professor_de_{i['titulo']}"] = Professores.objects.filter(eletiva=f"{i['titulo']}").values()
+    #adiciono a variável 'todos_professores' a variável dados
     dados['todos_professores'] = todos_professores
-    dados['user'] = request.session['user']
     return render(request,'eletiva/eletivas.html',dados)
 
+#função que desloga o usuário
 def logout_viwes(request):
     user = request.session['user'] 
     #o admin supremo(ADMIN) é o único que foi criado como um user no django e por isso ele recebe um 
-    #tratamento diferente dos demais, a função logout() é própria do Django ela server para deslogar o user
-    #que esta logado
+    #tratamento diferente dos demais, a função logout() é própria do Django ela server para deslogar o user que esta logado
     if user == 'ADMIN':
         logout(request)
     #se o usuário for um admin e quer deslogar-se então primeiro eu apago as sessions que comtém os valores 
@@ -273,9 +278,9 @@ def logout_viwes(request):
     request.session['user'] = None
     return redirect(retornar_index)
 
-
+#função que adiciona as eletivas
 def add_eletivas(request):
-    #chama a função que verifica se o usuário está apto ou não à adicionar eletivas
+    #chama a função que verifica se o usuário está apto ou não à adicionar eletivas ou não
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
     
@@ -285,22 +290,25 @@ def add_eletivas(request):
         if form.is_valid():
             #variável que armazena o nome da eletiva
             eletiva = form.cleaned_data.get('titulo')
+            #variável que armazena a imagem de fundo da eletiva
             imagem = checar_imagem_existente(form.cleaned_data.get("imagem"),"img_eletivas",None)
+            #variável que armazena a imagem dos professores da eletiva. Ele recebe o "request.FILES.get" porque  este campo não esta presente no form do django
             imagem_p = checar_imagem_existente(request.FILES.get("imagem_p"),"img_eletivas/img_professores_eletiva",None)
             #criando a nova eletiva
             new = Eletivas(titulo=eletiva,descricao=form.cleaned_data.get('descricao'),imagem=imagem,img_professores_eletiva=imagem_p,link=form.cleaned_data.get("link"))
             #salvando-a
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
-            
             excluir_imagem("img_eletivas",Eletivas.objects.all().values())
             return redirect(add_professor,tipo_de_user='professor')
     else:
         dados = {}
+        #variável que retorna o form para o html
         dados['form'] = AddEletivaForm()
         dados['message'] = ''
         return render(request,'eletiva/addeletiva.html',dados)
 
+#função que retorna os alunos e professores presentes na eletiva
 def ver_eletiva(request,eletiva):
     dados = {}
     dados['alunos'] = Alunos.objects.filter(eletiva=eletiva).values()
@@ -312,24 +320,32 @@ def ver_eletiva(request,eletiva):
         dados['message'] = 'Não há alunos nesta eletiva'
     return  render(request,'eletiva/eletiva.html',dados)
 
-
+#função que adiciona os professores e/ou tutores
 def add_professor(request, tipo_de_user):
+    #chama a função que verifica se o usuário está apto ou não à adicionar professores ou não
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
 
     if request.method == 'POST':
         dados_do_ser_a_ser_adicionado = {}
+        #esta variável armazena os campos que não possuem valores booleanos
         campos_universais = ['nome','email','password','descricao','eletiva']
+        #armazena a nova imagem do professor/tutor 
         dados_do_ser_a_ser_adicionado['imagem'] = checar_imagem_existente(request.FILES.get('imagem'),'imagem_professores','cadastrar')
+        #percorre os campos para adiciona-los a variável 'dados_do_ser_a_ser_adicionado'
         for i in campos_universais:
+            #se o user a ser adicionado for um professor então eu não preciso de descrição
             if tipo_de_user == 'professor' and i == 'descricao':
                 dados_do_ser_a_ser_adicionado[f'{i}'] = ''
+            #se o user a ser adicionado for um tutor então eu não preciso de eletiva
             elif tipo_de_user == 'tutor'and i == 'eletiva':
                 dados_do_ser_a_ser_adicionado[f'{i}'] = ''
+            #do contrário adicione os valores
             else:
                 dados_do_ser_a_ser_adicionado[f'{i}'] = request.POST.get(f'{i}')
 
-
+        #no models referente aos professores e tutores tem 2 campos booleano que dizem se o indivíduo é um professor, tutor ou ambos
+        #se for professor, o campo do professor no models receberá True e o de tutor receberá False ou vice-versa
         if tipo_de_user == 'professor':
             dados_do_ser_a_ser_adicionado['professor'] = True
             dados_do_ser_a_ser_adicionado['tutor'] = False
@@ -339,11 +355,13 @@ def add_professor(request, tipo_de_user):
         elif tipo_de_user == 'professor-tutor':
             dados_do_ser_a_ser_adicionado['tutor'] = True
             dados_do_ser_a_ser_adicionado['professor'] = True
-
+        #criando um novo professor ou tutor
         professor = Professores(eletiva=dados_do_ser_a_ser_adicionado['eletiva'],nome=dados_do_ser_a_ser_adicionado['nome'],email=dados_do_ser_a_ser_adicionado['email'],senha=dados_do_ser_a_ser_adicionado['password'],imagem=dados_do_ser_a_ser_adicionado['imagem'],professor=dados_do_ser_a_ser_adicionado['professor'],tutor=dados_do_ser_a_ser_adicionado['tutor'],descricao=dados_do_ser_a_ser_adicionado['descricao'])
+        #salvando-o
         professor.save()
         return redirect(eletivas)
     else:
+        ###############################################################
         dados={}
         if tipo_de_user != 'professor' and tipo_de_user != 'tutor' and tipo_de_user != 'professor-tutor':
             return redirect(retornar_index)
@@ -400,35 +418,6 @@ def tutoria(request):
     dados['pagina'] = 'tutoria'
     dados['tutores'] = Professores.objects.filter(tutor=True)
     return render(request,'principais/tutoria.html',dados)
-
-
-# def addanuncio(request):
-#     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-#         return redirect(retornar_index)
-#     else:
-#         if request.method == 'POST':
-#             form = AnuncioForm(request.POST, request.FILES)
-#             if form.is_valid():
-#                 anuncio = Anuncio(titulo=form.cleaned_data.get('titulo'),descricao=form.cleaned_data.get('descricao'),imagem=form.cleaned_data.get("imagem"),link=form.cleaned_data.get("link"))
-#                 anuncio.save()
-#                 return redirect(retornar_index)
-            
-#         else:
-#             form = AnuncioForm()
-#             return render(request, 'anuncio/addanuncio.html', {'form': form})
-    
-
-# def deletar_anuncio(request, anuncio_id):
-#         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
-#             return redirect(retornar_index)
-#         anuncio = Anuncio.objects.get(id=anuncio_id)
-#         if request.method == 'POST':
-#             sim = request.POST.get('sim')
-#             if sim == 'on':
-#                 anuncio.delete()
-#             return redirect(retornar_index)
-#         else:
-#             return render (request, 'anuncio/deletaranuncio.html')
 
 def editar_aviso(request,id):
     # if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
