@@ -1,8 +1,12 @@
 {% block eletiva %}
 <select name="eletiva" id="eletiva" required>
     <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
-    {% for i in eletivas %}
-        <option value="{{i.titulo}}">{{i.titulo}}</option>
-    {% endfor %}
+    {% if tamanho_eletivas != 0 %}
+        {% for i in eletivas %}
+            <option value="{{i.titulo}}">{{i.titulo}}</option>
+        {% endfor %}
+    {% endif %}
+    <option value="">Deixar sem</option>
 </select>
+
 {% endblock %}

@@ -321,6 +321,7 @@ def ver_eletiva(request,eletiva):
     return  render(request,'eletiva/eletiva.html',dados)
 
 #função que adiciona os professores e/ou tutores
+#tipo_de_user: tipo do user a ser adicionado(professor/tutor)
 def add_professor(request, tipo_de_user):
     #chama a função que verifica se o usuário está apto ou não à adicionar professores ou não
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
@@ -361,27 +362,36 @@ def add_professor(request, tipo_de_user):
         professor.save()
         return redirect(eletivas)
     else:
-        ###############################################################
         dados={}
+        #como essa função só adiciona professor ou tutor, se o 'tipo_de_user' for difente não poderá ser adicionado
         if tipo_de_user != 'professor' and tipo_de_user != 'tutor' and tipo_de_user != 'professor-tutor':
             return redirect(retornar_index)
-        
+        #como há campos pertencentes ao professor que são diferentes dos campos de um tutor
+        #nesta variável eu retorno o tipo do user, e lá no html,através de um if só será mostrado os campos referentes ao user a ser adicionado
         dados['tipo_de_user'] = tipo_de_user
+        #recebe as eletivas: poderei executar o 'exclude'
         dados['eletivas'] = Eletivas.objects
+         #recebe as eletivas: não poderei executar o 'exclude', porém, percorrerei-a para verificar se há eletivas sem professores
         dados['eletivas_para_for'] = Eletivas.objects.all().values()
         if tipo_de_user != 'tutor':
+            #este for verifica se tem alguma eletiva sem professor
             for i in dados['eletivas_para_for']:
                 p = Professores.objects.filter(eletiva=i['titulo'])
+                #se o tamanho da variável 'p' é igual a 2, é porque a eletiva está completa no quesito professor
                 if len(p) == 2:
+                    #estão exclua a respectiva eletiva da veriável 'dados['eletivas']'
                     dados['eletivas'] = dados['eletivas'].exclude(titulo=i['titulo'])
+                    #se o tamanho da variável "dados['eletivas']" for igual a zero é porque não tem eletiva para ser adicionado um professor responsável
+                    #logo, o professor não poderá ser adicionado
                     if len(dados['eletivas']) == 0:
                         dados['message'] = "Todas as eletivas possuem seus respectivos professores"
                         return redirect(retornar_index)
-                elif len(p) == 0:
-                    dados['eletivas'] = dados['eletivas'].all().values()
-            
+                # elif len(p) == 0:
+                #     dados['eletivas'] = dados['eletivas'].all().values()
+        #como eu tinha que executar o 'exclude' eu não podia obter os 'values' do models 'Eletivas', porém, agora posso
+        dados['eletivas'] = dados['eletivas'].values()
         return render(request,'professor/addprofessor.html',dados)
-
+#######################################################
 def add_aluno(request):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
@@ -420,8 +430,8 @@ def tutoria(request):
     return render(request,'principais/tutoria.html',dados)
 
 def editar_aviso(request,id):
-    # if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-    #     return redirect(retornar_index)
+    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
+        return redirect(retornar_index)
     anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
     titulo_antigo = anuncio_a_ser_atualizado.titulo
     descricao_antiga = anuncio_a_ser_atualizado.descricao
@@ -537,14 +547,20 @@ def deletar_com_ids(request,user,id):
                     dados['diretorio_user'] = "imagem_alunos"
                     dados['user'] = 'alunos(s)'
                     for i in dados['lista_id']:
-                        Alunos.objects.get(id=i).delete()
+                        try:
+                            Alunos.objects.get(id=i).delete()
+                        except:
+                            return redirect(update_or_delete,u_or_d='deletar',user=user)
 
                 elif user == "admin":
                     dados['model_user'] = Admins.objects.all().values()
                     dados['diretorio_user'] = "imagem_admins"
                     dados['user'] = 'admin(s)'
                     for i in dados['lista_id']:
-                        Admins.objects.get(id=i).delete()
+                        try:
+                            Admins.objects.get(id=i).delete()
+                        except:
+                            return redirect(update_or_delete,u_or_d='deletar',user=user)
 
                 elif user == "professor" or user == "tutor":
                     dados['model_user'] = Professores.objects.all().values()
@@ -558,7 +574,11 @@ def deletar_com_ids(request,user,id):
                                 dados['message'] = 'User não é um tutor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
-                                Professores.objects.get(id=i).delete()
+                                
+                                try:
+                                    Professores.objects.get(id=i).delete()
+                                except:
+                                    return redirect(update_or_delete,u_or_d='deletar',user=user)
                     else:
                         dados['user'] = 'professor(es)'
                         os_que_podem_ser_deletados = Professores.objects.filter(professor=True)
@@ -568,13 +588,19 @@ def deletar_com_ids(request,user,id):
                                 dados['message'] = 'User não é um professor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
-                                Professores.objects.get(id=i).delete()
+                                try:
+                                    Professores.objects.get(id=i).delete()
+                                except:
+                                    return redirect(update_or_delete,u_or_d='deletar',user=user)
                 elif user == "eletiva":
                     dados['model_user'] = Eletivas.objects.all().values()
                     dados['diretorio_user'] = "img_eletivas"
                     dados['user'] = 'eletiva(s)'
                     for i in dados['lista_id']:
-                        eletiva_a_ser_deletada = Eletivas.objects.get(id=i) #.delete()
+                        try:
+                            eletiva_a_ser_deletada = Eletivas.objects.get(id=i) #.delete()
+                        except:
+                            return redirect(update_or_delete,u_or_d='deletar',user=user)
                         alunos_e_professores = [Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo),Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo)]
                         for i in alunos_e_professores:
                             for e in i:
@@ -602,7 +628,10 @@ def deletar_com_ids(request,user,id):
             dados['message'] = ''
             if user == 'professor' or user == 'tutor':
                 for i in dados['lista_id']:
-                    professor_ou_tutor = Professores.objects.get(id=i)
+                    try:
+                        professor_ou_tutor = Professores.objects.get(id=i)
+                    except:
+                        return redirect(update_or_delete,u_or_d='deletar',user=user)
                     user_da_vez = ''
         
                     if user == 'professor':
@@ -650,7 +679,7 @@ def update_or_delete(request,u_or_d,user):
     else:
         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
             return redirect(retornar_index)
-    dados = dados_universsais
+    dados = dados_universsais.copy()
     dados['tabela_user_passado_como_parametro'] = user
 
     dados['modo'] = f'{u_or_d}'
@@ -666,6 +695,8 @@ def update_or_delete(request,u_or_d,user):
             dados['usuarios'] = Eletivas.objects.all().values()
     elif user.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
+    elif user.lower() == 'professor-tutor':
+        dados['usuarios'] = Professores.objects.filter(professor=True,tutor=True)
     else:
         dados['message'] = 'Usuário não identificado'
         return redirect(retornar_index)
@@ -689,16 +720,20 @@ def update_com_id(request,user,id):
         model.append("imagem_alunos")
         campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva,user_a_ser_atualizado[0].serie]
 
-    elif user == 'professor' or user == 'tutor':
+    elif user == 'professor' or user == 'tutor' or user == 'professor-tutor':
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
         except:
             dados['message'] = "User não encontrado"
             return redirect(update_or_delete,u_or_d='update', user=user)
+        if user_a_ser_atualizado[0].tutor == True and user_a_ser_atualizado[0].professor == True and user != 'professor-tutor':
+            return redirect(update_com_id, user='professor-tutor',id=id)
         model.append(Professores.objects.all().values())
         model.append("imagem_professores")
         if user == 'tutor':
-            campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].descricao]
+            campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].descricao]
+        elif user == 'professor-tutor':
+            campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].eletiva]
         else:
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
     elif user == 'eletiva':
@@ -738,9 +773,14 @@ def update_com_id(request,user,id):
             if user == 'aluno':
                 serie = request.POST.get('serie')
                 campos_atualizados_do_user = [nome,email,senha,imagem,eletiva,serie]
-        elif user == 'tutor':
+        elif user == 'tutor' or user == 'professor-tutor':
             descricao = request.POST.get('descricao')
-            campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
+            if user == 'professor-tutor':
+                eletiva = request.POST.get('eletiva')
+                campos_atualizados_do_user = [nome,email,senha,imagem,descricao,eletiva]
+
+            else:
+                campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
         elif user == 'eletiva':
             titulo = request.POST.get('titulo')
             link = request.POST.get('link')
@@ -794,14 +834,17 @@ def update_com_id(request,user,id):
                     elif img_professores != None and pergunta_imagem_professores == None:
                         user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(img_professores,f'img_eletivas/img_professores_eletiva','atualizar')
                   
-                elif tam == 4 and user != 'admin' and user != 'tutor':
+                elif tam == 4 and user != 'admin' and user != 'tutor' and user != 'professor-tutor':
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':
                     user_a_ser_atualizado[0].acoes = i
-                elif tam == 4 and user == 'tutor' or user == 'eletiva' and tam == 1:
+                elif tam == 4 and user == 'tutor' or  tam == 4 and user == 'professor-tutor' or user == 'eletiva' and tam == 1:
                     user_a_ser_atualizado[0].descricao = i
-                elif tam == 5:
+                elif tam == 5 and user != 'professor-tutor':
                     user_a_ser_atualizado[0].serie = i
+                elif tam == 5 and user == 'professor-tutor':
+                    user_a_ser_atualizado[0].eletiva = i
+                    
             tam += 1
         user_a_ser_atualizado[0].save()
         
@@ -817,7 +860,17 @@ def update_com_id(request,user,id):
         
         dados['user'] = user
         dados['tabela'] = user_a_ser_atualizado[0]
-        dados['eletivas'] = Eletivas.objects.all().values()
+        dados['eletivas'] = Eletivas.objects
+        dados['eletivas_para_for'] = Eletivas.objects.all().values()
+        if user == 'professor' or user == 'professor-tutor':
+            #este for verifica se tem alguma eletiva sem professor
+            for i in dados['eletivas_para_for']:
+                p = Professores.objects.filter(eletiva=i['titulo'])
+                if len(p) == 2:
+                    dados['eletivas'] = dados['eletivas'].exclude(titulo=i['titulo'])
+
+        dados['eletivas'] = dados['eletivas'].values()
+        dados['tamanho_eletivas'] = len(dados['eletivas'])
         dados['message'] = ''
         if user == 'admin':
             acoes_lista = campos_atigos_do_user[4].split()

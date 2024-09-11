@@ -24,7 +24,7 @@
             <label for="pergunta">Deixar sem imagem</label>
             <input type="checkbox" name="pergunta_imagem" id="">
         </div>
-        {% if user == 'aluno' or user == 'professor' %}
+        {% if user == 'aluno' or user == 'professor' or user == 'professor-tutor'%}
             {% include 'update/update_professor.html' %}
             {% block eletiva %}
             {% endblock %}
@@ -37,7 +37,8 @@
             {% include 'update/update_admin.html' %}
             {% block acoes_do_admin %}
             {% endblock %}
-        {% elif user == 'tutor' or user == 'eletiva'%}
+        {% endif %}
+        {% if user == 'tutor' or user == 'eletiva' or user == 'professor-tutor' %}
             {% include 'update/update_tutor.html' %}
             {% block descricao %}
             {% endblock %}
