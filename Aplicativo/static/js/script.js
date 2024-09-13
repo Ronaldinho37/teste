@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const eletivaElement = document.querySelector("#tecnologia strong");
     const cursorElement = document.querySelector(".cursor");
-    const palavras = ["Programação", "Desenvolvimento Web", "Design", "Full-stack"]; // Palavras a serem digitadas
+    const palavras = ["Ensino", "Inclusão", "Acolhimento", "Tecnologia"]; // Palavras a serem digitadas
     let palavraIndex = 0;
     let letraIndex = 0;
 
