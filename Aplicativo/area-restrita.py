@@ -1,5 +1,5 @@
 from django.urls import path
-from Aplicativo.views import update_or_delete,editar_aviso,update_com_id,add_admin,deletar_com_ids,sobre,login_viwes,tutoria,add_aluno,add_professor,retornar_index,eletivas,logout_viwes,add_eletivas,ver_eletiva
+from Aplicativo.views import *
 
 urlpatterns = [
     path('update_or_delete/<str:u_or_d>/<str:user>',update_or_delete,name="update_or_delete"),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('add-aluno/',add_aluno,name='add-aluno'),
     path('add-admin/',add_admin,name='add-admin'),
  #   path('tutoria/',tutoria,name='tutoria'),
+    path('definir-paginas/',definir_paginas_utilizaveis,name='definir-paginas'),
     path('editar_aviso/<int:id>',editar_aviso,name='editar_aviso'),
     path('deletar/<str:user>/<str:id>',deletar_com_ids,name='deletar_com_ids'),
 

@@ -54,3 +54,8 @@ class Anuncio(models.Model):
     link = models.URLField(max_length=100, null=True, blank=False)
 
 #14 alunos pra cada eletiva
+class PaginasUtilizaveis(models.Model):
+    tutoria = models.BooleanField()
+    eletiva = models.BooleanField()
+    index = models.BooleanField()
+    sobre = models.BooleanField(null=True, blank=False)

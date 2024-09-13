@@ -5,7 +5,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .forms import LoginForm,AddEletivaForm, AnuncioForm, UpdateEletiva
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
-from .models import Alunos,Admins,Professores,Eletivas,Anuncio
+from .models import *
 from django.contrib import messages
 import os
 from PIL import Image
@@ -27,6 +27,12 @@ dados_universsais = {}
 # ciphertext = rsa.encrypt(m, publickey)
 # m2 = rsa.decrypt(ciphertext, privatekey)
 # print(ciphertext)
+def ver_se_a_pagina_pode_funcionar(pagina):
+    paginaModels = PaginasUtilizaveis.objects.values().get(id=1)
+    if paginaModels[f'{pagina}'] != True:
+        return True
+    else:
+        return False
 #esta função serve para verificar se a imagem a ser adicionada é existente se não for a adicionará 
 #se for então será adicionado o caminho referente a ela
 def checar_imagem_existente(imagem,pasta,acao):
@@ -129,7 +135,8 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
         return True
     
 def retornar_index(request):
-    
+    if ver_se_a_pagina_pode_funcionar('index') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     #if que verifica se o ADMIN já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
@@ -245,6 +252,8 @@ def login_viwes(request):
     
 #função que retorna para a página das eletivas com as eletivas presentes no site
 def eletivas(request):
+    if ver_se_a_pagina_pode_funcionar('eletiva') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados = dados_universsais.copy()
     dados['pagina'] = "eletivas"
     dados['eletivas'] = Eletivas.objects.all().values()
@@ -424,6 +433,8 @@ def add_aluno(request):
             return render(request,'aluno/addaluno.html',dados)
 
 def tutoria(request):
+    if ver_se_a_pagina_pode_funcionar('tutoria') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados=dados_universsais.copy()
     dados['pagina'] = 'tutoria'
     dados['tutores'] = Professores.objects.filter(tutor=True)
@@ -516,6 +527,8 @@ def update_eletiva(request,id):
         
 #função para mostrar os dados existentes pagina sobre
 def sobre(request):
+    if ver_se_a_pagina_pode_funcionar('sobre') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados = dados_universsais.copy()
     dados['pagina'] = 'sobre'
     return render(request,'principais/about.html',dados)
@@ -878,5 +891,43 @@ def update_com_id(request,user,id):
                 dados[f'{i}'] = 'checked'
         
         return render(request, 'update/update_com_id.html', dados)
+    
+def definir_paginas_utilizaveis(request):
+    ObjectPagina = PaginasUtilizaveis.objects
+    if request.method == 'POST':
+        ObjectPagina = ObjectPagina.get(id=1)
+        paginas_list = ['tutoria','eletiva','index','sobre']
+        for i in paginas_list:
+            request_da_vez = request.POST.get(f'{i}')
+            if request_da_vez == 'on':
+                if i == 'tutoria':
+                    ObjectPagina.tutoria = True
+                elif i == 'eletiva':
+                    ObjectPagina.eletiva = True
+                elif i == 'index':
+                    ObjectPagina.index = True
+                elif i == 'sobre':
+                    ObjectPagina.sobre = True
+            else:
+                if i == 'tutoria':
+                    ObjectPagina.tutoria = False
+                elif i == 'eletiva':
+                    ObjectPagina.eletiva = False
+                elif i == 'index':
+                    ObjectPagina.index = False
+                elif i == 'sobre':
+                    ObjectPagina.sobre = False
+        ObjectPagina.save()
+        return redirect(retornar_index)
+    else:
+        dados = {}
+        valores_do_object = ObjectPagina.values().get(id=1)
+        for i in valores_do_object:
+            if valores_do_object[f'{i}'] == True:
+                dados[f'{i}'] = 'checked'
+            else:
+                dados[f'{i}'] = ''
+       
+        return render(request,'definir_as_paginas/definir_paginas.html',dados)
 
 
