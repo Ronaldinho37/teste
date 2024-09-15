@@ -4,6 +4,7 @@ import django.contrib.messages
 from django.shortcuts import render,redirect,get_object_or_404
 from .forms import LoginForm,AddEletivaForm, AnuncioForm, UpdateEletiva
 from django.http import HttpResponse
+from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from .models import *
 from django.contrib import messages
@@ -28,7 +29,13 @@ dados_universsais = {}
 # m2 = rsa.decrypt(ciphertext, privatekey)
 # print(ciphertext)
 def ver_se_a_pagina_pode_funcionar(pagina):
-    paginaModels = PaginasUtilizaveis.objects.values().get(id=1)
+    try:
+        paginaModels = PaginasUtilizaveis.objects.values().get(id=1)
+    except:
+        p1 = PaginasUtilizaveis(tutoria=True,eletiva=True,index=True,sobre=True)
+        p1.save()
+        return False 
+    
     if paginaModels[f'{pagina}'] != True:
         return True
     else:
@@ -117,7 +124,7 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
     #True: sim saia do código e retorne ao index
     #False: não saia, pois, o usuário está abilitado a fazer seja lá o que foi requisitado
     #se o usuário não estiver logado retorna True ou seja: o usuário não pode fazer nada pois ainda não está logado
-    if user == None:
+    if user == None or acao == 'definirpaginas' and user != 'ADMIN':
         return True
     #caso o usuário for um admin tem que ser verificado se ele pode realizar a ação requisitada
     elif user == 'admin':
@@ -135,8 +142,6 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
         return True
     
 def retornar_index(request):
-    if ver_se_a_pagina_pode_funcionar('index') == True:
-        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     #if que verifica se o ADMIN já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
@@ -150,8 +155,7 @@ def retornar_index(request):
     except:
         request.session['user'] = None
         dados['user'] = request.session['user']
-    
-    if dados_universsais != dados and dados['user'] != None:
+    if dados_universsais != dados and dados['user'] == 'admin':
         #caso o user logado seja um admin precisarei da senha e do nome dele, para impedir que ele se auto atualize ou delete
         dados['nome_user_logado'] = request.session['nome_user_logado']
         dados['senha_user_logado'] = request.session['senha_user_logado']
@@ -160,9 +164,10 @@ def retornar_index(request):
             dados['lista_de_acoes'] = request.session['lista_de_acoes']
     #atualizando a variável dos dados universsais para que eu possa acessar os valores adicionados de outras fuções
     dados_universsais.update(dados)
+    if ver_se_a_pagina_pode_funcionar('index') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     #variável que contém os cards de avisos
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
-    print(dados_universsais)
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -252,9 +257,9 @@ def login_viwes(request):
     
 #função que retorna para a página das eletivas com as eletivas presentes no site
 def eletivas(request):
-    if ver_se_a_pagina_pode_funcionar('eletiva') == True:
-        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados = dados_universsais.copy()
+    if ver_se_a_pagina_pode_funcionar('eletiva') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = "eletivas"
     dados['eletivas'] = Eletivas.objects.all().values()
     #essa variável recebe as duplas de professores por eletivas
@@ -433,9 +438,9 @@ def add_aluno(request):
             return render(request,'aluno/addaluno.html',dados)
 
 def tutoria(request):
-    if ver_se_a_pagina_pode_funcionar('tutoria') == True:
-        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados=dados_universsais.copy()
+    if ver_se_a_pagina_pode_funcionar('tutoria') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = 'tutoria'
     dados['tutores'] = Professores.objects.filter(tutor=True)
     return render(request,'principais/tutoria.html',dados)
@@ -443,49 +448,59 @@ def tutoria(request):
 def editar_aviso(request,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
-    anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
-    titulo_antigo = anuncio_a_ser_atualizado.titulo
-    descricao_antiga = anuncio_a_ser_atualizado.descricao
-    imagem_antiga = anuncio_a_ser_atualizado.imagem
-    link_antigo = anuncio_a_ser_atualizado.link
-    #Pega valores presentes no form
-    if request.method == 'POST':
-        titulo = request.POST.get('titulo')
-        descricao = request.POST.get('descricao')
-        imagem = request.FILES.get('imagem')
-        link = request.POST.get('link')
-        #esta variavel contem todos os valores que forem inseridos  
-        campos_novos = [titulo,descricao,imagem,link]
-        #esta variavel contem todos os valores antigos do aviso
-        campos_antigos = [titulo_antigo,descricao_antiga,imagem_antiga,link_antigo]
-        tam = 0
-        #for usado para checar se alguns dos anuncios e igual ao inserido na variavel campos novos
-        for i in campos_novos:
-            if tam == 0 and i != campos_antigos[tam]:
-                anuncio_a_ser_atualizado.titulo = i
-            elif tam == 1 and i != campos_antigos[tam]:
-                anuncio_a_ser_atualizado.descricao = i
-            elif tam == 2 and i != None:
-                #checa se ja existe uma imagem na variavel
-                imagem_final = checar_imagem_existente(imagem,'img_anuncio',None)
-                anuncio_a_ser_atualizado.imagem = imagem_final
-            elif tam == 3 and i != campos_antigos[tam]:
-                anuncio_a_ser_atualizado.link = i
-            tam += 1
-        
-        anuncio_a_ser_atualizado.save()
-        excluir_imagem('img_anuncio',Anuncio.objects.all().values())
+    if id <= 2 and id > 0:
+        try:
+            anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
+        except:
+            anuncios = 1
+            while anuncios <= 2:
+                anuncio_a_ser_cadastrado = Anuncio(id=anuncios,titulo='titulo',descricao='descricao',imagem=checar_imagem_existente(None,'img_anuncio',None),link='https://www.google.com.br')
+                anuncio_a_ser_cadastrado.save()
+                anuncios += 1
+            anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
+        titulo_antigo = anuncio_a_ser_atualizado.titulo
+        descricao_antiga = anuncio_a_ser_atualizado.descricao
+        imagem_antiga = anuncio_a_ser_atualizado.imagem
+        link_antigo = anuncio_a_ser_atualizado.link
+        #Pega valores presentes no form
+        if request.method == 'POST':
+            titulo = request.POST.get('titulo')
+            descricao = request.POST.get('descricao')
+            imagem = request.FILES.get('imagem')
+            link = request.POST.get('link')
+            #esta variavel contem todos os valores que forem inseridos  
+            campos_novos = [titulo,descricao,imagem,link]
+            #esta variavel contem todos os valores antigos do aviso
+            campos_antigos = [titulo_antigo,descricao_antiga,imagem_antiga,link_antigo]
+            tam = 0
+            #for usado para checar se alguns dos anuncios e igual ao inserido na variavel campos novos
+            for i in campos_novos:
+                if tam == 0 and i != campos_antigos[tam]:
+                    anuncio_a_ser_atualizado.titulo = i
+                elif tam == 1 and i != campos_antigos[tam]:
+                    anuncio_a_ser_atualizado.descricao = i
+                elif tam == 2 and i != None:
+                    #checa se ja existe uma imagem na variavel
+                    imagem_final = checar_imagem_existente(imagem,'img_anuncio',None)
+                    anuncio_a_ser_atualizado.imagem = imagem_final
+                elif tam == 3 and i != campos_antigos[tam]:
+                    anuncio_a_ser_atualizado.link = i
+                tam += 1
+            
+            anuncio_a_ser_atualizado.save()
+            excluir_imagem('img_anuncio',Anuncio.objects.all().values())
 
-        return redirect(retornar_index)
+            return redirect(retornar_index)
+        else:
+            dados = {}
+            dados['form'] = AnuncioForm()
+            dados['titulo'] = anuncio_a_ser_atualizado.titulo
+            dados['descricao'] = anuncio_a_ser_atualizado.descricao
+            dados['imagem'] = anuncio_a_ser_atualizado.imagem
+            dados['link'] = anuncio_a_ser_atualizado.link
+            return render(request, 'anuncio/addanuncio.html', dados)
     else:
-        dados = {}
-        dados['form'] = AnuncioForm()
-        dados['titulo'] = anuncio_a_ser_atualizado.titulo
-        dados['descricao'] = anuncio_a_ser_atualizado.descricao
-        dados['imagem'] = anuncio_a_ser_atualizado.imagem
-        dados['link'] = anuncio_a_ser_atualizado.link
-        return render(request, 'anuncio/addanuncio.html', dados)
-
+        return redirect(retornar_index)
 def update_eletiva(request,id):
     
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
@@ -527,9 +542,9 @@ def update_eletiva(request,id):
         
 #função para mostrar os dados existentes pagina sobre
 def sobre(request):
-    if ver_se_a_pagina_pode_funcionar('sobre') == True:
-        return render(request,'definir_as_paginas/acesso_bloqueado.html')
     dados = dados_universsais.copy()
+    if ver_se_a_pagina_pode_funcionar('sobre') == True:
+        return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = 'sobre'
     return render(request,'principais/about.html',dados)
         
@@ -622,9 +637,6 @@ def deletar_com_ids(request,user,id):
 
                         eletiva_a_ser_deletada.delete()
                 
-                        
-
-                            
             elif nao != "on" and sim != "on":
 
                 dados['message'] = "selecione um dos valores"
@@ -893,6 +905,8 @@ def update_com_id(request,user,id):
         return render(request, 'update/update_com_id.html', dados)
     
 def definir_paginas_utilizaveis(request):
+    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'definirpaginas') == True:
+        return redirect(retornar_index)
     ObjectPagina = PaginasUtilizaveis.objects
     if request.method == 'POST':
         ObjectPagina = ObjectPagina.get(id=1)
