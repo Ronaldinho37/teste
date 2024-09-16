@@ -145,7 +145,8 @@ def retornar_index(request):
     #if que verifica se o ADMIN já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
-
+        request.session['nome_user_logado'] = ''
+        request.session['senha_user_logado'] = ''
     dados = {}
     #como a session do Django dura enquanto o navegador estiver aberto(eu abilitei para isso) 
     #quando o usuário abrir o site pela primeira vez vai dar erro, por isso esse try
@@ -155,7 +156,7 @@ def retornar_index(request):
     except:
         request.session['user'] = None
         dados['user'] = request.session['user']
-    if dados_universsais != dados and dados['user'] == 'admin':
+    if dados_universsais != dados and dados['user'] != None:
         #caso o user logado seja um admin precisarei da senha e do nome dele, para impedir que ele se auto atualize ou delete
         dados['nome_user_logado'] = request.session['nome_user_logado']
         dados['senha_user_logado'] = request.session['senha_user_logado']
@@ -387,6 +388,8 @@ def add_professor(request, tipo_de_user):
         dados['eletivas'] = Eletivas.objects
          #recebe as eletivas: não poderei executar o 'exclude', porém, percorrerei-a para verificar se há eletivas sem professores
         dados['eletivas_para_for'] = Eletivas.objects.all().values()
+        if len(dados['eletivas_para_for']) == 0:
+            return redirect(retornar_index)
         if tipo_de_user != 'tutor':
             #este for verifica se tem alguma eletiva sem professor
             for i in dados['eletivas_para_for']:
