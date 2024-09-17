@@ -266,6 +266,8 @@ def eletivas(request):
     #essa variável recebe as duplas de professores por eletivas
     todos_professores = {}
     #for que percorre as eletivas existente
+    #ao fim, é adicionado na variável 'dados['todos_professores']' um dict com cada par de professores por eletiva
+    #no template é chamada uma tag que filtra o dict e retorna o nome dos professores que estão na eletiva
     for i in dados['eletivas']:
         #filtra os professores que dão aula na eletiva
         #e adiciona-os na variável "todos_professores" com uma key referente ao nome da eletiva 
@@ -408,8 +410,9 @@ def add_professor(request, tipo_de_user):
         #como eu tinha que executar o 'exclude' eu não podia obter os 'values' do models 'Eletivas', porém, agora posso
         dados['eletivas'] = dados['eletivas'].values()
         return render(request,'professor/addprofessor.html',dados)
-#######################################################
+#função que adiciona o aluno
 def add_aluno(request):
+    #verificando se o usuario pode realizar a ação requisitada
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
     else:
@@ -422,51 +425,67 @@ def add_aluno(request):
             imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
             
 
-            campos = [serie,nome,email,senha,eletiva]# checa se alguns dos valores acima e nulo
+            campos = [serie,nome,email,senha,eletiva]
+            # checa se alguns dos valores acima e nulo, se for impede que o alun o seja adicionado
             for i in campos:
-                
                 if i == '':
                     dados={}
                     dados['eletivas'] = Eletivas.objects.all().values()
                     dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
-                
                     return render(request,'aluno/addaluno.html',dados)
+            #se nenhum dos campos forem nulos então crie o novo aluno
             aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
+            #salve-o
             aluno.save()
+            
             return redirect(ver_eletiva,eletiva=eletiva)
         else:
             dados={}
             dados['eletivas'] = Eletivas.objects.all().values()
             dados['message'] = 'A imagem de perfil é opcional'
             return render(request,'aluno/addaluno.html',dados)
-
+#função que retorna para a página dos tutores
 def tutoria(request):
     dados=dados_universsais.copy()
+    #verificando se a página pode funcionar
     if ver_se_a_pagina_pode_funcionar('tutoria') == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
-    dados['pagina'] = 'tutoria'
+    dados['pagina'] = 'tutoria' #excluir essa linha
+    #pegue do models dos Professores somente onde tutor for igual a True
     dados['tutores'] = Professores.objects.filter(tutor=True)
+    #retornando para a página de tutoria
     return render(request,'principais/tutoria.html',dados)
-
+#função que edita e se ele não existir cria o aviso
 def editar_aviso(request,id):
+    #verificando se a página pode funcionar
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
         return redirect(retornar_index)
+    #como são só 2 avisos então não faz sentido o id passado na url ser maior que 2
     if id <= 2 and id > 0:
+        #tente pegar o aviso, se não der é porque ele não existe, então crie-o(são criados os avisos de id 1 e 2)
         try:
             anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
         except:
+            #número de avisos adicionados
             anuncios = 1
+            #enquato 'anuncios' for menor ou igual a 2(limite de avisos)
             while anuncios <= 2:
+                #crie avisos com quaisquer valores(exceto o id)
                 anuncio_a_ser_cadastrado = Anuncio(id=anuncios,titulo='titulo',descricao='descricao',imagem=checar_imagem_existente(None,'img_anuncio',None),link='https://www.google.com.br')
+                #salve-os
                 anuncio_a_ser_cadastrado.save()
+                #atribua 1 à variável 'anuncios', pois 1 aviso foi adicionado 
                 anuncios += 1
+            #pegue o aviso com o respectivo id
             anuncio_a_ser_atualizado = Anuncio.objects.get(id=id)
+        #todos os valores antigos do aviso
         titulo_antigo = anuncio_a_ser_atualizado.titulo
         descricao_antiga = anuncio_a_ser_atualizado.descricao
         imagem_antiga = anuncio_a_ser_atualizado.imagem
         link_antigo = anuncio_a_ser_atualizado.link
         #Pega valores presentes no form
         if request.method == 'POST':
+            #todos os novos valores do aviso
             titulo = request.POST.get('titulo')
             descricao = request.POST.get('descricao')
             imagem = request.FILES.get('imagem')
@@ -475,9 +494,11 @@ def editar_aviso(request,id):
             campos_novos = [titulo,descricao,imagem,link]
             #esta variavel contem todos os valores antigos do aviso
             campos_antigos = [titulo_antigo,descricao_antiga,imagem_antiga,link_antigo]
+            #variável que representa em qual campo o loop for esta, ex: 0=titulo_antigo,1=descricao_antiga...
             tam = 0
-            #for usado para checar se alguns dos anuncios e igual ao inserido na variavel campos novos
+            #for usado para checar se algum dos campos do anuncio e igual ao inserido na variavel campos novos
             for i in campos_novos:
+                #somente se for diferente adicione. O campo da imagem é só se for diferente de None
                 if tam == 0 and i != campos_antigos[tam]:
                     anuncio_a_ser_atualizado.titulo = i
                 elif tam == 1 and i != campos_antigos[tam]:
@@ -489,23 +510,27 @@ def editar_aviso(request,id):
                 elif tam == 3 and i != campos_antigos[tam]:
                     anuncio_a_ser_atualizado.link = i
                 tam += 1
-            
+            #salvando as alterações efetuadas
             anuncio_a_ser_atualizado.save()
+            #chamando a função que exclui a imagem se ela não esta mais sendo usada
             excluir_imagem('img_anuncio',Anuncio.objects.all().values())
-
             return redirect(retornar_index)
         else:
             dados = {}
+            #MODIFICAR AQUI#
             dados['form'] = AnuncioForm()
             dados['titulo'] = anuncio_a_ser_atualizado.titulo
             dados['descricao'] = anuncio_a_ser_atualizado.descricao
             dados['imagem'] = anuncio_a_ser_atualizado.imagem
             dados['link'] = anuncio_a_ser_atualizado.link
             return render(request, 'anuncio/addanuncio.html', dados)
+    #se o id for diferente de 1 ou 2 saía daqui
     else:
         return redirect(retornar_index)
+#função que atualiza a eletiva
+#excluir esta função
 def update_eletiva(request,id):
-    
+    #verificando se o usuario pode realizar a ação requisitada
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
     else:
@@ -543,46 +568,61 @@ def update_eletiva(request,id):
             dados['form'] = UpdateEletiva(instance=eletiva)
             return render(request,'eletiva/addeletiva.html',dados)
         
-#função para mostrar os dados existentes pagina sobre
+#função que retorna para a página sobre(about)
 def sobre(request):
     dados = dados_universsais.copy()
+     #verificando se a página pode funcionar
     if ver_se_a_pagina_pode_funcionar('sobre') == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
-    dados['pagina'] = 'sobre'
+    dados['pagina'] = 'sobre'#excluir essa linha
     return render(request,'principais/about.html',dados)
         
 def deletar_com_ids(request,user,id):
+        #verificando se o usuário pode deletar
         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
             return redirect(retornar_index)
-        
         dados = dados_universsais.copy()
+        #como os ids passados na url são strings, esta linha passa-os para uma lista
         dados['lista_id'] = id.split(',')
+        #variável que recebe o tamanho da lista de ids
         dados['tam_lista_id'] = len(dados['lista_id'])
-
-
-        #if que verifica  se os id entre usuario e admin sao iguais e se for ira ser apresentada a menssagem de que o usuario nao pode se auto-deletar
+       #se o user a ser deletado for um 'admin' e o user logado for o mesmo admin ele não poderá se auto deletar
         if dados['user'] == 'admin' and user == 'admin':
+            #pego o id referente ao admin logado
             id_do_user_logado = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
+            #loop para percorrer os ids
             for i in dados['lista_id']:
+                #se o id passado como parâmetro for igual ao id do user logado, impessa que o delete aconteça
                 if int(i) == id_do_user_logado:
                     dados['message'] = 'Você não pode se auto deletar'
                     return redirect(update_or_delete,u_or_d='deletar', user=user)
         
         if request.method == 'POST':
+            #pegando os valores dos inputs do html
             sim = request.POST.get('sim')
             nao = request.POST.get('nao')
+            #if para deletar
             if sim == 'on' and nao != 'on':
                 #ifs que deletam pelo id de acordo com o models escolhido: user=models='aluno,eletivas,admin ou professor' 
+                 #ambos  passam 3 variáveis:
+                # dados['model_user']: recebe o models com todas imagens que estão sendo usadas
+                # dados['diretorio_user']: recebe o nome da pasta onde esta localizada a imagem
+                # dados['user']: recebe o tipo de user que foi deletado
+                #se o user for um aluno
                 if user == "aluno":
                     dados['model_user'] = Alunos.objects.all().values()
                     dados['diretorio_user'] = "imagem_alunos"
-                    dados['user'] = 'alunos(s)'
+                    #mudar esta linha em todos ifs
+                    dados['user'] = 'aluno(s)'
+                    #loop que percorre os ids
                     for i in dados['lista_id']:
+                        #tente pegar o object de id = i e delete-o
                         try:
                             Alunos.objects.get(id=i).delete()
+                        #se não conseguir saía daqui
                         except:
                             return redirect(update_or_delete,u_or_d='deletar',user=user)
-
+                #se o user for um admin
                 elif user == "admin":
                     dados['model_user'] = Admins.objects.all().values()
                     dados['diretorio_user'] = "imagem_admins"
@@ -592,29 +632,40 @@ def deletar_com_ids(request,user,id):
                             Admins.objects.get(id=i).delete()
                         except:
                             return redirect(update_or_delete,u_or_d='deletar',user=user)
-
+                #se o user for um professor ou tutor
                 elif user == "professor" or user == "tutor":
                     dados['model_user'] = Professores.objects.all().values()
                     dados['diretorio_user'] = "imagem_professores"
+                    #se o user for tutor
                     if user == 'tutor':
+                        #variável que recebe somente os objects que são tutores
                         os_que_podem_ser_deletados = Professores.objects.filter(tutor=True)
                         dados['user'] = 'tutor(es)'
+                        #loop que percorre a lista de ids
                         for i in dados['lista_id']:
+                            #recebe o user a ser deletado
                             user_da_vez = os_que_podem_ser_deletados.filter(id=i)
+                            #se o tamanho da variável 'user_da_vez' for igual a 0 é poque o id passado não é de um tutor
+                            #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
                                 dados['message'] = 'User não é um tutor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
-                                
+                                 #tente pegar o object de id = i e delete-o
                                 try:
                                     Professores.objects.get(id=i).delete()
                                 except:
+                                     #se não conseguir saía daqui
                                     return redirect(update_or_delete,u_or_d='deletar',user=user)
                     else:
                         dados['user'] = 'professor(es)'
+                        #variável que recebe somente os objects que são professores
                         os_que_podem_ser_deletados = Professores.objects.filter(professor=True)
                         for i in dados['lista_id']:
+                         #recebe o user a ser deletado
                             user_da_vez = os_que_podem_ser_deletados.filter(id=i)
+                             #se o tamanho da variável 'user_da_vez' for igual a 0 é poque o id passado não é de um tutor
+                            #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
                                 dados['message'] = 'User não é um professor'
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
@@ -623,6 +674,7 @@ def deletar_com_ids(request,user,id):
                                     Professores.objects.get(id=i).delete()
                                 except:
                                     return redirect(update_or_delete,u_or_d='deletar',user=user)
+                #se o user passado como parâmetro for igual a eletiva
                 elif user == "eletiva":
                     dados['model_user'] = Eletivas.objects.all().values()
                     dados['diretorio_user'] = "img_eletivas"
@@ -632,47 +684,56 @@ def deletar_com_ids(request,user,id):
                             eletiva_a_ser_deletada = Eletivas.objects.get(id=i) #.delete()
                         except:
                             return redirect(update_or_delete,u_or_d='deletar',user=user)
+                      #como têm professores e alunos nas eletivas, para apaga-la será necessário retira-los desta. Esta variável
+                        #recebe uma lista com professores e alunos da referente eletiva
                         alunos_e_professores = [Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo),Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo)]
+                        #loop para percorrer a variável 'alunos_e_professores'
                         for i in alunos_e_professores:
+                            #loop para percorrer a variável da variável 'alunos_e_professores'(professores ou aluno) 
                             for e in i:
+                                #definindo o campo eletiva deles como None
                                 e.eletiva = None
-                                e.save()
-
+                                #salvando
+                                e.save() 
+                        #deletendo a eletiva
                         eletiva_a_ser_deletada.delete()
-                
+            #se ambos valores forem diferentes de 'on' é porque nenhum dos inputs foram marcados, por conguinte, saía daqui
             elif nao != "on" and sim != "on":
-
                 dados['message'] = "selecione um dos valores"
                 return redirect(deletar_com_ids, user=user,id=id)
             else:
                 return redirect(update_or_delete,u_or_d='deletar',user=user)
             
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
+            #como a eletiva tem dois campos que requerem imagens, é necessário que a função 'excluir_imagem' seja chamada novamente, 
+            #agora excluindo as imagens dos professores
             if dados['diretorio_user'] == 'img_eletivas':
                excluir_imagem(f"{dados['diretorio_user']}/img_professores_eletiva", dados['model_user'])
             dados['message'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
             dados['message'] = ''
+            #esse if checa se o professor também é um tutor ou vice-versa e retorna uma mensagem informando ao usuário
             if user == 'professor' or user == 'tutor':
+                #loop que percorre a lista com ids
                 for i in dados['lista_id']:
-                    try:
+                    #pega o professor/tutor
+                    try:   
                         professor_ou_tutor = Professores.objects.get(id=i)
                     except:
                         return redirect(update_or_delete,u_or_d='deletar',user=user)
+                    #variável que recebe o valor contrário ao user passado como parâmetro
                     user_da_vez = ''
-        
                     if user == 'professor':
                         user_da_vez += 'tutor'
-                        
                     else:
                         user_da_vez += 'professor'
+                    #se ambos campos 'tutor' e 'professor' forem True é porque ele é professor e tutor, logo, retorne uma menssagem
                     if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True: 
                         dados['message'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
                         break
-            
             return render(request,'deletar/deletar_com_ids.html',dados)
-
+#função que adiciona o admin
 def add_admin(request):
     if dados_universsais['user'] == 'admin':
         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
