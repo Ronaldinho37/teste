@@ -1,6 +1,9 @@
 {% block links %}
 {% load static%}
 <link rel="stylesheet" href="{% static 'css/cab.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <header>
         <div class="logo">ASN</div>
         <div class="header-controls">
@@ -15,7 +18,7 @@
             {% if user != None%}
                 
                 {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
-                <li class="menu-item">
+                <li class="menu-item" style="">
                     <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
                     <ul class="dropdown-content" id="home-dropdown">
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno </a></li>
@@ -55,11 +58,10 @@
             <li><a href="{% url 'eletivas' %}">Eletiva</a></li>
             <li><a href="{% url 'tutoria' %}">Tutores</a></li>
             <li><a href="{% url 'sobre'%}">Sobre</a></li>
-            <li><a href="{% url 'index'%}">Voltar</a></li>
         </ul>
 
         <div class="logo-container">
-            <img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" >
+            <a href="{% url 'index'%}"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
         </div>
     </nav>
 
