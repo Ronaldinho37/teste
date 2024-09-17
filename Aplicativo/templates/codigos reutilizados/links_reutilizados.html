@@ -11,6 +11,7 @@
             <button id="theme-switcher">🔆</button>
         </div>
     </header>
+    <div id="effect"></div>
 
     <nav id="side-nav">
         <button id="close-btn">&times;</button>
@@ -18,7 +19,7 @@
             {% if user != None%}
                 
                 {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
-                <li class="menu-item" style="">
+                <li class="menu-item">
                     <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
                     <ul class="dropdown-content" id="home-dropdown">
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno </a></li>
@@ -57,7 +58,7 @@
             {% endif %}
             <li><a href="{% url 'eletivas' %}">Eletiva</a></li>
             <li><a href="{% url 'tutoria' %}">Tutores</a></li>
-            <li><a href="{% url 'sobre'%}">Sobre</a></li>
+            <li><a href="{% url 'sobre'%}" id="sobre">Sobre</a></li>
         </ul>
 
         <div class="logo-container">
@@ -68,5 +69,6 @@
     <div id="overlay"></div>
 
     <script src="{% static 'js/cab.js' %}"></script>
+    <script src="{% static 'js/transition.js' %}"></script>
     {% endblock %}
 

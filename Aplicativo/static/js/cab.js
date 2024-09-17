@@ -2,10 +2,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuBtn = document.getElementById('menu-btn');
     const closeBtn = document.getElementById('close-btn');
     const sideNav = document.getElementById('side-nav');
-    const overlay = document.getElementById('overlay');
+    const effect = document.getElementById('effect');
     const themeSwitcher = document.getElementById('theme-switcher');
     const dropdownButtons = document.querySelectorAll('.dropdown-btn');
 
+    menuBtn.addEventListener('click', function() {
+        sideNav.style.right = '0'; /* Abrir o menu pela direita */
+        effect.classList.remove('visible'); // Certifique-se de que o efeito está oculto
+    });
+
+    closeBtn.addEventListener('click', function() {
+        sideNav.style.right = '-250px'; /* Fechar o menu pela direita */
+        effect.classList.remove('visible');
+    });
+
+    // Adicione o código para ocultar o side nav e mostrar o efeito
+    const sobreLink = document.getElementById('sobre');
+    if (sobreLink) {
+        sobreLink.addEventListener('click', function(event) {
+            event.preventDefault(); // Previne o comportamento padrão do link
+
+            // Oculta o side nav
+            sideNav.style.right = '-250px';
+            
+            // Adiciona a classe 'visible' ao efeito para ativar o efeito de fade-in
+            effect.classList.add('visible');
+
+            // Redireciona após o efeito de fade-in
+            setTimeout(function() {
+                window.location.href = sobreLink.href;
+            }, 3000); // Tempo deve corresponder à duração do efeito de fade-in
+        });
+    }
+
+    const overlay = document.getElementById('overlay');
     menuBtn.addEventListener('click', function() {
         sideNav.style.right = '0'; /* Abrir o menu pela direita */
         overlay.classList.add('show');

@@ -21,6 +21,43 @@ header {
     font-weight: bold;
     color: #0194FF;
 }
+.dropdown-btn-delete{
+    transition: .5s;
+    
+}
+
+.dropdown-btn-delete:hover{
+    border: 2px solid red;
+    color: red;
+    padding: 5px;
+    transition: .5s;
+    display: block;
+
+}
+
+#effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1); /* Preto totalmente opaco */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 1s ease;
+    z-index: 1000; /* Certifique-se de que o efeito está acima do side nav */
+}
+
+/* Visível */
+#effect.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Efeito de fade-in e fade-out */
+.fade {
+    transition: opacity 0.5s ease;
+}
 
 nav a:hover{
     text-decoration: none;
