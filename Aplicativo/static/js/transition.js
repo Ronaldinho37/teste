@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Redireciona após o efeito de fade-in
             setTimeout(function() {
                 window.location.href = sobreLink.href;
-            }, 500); // Tempo deve corresponder à duração do efeito de fade-in
+            }, 800); // Tempo deve corresponder à duração do efeito de fade-in
 
             // Remove a classe 'visible' após a transição para permitir o fade-out
             effect.addEventListener('transitionend', function() {

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Adicionando a fonte -->
+    <title>Loading Page</title>
+</head>
+<body>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ebeaeb;
+            flex-direction: column;
+            overflow: hidden; /* Evita rolagem durante o carregamento */
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ebeaeb;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            z-index: 1; /* Fica acima do conteúdo */
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 2; /* Fica acima do overlay */
+        }
+        
+        .logo {
+            width: 250px; /* Tamanho inicial da logo */
+           
+            animation: pulse 1.5s infinite; /* Animação de crescimento e diminuição */
+        }
+        
+        .tagline {
+            font-size: 18px; /* Tamanho da fonte das frases */
+            color: #333; /* Cor do texto */
+            margin: 20px 0; /* Espaço entre a frase e a barra de progresso */
+            opacity: 1; /* Opacidade padrão */
+            transition: opacity 0.5s ease, transform 0.5s ease; /* Transições para opacidade e transformação */
+            transform: translateY(10px); /* Desloca o texto levemente para baixo */
+        }
+        
+        .loader {
+            width: 0; /* Começa do tamanho 0 */
+            height: 20px; /* Altura da barra de progresso */
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px; /* Espaço entre a barra e o conteúdo abaixo */
+            overflow: hidden; /* Para garantir que nada transborde */
+            position: relative; /* Para usar posição absoluta na barra interna */
+            opacity: 0; /* Inicialmente invisível */
+            animation: grow 0.5s forwards; /* Animação de crescimento */
+        }
+        .fade {
+            opacity: 0; /* Efeito de fade */
+            transform: translateY(-10px); /* Desloca o texto levemente para cima durante o fade */
+        }
+        
+        .progress-bar {
+            position: absolute; /* Para centralizar */
+            left:0; /* Começa no meio */
+            width: 0; /* Largura inicial da barra azul */
+            height: 100%; /* Altura da barra de progresso */
+            border-radius: 15px;
+            background-color: #2e15ed;
+            transition: width 0.5s ease; /* Transição para a barra de progresso */
+            transform: translateX(-50%); /* Para centralizar a barra */
+        }
+        
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1); /* Tamanho original */
+            }
+            50% {
+                transform: scale(1.1); /* Tamanho aumentado */
+            }
+        }
+
+        @keyframes grow {
+            0% {
+                width: 0; /* Começa do tamanho 0 */
+                opacity: 1; /* Torna visível */
+            }
+            100% {
+                width: 400px; /* Alcança o tamanho total */
+                opacity: 1; /* Mantém visível */
+            }
+        }
+
+        @media(max-width: 375px) and (min-width: 320px){
+            .loader {
+                width: 300px; /* Largura fixa da barra de progresso */
+                background-color: #e0e0e0;
+                border-radius: 15px;
+                margin-bottom: 20px; /* Espaço entre a barra e o conteúdo abaixo */
+            }
+
+            @keyframes grow {
+                0% {
+                    width: 0; /* Começa do tamanho 0 */
+                    opacity: 1; /* Torna visível */
+                }
+                100% {
+                    width: 300px; /* Alcança o tamanho total */
+                    opacity: 1; /* Mantém visível */
+                }
+            }
+    
+        }
+        
+        
+        
+        
+    </style>
+
+    <div class="overlay"></div>
+    <div class="container">
+        <img src="../../../media/img_fixas/logo-asn.png" alt="Logo" class="logo"> <!-- Substitua "logo.png" pelo caminho da sua logo -->
+        <div class="tagline" id="tagline" style=" font-family: 'Roboto', sans-serif; /* Definindo a fonte */">O seu futuro está aqui</div>
+        <div class="loader">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simulação de carregamento
+        let progress = 0;
+        const progressBar = document.querySelector('.progress-bar');
+        const overlay = document.querySelector('.overlay');
+        const loader = document.querySelector('.loader');
+    
+        // Frases para exibir
+        const phrases = [
+            "O seu futuro está aqui",
+            "Descubra novas possibilidades",
+            "Transforme seus sonhos em realidade",
+            "Estamos aqui para te apoiar",
+            "A inovação começa com você",
+            "Acredite no seu potencial",
+            "O sucesso é uma jornada, não um destino",
+            "Desafie seus limites",
+            "Cada passo conta",
+            "Seu esforço fará a diferença",
+            "O primeiro passo é sempre o mais difícil",
+            "Seja a mudança que você deseja ver",
+            "Sonhe grande, comece pequeno",
+            "O que você faz hoje pode mudar seu amanhã",
+            "A vida é feita de escolhas",
+            "Construa a sua própria história",
+            "Aprenda com os erros, celebre os acertos",
+            "A perseverança é a chave do sucesso",
+            "O conhecimento é um poderoso aliado",
+            "Sua atitude determina sua altitude",
+            "A oportunidade bate à porta de quem está preparado"
+        ];
+    
+        // Função para sortear uma frase
+        function getRandomPhrase() {
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            return phrases[randomIndex];
+        }
+    
+        // Inicia a animação da barra de progresso
+        loader.style.opacity = 1; // Torna a barra visível
+        setTimeout(() => {
+            // Inicia o carregamento da barra azul
+            progressBar.style.width = '0'; // Garante que comece em 0
+            const loadingInterval = setInterval(() => {
+                if (progress < 100) {
+                    progress += 2; // Incrementa o progresso
+                    progressBar.style.width = progress + '%'; // Atualiza a largura da barra azul
+                } else {
+                    clearInterval(loadingInterval);
+                    // Apenas remove o overlay após o carregamento completo
+                    overlay.style.opacity = 0; // Remove o overlay
+                    setTimeout(() => {
+                        overlay.style.display = 'none'; // Remove do DOM após a transição
+                        // Aqui você pode redirecionar para outra página ou exibir o conteúdo
+                        document.body.innerHTML = '<h1>Bem-vindo ao site!</h1>';
+                    }, 500);
+                }
+            }, 100); // Tempo de intervalo (em milissegundos)
+        }, 500); // Tempo para iniciar o carregamento após a animação
+    
+        // Troca as frases a cada 3 segundos com fade
+        const taglineElement = document.getElementById('tagline');
+    
+        setInterval(() => {
+            taglineElement.classList.add('fade'); // Adiciona a classe de fade
+            setTimeout(() => {
+                taglineElement.innerText = getRandomPhrase(); // Sorteia uma nova frase
+                taglineElement.classList.remove('fade'); // Remove a classe de fade
+            }, 500); // Tempo do fade
+        }, 2000);
+    </script>
+    
+    
+    
+    
+    
+    
+    
+</body>
+</html>
+    </script>
+</body>
+</html>
