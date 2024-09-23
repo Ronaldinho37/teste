@@ -173,6 +173,10 @@ def retornar_index(request):
 
 #nesta função é feito o login dos usuários 
 def login_viwes(request):
+    try:
+        request.session['user']
+    except:
+        request.session['user'] = None
     #esse if verifica se já tem um usuário logado, se tiver é necessário que deslogue para logar de novo
     if request.session['user'] == 'ADMIN'or request.session['user'] != None:
         return redirect(retornar_index)
