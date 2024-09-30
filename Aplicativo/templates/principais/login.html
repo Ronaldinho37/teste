@@ -3,112 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .checkboxes {
-            margin: 20px 0;
-        }
-
-        .checkboxes label {
-            margin-right: 15px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .checkboxes input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        p {
-            margin: 15px 0;
-            font-size: 16px;
-            color: #333;
-        }
-        
-    </style>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="./styler2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    {% include 'codigos reutilizados/menssage.html' %}
-    {% block menssagem %}
-    {% endblock %}
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="nome" id="nome" value="{{nome}}" required placeholder="Nome">
-        <input type="password" name="password" id="password" value="{{password}}" required placeholder="Senha">
-        <p>Eu sou um:</p>
-        <div class="checkboxes">
-            <label for="ADMIN">ADMIN</label>
-            <input type="checkbox" name="ADMIN" id="ADMIN" onclick="vai(this)">
-            <label for="admin">Admin</label>
-            <input type="checkbox" name="Admin" id="Admin" onclick="vai(this)">
-            <label for="Professor">Professor</label>
-            <input type="checkbox" name="Professor" id="Professor" onclick="vai(this)">
-            <label for="Tutor">Tutor</label>
-            <input type="checkbox" name="Tutor" id="Tutor" onclick="vai(this)">
-            <label for="Aluno">Aluno</label>
-            <input type="checkbox" name="Aluno" id="aluno" onclick="vai(this)">
+    <div class="login-container">
+        <div class="form-container" >
+            <div class="logo-header" id="minha_logo">
+                <img src="./logo-asn.png" alt="Logo">
+            </div>
+            <h2 id="welcome-message">Bem-vindo!!!</h2>
+            <p id="please">Por favor, preencha suas credenciais</p>
+            <form action="#" id="carai">
+                <label for="email" style="color: rgb(154, 156, 158);">Email</label>
+                <input type="email" id="email" name="email" placeholder="Email address" >
+                
+                <label for="password" style="color: rgb(154, 156, 158);" >Senha</label>
+                <input type="password" id="password" name="password" placeholder="Password" >
+                
+                <p id="error-message" style="color: red; display: none;">Por favor, preencha todos os campos corretamente.</p>
+                <button type="submit" class="signin-btn" id="confirm-button">Confirmar</button>
+
+            </form>
+
+            <!-- Contêiner para os botões -->
+        <div id="button-container" style="display: none;">
+            <h1>VOCÊ É UM:</h1>
+            <button class="classes">
+                <img src="./principal.jpg" alt="" style="border-radius: 50%;" width="50">
+                <h5>ADMINISTRADOR</h5></button>
+            <button class="classes">
+                <img src="./teacher.jpg" alt="" style="border-radius: 50%;" width="50">
+                <h5>PROFFESOR</h5></button>
+            <button class="classes">
+                <img src="./student.jpg" alt="" style="border-radius: 50%;" width="50">
+                <h5>ALUNO</h5></button>
+            <button class="classes">
+                <img src="./tutor.jpg" alt="" style="border-radius: 50%;" width="50">
+                <h5>TUTOR</h5></button>
+            <button id="back-button">Voltar</button> <!-- Botão para voltar -->
         </div>
-        <input type="submit" value="submit">
-    </form>
-    <script>
-        let inputs = document.querySelectorAll('input[type="checkbox"]');
-        function vai(x){
-            for(i of inputs){
-                if(i.id != x.id){
-                    i.checked = false
-                } else {
-                    i.checked = true
-                }
-            }
-        }
-    </script>
+        </div>
+        <div class="video-container">
+            <video autoplay muted loop>
+                <source src="./asn vem de frente.MP4" type="video/mp4" id="vidio">
+                Your browser does not support the video tag.
+            </video>
+            <div class="overlay">
+                <div class="content">
+                    <img src="./logo_espirito_santo.png" alt="" width="190" class="espirit">
+                    <p class="typewriter-text">
+                        <span id="typewriter"></span><br><span id="highlight"></span><span id="cursor"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="./digit.js"></script>
+    <script src="./R_login.js"></script>
 </body>
 </html>
