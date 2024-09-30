@@ -17,7 +17,7 @@
         <button id="close-btn">&times;</button>
         <ul>
             {% if user != None%}
-                
+            <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
