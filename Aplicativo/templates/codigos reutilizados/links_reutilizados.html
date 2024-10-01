@@ -18,7 +18,6 @@
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
                     <ul class="dropdown-content" id="home-dropdown">
-                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno </a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='professor'%}">Deletar Professor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='tutor'%}">Deletar Tutor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='eletiva'%}">Deletar Eletiva</a></li>
@@ -30,7 +29,6 @@
                     <li class="menu-item">
                         <a href="" class="dropdown-btn-add dropdown-btn" data-target="services-dropdown">Adicionar</a>
                         <ul class="dropdown-content" id="services-dropdown">
-                            <li><a href="{% url 'add-aluno'%}">Adcionar Aluno</a></li>
                             <li><a href="{% url 'add' tipo_de_user='professor'%}">Adcionar Professor</a></li>
                             <li><a href="{% url 'add' tipo_de_user='tutor'%}">Adcionar Tutor</a></li>
                             <li><a href="{% url 'add' tipo_de_user='professor-tutor'%}">Adcionar Professor/Tutor</a></li>
@@ -43,7 +41,6 @@
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-update dropdown-btn" data-target="contact-dropdown">Atualizar</a>
                     <ul class="dropdown-content" id="contact-dropdown">
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='aluno'%}">Atualizar  Aluno</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Atualizar  Professor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='tutor'%}">Atualizar  Tutor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='admin'%}">Atualizar  Admin</a></li>

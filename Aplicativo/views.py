@@ -86,8 +86,11 @@ def checar_imagem_existente(imagem,pasta,acao):
 def excluir_imagem(dir,model):
     #variável que guarda as imagens que estão sendo utilizadas
     imagens_usuarios = []
-    #variável que guarda todas imagens da pasta media
-    imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+    try:
+        #variável que guarda todas imagens da pasta media
+        imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+    except:
+        return
     #caso a pasta passada como parâmetro seja a 'pasta_da_velha_imagem' é necessário que se exclua a sub-pasta 'img_professores_eletiva', pois eu só preciso das imagens
     if dir == 'img_eletivas':
         imagens_da_pasta_solicitada.remove('img_professores_eletiva')
@@ -189,7 +192,7 @@ def login_viwes(request):
         #guardará o valor inserido pelo usuário referente a cada checkbox
         checkboxes = {}
         #lista de nomes de cada checkbox do html
-        lista_checkboxes = ['ADMIN','Admin','Professor','Aluno','Tutor']
+        lista_checkboxes = ['ADMIN','Admin']
         #for que armazena na variável 'checkboxes' os valores referentes a cada input do html
         for i in lista_checkboxes:
             checkboxes[f'{i}'] = request.POST.get(f'{i}')
@@ -220,31 +223,6 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     return redirect(retornar_index)
-        #caso o usuário a ser logado seja o professor
-        elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
-            #pegue todos os professores do meu site
-            professor = Professores.objects.all().values()
-            #percorra-os
-            for i in professor:
-                #se o nome e senha pegados do html forem iguais à nome e senha de algum professor então logue-o
-                if i['nome'].lower() == nome and i['senha'] == password:
-                    request.session['user'] = 'professor'
-                    request.session['nome_user_logado'] = nome
-                    request.session['senha_user_logado'] = password
-                    return redirect(retornar_index)
-        #caso o usuário a ser logado seja o aluno
-        elif checkboxes['Aluno'] == 'on':
-            #pegue todos os alunos do meu site
-            alunos = Alunos.objects.all().values()
-            #percorra-os
-            for i in alunos:
-                #se o nome e senha pegados do html forem iguais à nome e senha de algum aluno então logue-o
-                if i['nome'].lower() == nome and i['senha'] == password:
-                    request.session['user'] = 'aluno'
-                    request.session['nome_user_logado'] = nome
-                    request.session['senha_user_logado'] = password
-                    return redirect(retornar_index)
-                    
             
         #se chegou até aqui é porque nenhum dos ifs anteriores foram iguais a True, logo a senha ou nome ou usuário escolhidos não coincidem
         dados = {}
@@ -327,18 +305,6 @@ def add_eletivas(request):
         dados['message'] = ''
         return render(request,'eletiva/addeletiva.html',dados)
 
-#função que retorna os alunos e professores presentes na eletiva
-def ver_eletiva(request,eletiva):
-    dados = {}
-    dados['alunos'] = Alunos.objects.filter(eletiva=eletiva).values()
-    try:
-        dados['professor'] = Professores.objects.filter(eletiva=eletiva)
-    except:
-        dados['message'] = 'Não professor responsável por essa eletiva'
-    if len(dados['alunos']) == 0:
-        dados['message'] = 'Não há alunos nesta eletiva'
-    return  render(request,'eletiva/eletiva.html',dados)
-
 #função que adiciona os professores e/ou tutores
 #tipo_de_user: tipo do user a ser adicionado(professor/tutor)
 def add_professor(request, tipo_de_user):
@@ -413,37 +379,6 @@ def add_professor(request, tipo_de_user):
         dados['eletivas'] = dados['eletivas'].values()
         return render(request,'professor/addprofessor.html',dados)
 #######################################################
-def add_aluno(request):
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-        return redirect(retornar_index)
-    else:
-        if request.method == 'POST':
-            serie=request.POST.get('serie')
-            nome=request.POST.get('nome')
-            email=request.POST.get('email')
-            senha=request.POST.get('senha')
-            eletiva=request.POST.get('select')
-            imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
-            
-
-            campos = [serie,nome,email,senha,eletiva]# checa se alguns dos valores acima e nulo
-            for i in campos:
-                
-                if i == '':
-                    dados={}
-                    dados['eletivas'] = Eletivas.objects.all().values()
-                    dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
-                
-                    return render(request,'aluno/addaluno.html',dados)
-            aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
-            aluno.save()
-            return redirect(ver_eletiva,eletiva=eletiva)
-        else:
-            dados={}
-            dados['eletivas'] = Eletivas.objects.all().values()
-            dados['message'] = 'A imagem de perfil é opcional'
-            return render(request,'aluno/addaluno.html',dados)
-
 def tutoria(request):
     dados=dados_universsais.copy()
     if ver_se_a_pagina_pode_funcionar('tutoria') == True:
@@ -509,7 +444,6 @@ def editar_aviso(request,id):
     else:
         return redirect(retornar_index)
 def update_eletiva(request,id):
-    
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
     else:
@@ -521,17 +455,11 @@ def update_eletiva(request,id):
             if form.is_valid():
                 if form.cleaned_data.get('titulo') != eletiva_1:
                     professores = Professores.objects.filter(eletiva=eletiva_1)
-                    alunos = Alunos.objects.filter(eletiva=eletiva_1)
                     if len(professores) != 0:
                         for professor in professores:
                             professor.eletiva = form.cleaned_data.get('titulo')
                             professor.save()
                        
-                    if len(alunos) != 0:
-                        for aluno in alunos:
-                            aluno.eletiva = form.cleaned_data.get('titulo')
-                            aluno.save()
-        
                 form.save()
                 return redirect(eletivas)
             else:
@@ -576,18 +504,7 @@ def deletar_com_ids(request,user,id):
             sim = request.POST.get('sim')
             nao = request.POST.get('nao')
             if sim == 'on' and nao != 'on':
-                #ifs que deletam pelo id de acordo com o models escolhido: user=models='aluno,eletivas,admin ou professor' 
-                if user == "aluno":
-                    dados['model_user'] = Alunos.objects.all().values()
-                    dados['diretorio_user'] = "imagem_alunos"
-                    dados['user'] = 'alunos(s)'
-                    for i in dados['lista_id']:
-                        try:
-                            Alunos.objects.get(id=i).delete()
-                        except:
-                            return redirect(update_or_delete,u_or_d='deletar',user=user)
-
-                elif user == "admin":
+                if user == "admin":
                     dados['model_user'] = Admins.objects.all().values()
                     dados['diretorio_user'] = "imagem_admins"
                     dados['user'] = 'admin(s)'
@@ -701,6 +618,7 @@ def add_admin(request):
         return redirect(retornar_index)
     else:
         return render(request,'acoes_principais/template_add.html')
+    
 def update_or_delete(request,u_or_d,user):
     if u_or_d != 'deletar' and u_or_d != 'update':
         return redirect(retornar_index)
@@ -715,9 +633,7 @@ def update_or_delete(request,u_or_d,user):
     dados['tabela_user_passado_como_parametro'] = user
 
     dados['modo'] = f'{u_or_d}'
-    if user.lower() == 'aluno':
-        dados['usuarios'] = Alunos.objects.all().values()
-    elif user.lower() == 'professor':
+    if user.lower() == 'professor':
         dados['usuarios'] = Professores.objects.exclude(professor=False)
     elif user.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()
@@ -741,18 +657,7 @@ def update_com_id(request,user,id):
     user_a_ser_atualizado = []
     campos_atigos_do_user = []
     model = []
-
-    #ifs para adcionar valores antigos do usuario
-    if user == 'aluno':
-        try:
-            user_a_ser_atualizado.append(Alunos.objects.get(id=id))
-        except:
-            return redirect(update_or_delete,u_or_d='update', user=user)
-        model.append(Alunos.objects.all().values())
-        model.append("imagem_alunos")
-        campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva,user_a_ser_atualizado[0].serie]
-
-    elif user == 'professor' or user == 'tutor' or user == 'professor-tutor':
+    if user == 'professor' or user == 'tutor' or user == 'professor-tutor':
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
         except:
@@ -799,12 +704,10 @@ def update_com_id(request,user,id):
             
         campos_atualizados_do_user = []
         #ifs que pegamm valores atuais dos usuarios
-        if user == 'aluno' or user == 'professor':
+        if user == 'professor': #user == 'aluno' or 
             eletiva = request.POST.get('eletiva')
             campos_atualizados_do_user = [nome,email,senha,imagem,eletiva]
-            if user == 'aluno':
-                serie = request.POST.get('serie')
-                campos_atualizados_do_user = [nome,email,senha,imagem,eletiva,serie]
+
         elif user == 'tutor' or user == 'professor-tutor':
             descricao = request.POST.get('descricao')
             if user == 'professor-tutor':
@@ -838,16 +741,12 @@ def update_com_id(request,user,id):
                 if tam == 0:
                     if user == 'eletiva':
                         professores = Professores.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
-                        alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
+                        # alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
                         if len(professores) != 0:
                             for e in professores:
                                 e.eletiva = i
                                 e.save()
 
-                        if len(alunos) != 0:
-                            for e in alunos:
-                                e.eletiva = i
-                                e.save()
                         user_a_ser_atualizado[0].titulo = i
                     else:
                         user_a_ser_atualizado[0].nome = i
