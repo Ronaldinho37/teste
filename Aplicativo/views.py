@@ -244,7 +244,7 @@ def login_viwes(request):
             
         #se chegou até aqui é porque nenhum dos ifs anteriores foram iguais a True, logo a senha ou nome ou usuário escolhidos não coincidem
         dados = {}
-        dados['message'] = "Usuário ou senha inválidos!"
+        dados['message'] = "Usuário ou senha inválidos!, por favor, preencha noamente suas credenciais!!"
         dados['form'] = LoginForm()
         dados['nome'] = nome
         dados['password'] = password

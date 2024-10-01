@@ -29,6 +29,8 @@
                 
                 <label for="password" style="color: rgb(154, 156, 158);" >Senha</label>
                 <input type="password" id="password" name="password" placeholder="Password" value="{{password}}">
+                <img id="olho" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABDUlEQVQ4jd2SvW3DMBBGbwQVKlyo4BGC4FKFS4+TATKCNxAggkeoSpHSRQbwAB7AA7hQoUKFLH6E2qQQHfgHdpo0yQHX8T3exyPR/ytlQ8kOhgV7FvSx9+xglA3lM3DBgh0LPn/onbJhcQ0bv2SHlgVgQa/suFHVkCg7bm5gzB2OyvjlDFdDcoa19etZMN8Qp7oUDPEM2KFV1ZAQO2zPMBERO7Ra4JQNpRa4K4FDS0R0IdneCbQLb4/zh/c7QdH4NL40tPXrovFpjHQr6PJ6yr5hQV80PiUiIm1OKxZ0LICS8TWvpyyOf2DBQQtcXk8Zi3+JcKfNafVsjZ0WfGgJlZZQxZjdwzX+ykf6u/UF0Fwo5Apfcq8AAAAASUVORK5CYII="
+/>
                 
                 <p id="error-message" style="color: red; display: none;">Por favor, preencha todos os campos corretamente.</p>
                 <button type="submit" class="signin-btn" id="confirm-button">Confirmar</button>
@@ -40,10 +42,10 @@
                     <h1>VOCÊ É UM:</h1>
                     <button class="classes" type="submit" onclick="marcar_chackbox('ADMIN')">
                         <img src="../../../media/img_fixas/principal.jpg" alt="" style="border-radius: 50%;" width="50">
-                        <h5>ADMIN</h5></button>
+                        <h5>DIRETOR</h5></button>
                         <button class="classes"  type="submit" onclick="marcar_chackbox('Admin')">
                             <img src="../../../media/img_fixas/principal.jpg" alt="" style="border-radius: 50%;" width="50">
-                            <h5>admin</h5></button>
+                            <h5>GESTOR</h5></button>
                             <button class="classes">
                                 <img src="../../../media/img_fixas/teacher.jpg" alt="" style="border-radius: 50%;" width="50">
                                 <h5>PROFFESOR</h5></button>
@@ -64,7 +66,7 @@
         </div>
         <div class="video-container">
             <video autoplay muted loop>
-                <source src="./asn vem de frente.MP4" type="video/mp4" id="vidio">
+                <source src="../../../media/img_fixas/asn vem de frente.MP4" type="video/mp4" id="vidio">
                 Your browser does not support the video tag.
             </video>
             <div class="overlay">
@@ -86,6 +88,23 @@
             let ip = document.querySelector(`input[name=${x}]`).checked = true
             console.log(ip)
         }
+
+        var senha = $('#password');
+var olho= $("#olho");
+
+olho.mousedown(function() {
+  senha.attr("type", "text");
+});
+
+olho.mouseup(function() {
+  senha.attr("type", "password");
+});
+// para evitar o problema de arrastar a imagem e a senha continuar exposta, 
+//citada pelo nosso amigo nos comentários
+$( "#olho" ).mouseout(function() { 
+  $("#password").attr("type", "password");
+});
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 </body>
 </html>
