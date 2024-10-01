@@ -12,6 +12,7 @@ import os
 from PIL import Image
 #pip freeze > requiriments.txt
 
+menssagem = {'logado':['','']}
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
 dados_universsais = {}
@@ -169,6 +170,12 @@ def retornar_index(request):
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     #variável que contém os cards de avisos
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
+    if menssagem['logado'][1] == 0:
+        dados['message'] = menssagem['logado'][0]
+        menssagem['logado'][1] += 1
+    elif menssagem['logado'][1] == 1:
+        menssagem.clear()
+        menssagem['logado'] = ['','']
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -200,6 +207,7 @@ def login_viwes(request):
                 request.session['user'] = 'ADMIN'
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
+                menssagem['logado'] = ['User logado com sucesso!',0]
                 return redirect(retornar_index)
         #caso o usuário a ser logado seja o Admin
         elif checkboxes['Admin'] == 'on':
@@ -215,6 +223,7 @@ def login_viwes(request):
                     request.session['lista_de_acoes'] = acoes_lista
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
+                    menssagem['logado'] = ['User logado com sucesso!',0]
                     return redirect(retornar_index)
         #caso o usuário a ser logado seja o professor
         elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
@@ -227,6 +236,7 @@ def login_viwes(request):
                     request.session['user'] = 'professor'
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
+                    menssagem['logado'] = ['User logado com sucesso!',0]
                     return redirect(retornar_index)
         #caso o usuário a ser logado seja o aluno
         elif checkboxes['Aluno'] == 'on':
@@ -239,6 +249,7 @@ def login_viwes(request):
                     request.session['user'] = 'aluno'
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
+                    menssagem['logado'] = ['User logado com sucesso!',0]
                     return redirect(retornar_index)
                     
             

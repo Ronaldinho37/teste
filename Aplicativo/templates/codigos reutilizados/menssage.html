@@ -67,8 +67,8 @@
         .border-modal{
             background-color: #0056b3;
             width: 410px;
-            height: 165px;
             border-radius: 10px;
+            display: flex;
             
         }
 
@@ -81,7 +81,7 @@
     <div class="border-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 style="color:red;">Acesso Negado</h2>
+            <h2 style="color:red;" id="h2">Acesso Negado</h2>
             <span class="close">&times;</span>
         </div>
         
@@ -96,6 +96,12 @@
 </div>
 {% endif %}
 <script>
+    window.onload = () => {
+        let pagina = document.querySelector('title').innerText;
+        if(pagina == 'Home'){
+            document.querySelector('h2[id="h2"]').innerText = ''
+        }
+    }
     let p = document.querySelector('p[id="mensagem-final"]').innerText
     const modal = document.getElementById('errorModal');
     if(p != ''){
