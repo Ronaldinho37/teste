@@ -75,25 +75,52 @@
         :-ms-reveal{
             border: 1px solid transparent;
         }
+
+        .div-log{
+            background-color: #089432;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .message{
+            display: inline;
+            font-size: 12px;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .log{
+            display: flex;
+            justify-content: center;
+        }
 </style>
-{% if message != '' %}
-<div id="errorModal" class="modal">
-    <div class="border-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 style="color:red;" id="h2">Acesso Negado</h2>
-            <span class="close">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <p id="mensagem-final">{{message}}</p>
-        </div>
-        <div class="modal-footer">
-            <button id="closeModal"></button>
-        </div>
+{% if message != ''%}
+    {% if message == 'User logado com sucesso!'%}
+    <div class="log">
+    <div class="div-log">
+        <h1 class="message">{{message}}</h1>
     </div>
 </div>
-</div>
+    {% else %}
+    <div id="errorModal" class="modal">
+        <div class="border-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="color:red;" id="h2">Acesso Negado</h2>
+                <span class="close">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <p id="mensagem-final">{{message}}</p>
+            </div>
+            <div class="modal-footer">
+                <button id="closeModal"></button>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
 {% endif %}
 <script>
     window.onload = () => {
