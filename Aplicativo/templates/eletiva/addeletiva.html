@@ -7,6 +7,156 @@
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/add_users.css' %}">
 </head>
+<style>
+    /* Fundo azul cobrindo toda a tela */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #007bff; /* Fundo azul */
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Menu lateral */
+    nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #333;
+        padding-top: 20px;
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        padding: 10px;
+        text-align: left;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2rem;
+    }
+
+    /* Quadro branco para o conteúdo */
+    .content {
+        margin-left: 270px; /* Espaço para o menu */
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 40px;
+        max-width: 80%; /* Ajusta a largura máxima */
+        margin-bottom: 40px;
+
+        /* Estilo da borda */
+        border: 5px solid transparent; /* Borda inicial transparente */
+        border-radius: 15px; /* Borda arredondada */
+        position: relative; /* Para posicionar o pseudo-elemento */
+    }
+
+    /* Pseudo-elemento para borda estilizada */
+    .content::before {
+        content: "";
+        position: absolute;
+        top: -5px; /* Ajuste para cima */
+        left: -5px; /* Ajuste para a esquerda */
+        right: -5px; /* Ajuste para a direita */
+        bottom: -5px; /* Ajuste para baixo */
+        background: linear-gradient(45deg, #007bff, #0056b3); /* Gradiente da borda */
+        border-radius: 15px; /* Borda arredondada */
+        z-index: -1; /* Coloca atrás do conteúdo */
+        filter: blur(5px); /* Efeito de desfoque */
+    }
+
+    /* Título */
+    h1 {
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Parágrafo */
+    p {
+        font-size: 1.1rem;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    /* Estilo do botão */
+    .btn {
+        padding: 10px 25px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        nav {
+            width: 200px;
+            position: absolute; /* Muda para absoluto */
+            z-index: 10; /* Coloca o menu acima de outros elementos */
+        }
+
+        nav.active {
+            transform: translateX(0); /* Exibe o menu */
+        }
+
+        .content {
+            margin-left: 0; /* Remove o espaço lateral em telas pequenas */
+            max-width: 100%;
+            padding: 10px; /* Reduz o padding */
+            margin-top: 20px; /* Ajusta a margem superior */
+        }
+        
+        h1 {
+            font-size: 1.8rem; /* Reduz o tamanho do título */
+        }
+
+        p {
+            font-size: 1rem; /* Reduz o tamanho do texto */
+        }
+        
+        .btn {
+            padding: 8px 20px; /* Ajusta o tamanho do botão */
+        }
+    }
+
+    /* Estilo do botão de menu */
+    #menu-btn {
+        display: block; /* Exibe o botão de menu */
+        background-color: #007bff; /* Cor do botão */
+        color: #fff; /* Cor do texto */
+        border: none; /* Sem borda */
+        padding: 10px; /* Padding do botão */
+        cursor: pointer; /* Muda o cursor ao passar o mouse */
+        border-radius: 5px; /* Bordas arredondadas */
+        font-size: 1.2rem; /* Tamanho da fonte */
+        margin: 10px; /* Margem do botão */
+        position: fixed; /* Fixa o botão na tela */
+        top: 20px; /* Distância do topo */
+        left: 20px; /* Distância da esquerda */
+    }
+</style>
+
 <body>
     {% include 'codigos reutilizados/menssage.html' %}
     {% block menssagem %}
