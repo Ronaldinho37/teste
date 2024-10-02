@@ -1,167 +1,186 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/about.css'%}">
-    <link rel="stylesheet" href="{% static 'css/style.css'%}">
-    <script src="https://unpkg.com/scrollreveal"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton+SC&display=swap" rel="stylesheet">
-    <style>
-        #gradient {
-            position: relative; /* Adiciona posição relativa ao container pai */
-        }
-        #hidden-title {
-            position: absolute; /* Posiciona absolutamente dentro do container pai */
-            top: 50%; /* Ajuste o posicionamento conforme necessário */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0; /* Começa oculto */
-            transition: opacity 0.3s ease; /* Adiciona transição suave */
-        }
-    </style>
-    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/abount_new.css'%}">
+    <title>sobre</title>
 </head>
-<body class="">
 
+<body>
 
+    
     {% include 'codigos reutilizados/links_reutilizados.html' %}
     {% block links %}
     {% endblock %}
 
-    <div class="container py-5">
-        <div class="row">
-            <div class="col text-center">
-                <div class="d-flex justify-content-center p-5" id="gradient">
-                    <h1 id="hidden-title">A ESCOLA COM <br> FOCO CONSTANTE NA <br> <span style="color:rgb(245, 209, 31);">EDUCAÇÃO</span></h1>
-                    <img src="../../media/img_fixas/logo-asn.png" id="logo" style="cursor: pointer;">
-                </div>
-            </div>
+    <section id="s1">
+    <div class="titulo"></div>
+    <h1>Nossa Historia</h1>
+    <div>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. 
+        The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', 
+        making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. 
+        Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</div>
+    </section>
+<br>
+<section id="ss2">
+    <section class="timeline">
+    <div class="timeline-item">
+        <div class="content-left">
+            <h2>1978</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex.
+            </p>
         </div>
-
-        <h1 class="text-center pt-5" id="text-objective">OBJETIVOS:</h1>
-<div class="container">
-    <div class="row justify-content-around">
-        <div class="col-md-4">
-            <div class="bg-primary text-white p-3 rounded-3">
-                <h3 class="text-center">OBJETIVO</h3>
-                <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at auctor lectus, id sagittis felis. Sed ac risus vel neque efficitur scelerisque. Suspendisse ut molestie mi.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-primary text-white p-3 rounded-3">
-                <h3 class="text-center">MISSÃO</h3>
-                <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at auctor lectus, id sagittis felis. Sed ac risus vel neque efficitur scelerisque. Suspendisse ut molestie mi.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-primary text-white p-3 rounded-3">
-                <h3 class="text-center">VALORES</h3>
-                <p class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at auctor lectus, id sagittis felis. Sed ac risus vel neque efficitur scelerisque. Suspendisse ut molestie mi.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-        <div class="importante d-flex flex-column flex-md-row justify-content-between align-items-center mt-5">
-            <div>
-                <h2 class="history"><strong>NOSSA HISTÓRIA</strong></h2>
-                <p class="text-importante">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus,
-                     suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis.
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus,
-                     suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis.
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus,
-                     suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis.
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus,
-                     suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis.
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus,
-                     suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis.</p>
-            </div>
-            <img src="../../media/img_fixas/Albert-Einstein-PNG-HD-Image.png" class="albert d-none d-md-block" alt="" width="500">
+        <div class="image-right">
+            <!-- Adicione sua imagem aqui -->
         </div>
     </div>
 
+    <div class="timeline-item">
+        <div class="content-left">
+            <h2>1985</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex.
+            </p>
+        </div>
+        <div class="image-right">
+            <!-- Adicione sua imagem aqui -->
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="content-left">
+            <h2>2010</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex. Cras eu massa lobortis, luctus turpis sit amet, sagittis turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec justo rhoncus, suscipit arcu eget, viverra ex.
+            </p>
+        </div>
+        <div class="image-right">
+            <!-- Adicione sua imagem aqui -->
+        </div>
+    </div>
+    </section>
+        <br>
+
+</section>        
+<section id="s3">
+            <div class="num">
+            <h1>Números do ASN</h1>
+            <div class="resto">
+
+            <div class="pri">
+            <h2>+200 mil</h2>
+            <p>aprovados em medicina</p>
+        </div>
+            <div class="sec">
+                <h2>+15mil </h2>
+                <p>aprovados em concursos militares</p>
+            </div>
+            <div class="ter">
+                <h2>+3 milhões</h2>
+                <p>De alunos mátriculados</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="s4">
+    <section class="s5"></section>
+    <div class="testimonials-container">
+        <h2 class="title">Depoimentos dos pais</h2>
+        <div class="testimonials">
+            <div class="testimonial">
+                <span class="quote">“</span>
+                <p class="content">Quando chegamos, fomos acolhidos com respeito e sorriso estampado no rosto. Isso foi fazendo com que nos apaixonássemos pela estrutura do Darwin. Depois de um ano, parecia que já estávamos havia uns dez anos, tamanha a cumplicidade. É uma família.</p>
+                <p class="author">ELITON PERINI</p>
+                <p class="author-details">Pai de Vitoria e Lucas</p>
+            </div>
+            <div class="testimonial">
+                <span class="quote">“</span>
+                <p class="content">Acredito que para uma criança estar bem afetivamente e estar bem dentro da escola, ela precisa saber que ali dentro é tratada com carinho, com atenção. E eu encontrei isso no Darwin. Com menos de uma semana, meu marido e eu tivemos a certeza de ter feito a escolha certa.</p>
+                <p class="author">ÂNGELA BARATELLA</p>
+                <p class="author-details">Mãe de João e Joaquim</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="sobre-nos">
+    <h1>Sobre Nos</h1>
+    <div class="container">
+        <div class="box" style="width: 450px;">
+            <h2>Valores</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at auctor lectus, id sagittis felis. Sed ac.</p>
+        </div>
+        <div class="box" style="    height: 136%;">
+            <h2>Missão</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at auctor lectus, id sagittis felis. Sed ac risus vel neque efficitur scelerisque. Suspendisse ut molestie mi.</p>
+        </div>
+        <div class="box larger">
+            <h2>Objetivo</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur.</p>
+        </div>
+    </div>
+</section></section>
+    <br>
+    <section id="s6">
+        <section class="professores">
+            <h1>Nossos Professores</h1>
+            <div class="container">
+                <div class="card">
+                    <div class="info">
+                        <div class="profile-pic"></div>
+                        <div class="text">
+                            <a href="">
+                            <h2>Heitor pasti</h2>
+                            <p>pós doutorado em ciências da computação</p>
+                        </div>
+                    </div>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAP9JREFUWEftlkEKwjAQRV8vILgTTyeCigvBrbjxBm7EjbrxosqAhSxsk0x+oYV0O23m9f/8SRpG9jQj46ECxRypClWFYgrE6so9dAKWwCHWtK+uAroCx1+jB7D1QqmA7sA+gHBDqYCMRQKlBJJAqYEM6gWsvfYNAWRrPr1QQwCZOF1QO+CjiP3FEWODslEwC7415WwkdEKlKtT7V5mwb2DVBTVZIK9ldozMAwUtgRuFZZmu/N3UvVa1DVItywFyJ6yNZ06z2LtFM2gIoKIprQYa1eEqgVEqFF7QbiW3RmXKzsCiBEapUCx9yXWlQslNFae9pFnKIlWhmEpVockp9AXY9C0lASga0QAAAABJRU5ErkJggg=="/>
+                </a></div>
+                
+                <div class="card">
+                    <div class="info">
+                        <div class="profile-pic"></div>
+                        <div class="text">
+                            <a href="">
+                            <h2>Luan pasti</h2>
+                            <p>pós doutorado em sistemas da informação</p>
+                        </div>
+                    </div>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAP9JREFUWEftlkEKwjAQRV8vILgTTyeCigvBrbjxBm7EjbrxosqAhSxsk0x+oYV0O23m9f/8SRpG9jQj46ECxRypClWFYgrE6so9dAKWwCHWtK+uAroCx1+jB7D1QqmA7sA+gHBDqYCMRQKlBJJAqYEM6gWsvfYNAWRrPr1QQwCZOF1QO+CjiP3FEWODslEwC7415WwkdEKlKtT7V5mwb2DVBTVZIK9ldozMAwUtgRuFZZmu/N3UvVa1DVItywFyJ6yNZ06z2LtFM2gIoKIprQYa1eEqgVEqFF7QbiW3RmXKzsCiBEapUCx9yXWlQslNFae9pFnKIlWhmEpVockp9AXY9C0lASga0QAAAABJRU5ErkJggg=="/>
+                </a></div>
+    
+                <div class="card">
+                    <div class="info">
+                        <div class="profile-pic"></div>
+                        <div class="text">
+                            <a href="">
+                            <h2>Isamara</h2>
+                            <p>mestranda biologia</p>
+                        </div>
+                    </div>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAP9JREFUWEftlkEKwjAQRV8vILgTTyeCigvBrbjxBm7EjbrxosqAhSxsk0x+oYV0O23m9f/8SRpG9jQj46ECxRypClWFYgrE6so9dAKWwCHWtK+uAroCx1+jB7D1QqmA7sA+gHBDqYCMRQKlBJJAqYEM6gWsvfYNAWRrPr1QQwCZOF1QO+CjiP3FEWODslEwC7415WwkdEKlKtT7V5mwb2DVBTVZIK9ldozMAwUtgRuFZZmu/N3UvVa1DVItywFyJ6yNZ06z2LtFM2gIoKIprQYa1eEqgVEqFF7QbiW3RmXKzsCiBEapUCx9yXWlQslNFae9pFnKIlWhmEpVockp9AXY9C0lASga0QAAAABJRU5ErkJggg=="/>
+                </a></div>
+                <div class="card">
+                    <div class="info">
+                        <div class="profile-pic"></div>
+                        <div class="text">
+                            <a href="">
+                            <h2>Wilmeika</h2>
+                            <p>mestre em língua Portuguesa - pós doutorado em letras</p>
+                        </div>
+                    </div>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAP9JREFUWEftlkEKwjAQRV8vILgTTyeCigvBrbjxBm7EjbrxosqAhSxsk0x+oYV0O23m9f/8SRpG9jQj46ECxRypClWFYgrE6so9dAKWwCHWtK+uAroCx1+jB7D1QqmA7sA+gHBDqYCMRQKlBJJAqYEM6gWsvfYNAWRrPr1QQwCZOF1QO+CjiP3FEWODslEwC7415WwkdEKlKtT7V5mwb2DVBTVZIK9ldozMAwUtgRuFZZmu/N3UvVa1DVItywFyJ6yNZ06z2LtFM2gIoKIprQYa1eEqgVEqFF7QbiW3RmXKzsCiBEapUCx9yXWlQslNFae9pFnKIlWhmEpVockp9AXY9C0lASga0QAAAABJRU5ErkJggg=="/>
+                </a></div>
+            </div>
+        </section>
+    </section>
     {% include 'codigos reutilizados/footer.html' %}
     {% block footer %}
     {% endblock %}
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
-  
-      <script>
-          // Seleciona elementos
-        const logo = document.getElementById('logo');
-        const hiddenTitle = document.getElementById('hidden-title');
-
-        // Estado inicial da logo
-        let isLogoMoved = false;
-
-        // Função para movimentar a logo
-        function moveLogo() {
-            if (!isLogoMoved) {
-                // Move para a direita
-                logo.style.transform = 'translateX(500px)';
-                hiddenTitle.style.opacity = '1';
-            } else {
-                // Retorna ao estado original
-                logo.style.transform = 'none';
-                hiddenTitle.style.opacity = '0';
-            }
-            // Alterna o estado
-            isLogoMoved = !isLogoMoved;
-        }
-
-        // Adiciona evento de clique à logo
-        logo.addEventListener('click', moveLogo);
-
-        if (window.innerWidth <= 768){
-          function moveLogo() {
-            if (!isLogoMoved) {
-                // Move para a direita
-                logo.style.transform = 'translateX(500px)';
-                hiddenTitle.style.opacity = '1';
-                
-            } else {
-                // Retorna ao estado original
-                logo.style.transform = 'none';
-                hiddenTitle.style.opacity = '0';
-            }
-            // Alterna o estado
-            isLogoMoved = !isLogoMoved;
-        }
-
-        // Adiciona evento de clique à logo
-        logo.addEventListener('click', moveLogo);
-        }
-      </script>
-    <script>
-        // Detecta o início do toque
-        let startX = 0;
-        let startY = 0;
-
-        document.addEventListener('touchstart', function(event) {
-            startX = event.touches[0].pageX;
-            startY = event.touches[0].pageY;
-        });
-
-        document.addEventListener('touchmove', function(event) {
-            const moveX = event.touches[0].pageX;
-            const moveY = event.touches[0].pageY;
-
-            const diffX = Math.abs(moveX - startX);
-            const diffY = Math.abs(moveY - startY);
-
-            // Se o movimento horizontal for maior que o vertical, previne o comportamento padrão
-            if (diffX > diffY) {
-                event.preventDefault();
-            }
-        }, { passive: false });
-        </script>  
-    <script src="{% static 'js/about.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-d" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-" crossorigin="anonymous"></script>
-     
 </body>
 </html>
