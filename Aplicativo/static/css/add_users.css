@@ -1,12 +1,15 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #007bff; /* Azul de fundo */
+    background: linear-gradient(to bottom right, #007bff, #509cf3); /* Azul de fundo */
     margin: 0;
-    display: flex;
     min-height: 100vh;
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Impede a rolagem da página principal */
+    padding: 0;
+   
+    
+   
 }
 
 .container {
@@ -24,8 +27,8 @@ body {
     justify-content: center;
     align-items: center;
     padding: 50px;
+    margin: 10px;
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-    border: 2px solid #007bff; /* Bordas azuis */
     position: relative;
     z-index: 2; /* Garante que o formulário fique sobre o fundo */
     max-height: 90vh; /* Limita a altura máxima do formulário */
@@ -92,7 +95,7 @@ input[type="submit"]:hover {
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: -59%;
     background: linear-gradient(135deg, #5b50f3 25%, transparent 25%) -50px 0,
                 linear-gradient(225deg, #ffffff 25%, transparent 25%) -50px 0,
                 linear-gradient(315deg, #5053f3 25%, transparent 25%),
@@ -128,8 +131,7 @@ input[type="submit"]:hover {
 
 @media (max-width: 768px) {
     .login-container {
-        width: 100%;
-        box-shadow: none;
+        left: 20%;
     }
 
     .background {
