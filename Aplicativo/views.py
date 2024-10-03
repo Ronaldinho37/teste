@@ -345,7 +345,10 @@ def add_professor(request, tipo_de_user):
         professor = Professores(eletiva=dados_do_ser_a_ser_adicionado['eletiva'],nome=dados_do_ser_a_ser_adicionado['nome'],email=dados_do_ser_a_ser_adicionado['email'],senha=dados_do_ser_a_ser_adicionado['password'],imagem=dados_do_ser_a_ser_adicionado['imagem'],professor=dados_do_ser_a_ser_adicionado['professor'],tutor=dados_do_ser_a_ser_adicionado['tutor'],descricao=dados_do_ser_a_ser_adicionado['descricao'])
         #salvando-o
         professor.save()
-        return redirect(eletivas)
+        if tipo_de_user == 'tutor':
+            return redirect(tutoria)
+        else:
+            return redirect(eletivas)
     else:
         dados={}
         #como essa função só adiciona professor ou tutor, se o 'tipo_de_user' for difente não poderá ser adicionado

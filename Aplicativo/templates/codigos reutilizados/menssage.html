@@ -21,9 +21,9 @@
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            width: 80%;
             max-width: 400px;
-            margin: auto;
+            margin: 20px 10px 10px 10px;
+            padding-top: 10px;
         }
 
         .modal-header {
@@ -59,12 +59,29 @@
         .modal-footer button:hover {
             background-color: #0056b3;
         }
+
+        #mensagem-final{
+            color:#000;
+        }
+
+        .border-modal{
+            background-color: #0056b3;
+            width: 410px;
+            border-radius: 10px;
+            display: flex;
+            
+        }
+
+        :-ms-reveal{
+            border: 1px solid transparent;
+        }
 </style>
 {% if message != '' %}
 <div id="errorModal" class="modal">
+    <div class="border-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Erro</h2>
+            <h2 style="color:red;" id="h2">Acesso Negado</h2>
             <span class="close">&times;</span>
         </div>
         
@@ -76,8 +93,15 @@
         </div>
     </div>
 </div>
+</div>
 {% endif %}
 <script>
+    window.onload = () => {
+        let pagina = document.querySelector('title').innerText;
+        if(pagina == 'Home'){
+            document.querySelector('h2[id="h2"]').innerText = ''
+        }
+    }
     let p = document.querySelector('p[id="mensagem-final"]').innerText
     const modal = document.getElementById('errorModal');
     if(p != ''){
@@ -110,6 +134,8 @@
         //         hideErrorModal();
         //     }
         // }
+
+        
 </script>
 
 

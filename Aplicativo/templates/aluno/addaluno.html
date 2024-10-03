@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<link rel="stylesheet" href="{% static 'css/add_users.css' %}">
+<body>
+    {% include 'codigos reutilizados/menssage.html' %}
+    {% block menssagem %}
+    {% endblock %}
+<div class="container">
+    <div class="login-container">
+        <h1>Adicionar Aluno</h1>
+        <form action="" method="post"  enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="imagem" name="imagem">
+            <label for="select">Eletiva</label>
+            <select name="select" id="select" required>
+                <option value=""></option>
+                {% for i in eletivas %}
+                    <option value="{{i.titulo}}">{{i.titulo}}</option>
+                {% endfor %}
+            </select>
+                <input type="text" name="nome" id="nome" placeholder="nome" required>
+                <input type="email" name="email" id="email" placeholder="email" required>
+                <label for="serie">Serie</label>
+                <select name="serie" id="serie" required>
+                    <option value=""></option>
+                    <option value="8ºano">8ºano</option>
+                    <option value="7ºano">7ºano</option>
+                    <option value="6ºano">6ºano</option>
+                    <option value="5ºano">5ºano</option>
+                    <option value="4ºano">4ºano</option>
+                    <option value="3ºano M">3ºano M</option>
+                    <option value="2ºano M">2ºano M</option>
+                    <option value="1ºano M">1ºano M</option>
+                </select>
+                <input type="password" name="senha" id="senha" placeholder="senha" required>
+            <input type="submit" value="submit">
+        </form>
+    </div>
+    <div class="background">
+        <div class="background-content">
+            <img src="../../../media/img_fixas/logo-asn.png" width="340px" alt="">
+            <h2>Minha Eletiva será sobre:</h2>
+            <p class="eletiva"><strong></strong><span class="cursor">&nbsp;</span></p>
+        </div>
+    </div>
+    
+</div>
+<script src="{% static 'js/add_users.js' %}"></script>
+</body>
+</html>
