@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Variáveis de configuração
-    const fullText = "Escola de Ensino Fundamental e Médio ANTÔNIO DOS ";
-    const highlightedText = "SANTOS NEVES";
+    const fullText = "Escola de Ensino Fundamental e Médio ";
+    const highlightedText = "ANTONIO DOS SANTOS NEVES";
     const typingSpeed = 80;
 
     // Elementos do DOM
