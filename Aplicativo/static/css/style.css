@@ -224,7 +224,7 @@ input:checked + .slider:before {
 }
 
 #informations {
-    padding-top: 10%;
+    padding-top: 5%;
     padding-bottom: 10%;
     position: relative;
     overflow: hidden;
@@ -268,7 +268,7 @@ input:checked + .slider:before {
 .plus-sign {
     font-size: 100px;
     color: #3498db;
-    top: 10%;
+    top:-80%;
     left: 10%;
     animation: rotatePlus 5s linear infinite;
 }
@@ -276,15 +276,15 @@ input:checked + .slider:before {
 .minus-sign {
     font-size: 50px;
     color: #e74c3c;
-    top: 50%;
-    left: 10%;
+    top: -30%;
+    left: 20%;
     animation: moveMinus 3s ease-in-out infinite;
 }
 
 .atom {
     font-size: 80px;
     color: #f1c40f;
-    top: 10%;
+    top: -60%;
     right: 20%;
     animation: bounceAtom 2s ease-in-out infinite;
 }
@@ -300,7 +300,7 @@ input:checked + .slider:before {
 .globe {
     font-size: 120px;
     color: #3498db;
-    top:80%;
+    top:70%;
     left: 10%;
     animation: spinGlobe 6s linear infinite;
 }

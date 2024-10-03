@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-status="{{user}}">
     {% include 'codigos reutilizados/menssage.html' %}
     {% block menssagem %}
     {% endblock %}
@@ -84,9 +84,11 @@
     <script src="{% static 'js/digit.js' %}"></script>
     <script src="{% static 'js/R_login.js'%}"></script>
     <script>
+
+        console.log(document.querySelector('body').dataset.status)
         function marcar_chackbox(x){
             let ip = document.querySelector(`input[name=${x}]`).checked = true
-            console.log(ip)
+            {% comment %} console.log(ip) {% endcomment %}
         }
 
         var senha = $('#password');
@@ -108,3 +110,4 @@ $( "#olho" ).mouseout(function() {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 </body>
 </html>
+
