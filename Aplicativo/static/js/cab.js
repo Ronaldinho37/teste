@@ -8,30 +8,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     menuBtn.addEventListener('click', function() {
         sideNav.style.right = '0'; /* Abrir o menu pela direita */
-        effect.classList.remove('visible'); // Certifique-se de que o efeito está oculto
-    });
-
-    closeBtn.addEventListener('click', function() {
-        sideNav.style.right = '-250px'; /* Fechar o menu pela direita */
         effect.classList.remove('visible');
     });
 
-    // Adicione o código para ocultar o side nav e mostrar o efeito
+    closeBtn.addEventListener('click', function() {
+        sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
+        effect.classList.remove('visible');
+    });
+
     const sobreLink = document.getElementById('sobre');
     if (sobreLink) {
         sobreLink.addEventListener('click', function(event) {
-            event.preventDefault(); // Previne o comportamento padrão do link
-
-            // Oculta o side nav
-            sideNav.style.right = '-250px';
-            
-            // Adiciona a classe 'visible' ao efeito para ativar o efeito de fade-in
+            event.preventDefault();
+            sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
             effect.classList.add('visible');
-
-            // Redireciona após o efeito de fade-in
             setTimeout(function() {
                 window.location.href = sobreLink.href;
-            }, 3000); // Tempo deve corresponder à duração do efeito de fade-in
+            }, 3000);
         });
     }
 
@@ -42,12 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     closeBtn.addEventListener('click', function() {
-        sideNav.style.right = '-250px'; /* Fechar o menu pela direita */
+        sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
         overlay.classList.remove('show');
     });
 
     overlay.addEventListener('click', function() {
-        sideNav.style.right = '-250px'; /* Fechar o menu pela direita */
+        sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
         overlay.classList.remove('show');
     });
 
@@ -58,29 +51,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     dropdownButtons.forEach(button => {
         button.addEventListener('click', function(event) {
-            event.preventDefault(); // Evita o comportamento padrão do link
-            
+            event.preventDefault();
             const targetId = button.getAttribute('data-target');
             const dropdown = document.getElementById(targetId);
             const isActive = dropdown.parentElement.classList.toggle('active');
-            
-            // Fecha outros drop-downs se existirem
             document.querySelectorAll('.dropdown-content').forEach(d => {
                 if (d !== dropdown) {
                     d.parentElement.classList.remove('active');
                 }
             });
-            
-            // Controla a exibição do drop-down do item clicado
-            if (isActive) {
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
+            dropdown.style.display = isActive ? 'block' : 'none';
         });
     });
 
-    // Fecha o drop-down se o usuário clicar fora dele
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.menu-item') && !event.target.closest('.dropdown-content')) {
             document.querySelectorAll('.dropdown-content').forEach(dropdown => {

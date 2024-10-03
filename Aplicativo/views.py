@@ -11,7 +11,7 @@ from django.contrib import messages
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
-
+menssagem = {'logado':['','']}
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
 dados_universsais = {}
