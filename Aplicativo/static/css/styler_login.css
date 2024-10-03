@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Lato', sans-serif; /* Garantindo a aplicação da fonte ao corpo */
-    background-color: #f0f0f0;
+    background-color: hsl(196, 79%, 91%);
     height: 100vh;
     display: flex;
     align-items: center;
@@ -37,7 +37,7 @@ h1, h2, p {
 .logo-header img {
     width: 180px;
     margin-right: 10px;
-    opacity: 1;
+    opacity: 1; 
     transition: opacity 0.5s ease;
 }
 
@@ -215,13 +215,13 @@ video {
     width: 100%;
     background-color: transparent;
     padding: 20px 200px;
-    border: 2px solid aquamarine ;
+    border: 2px solid hsl(196, 79%, 91%) ;
     border-radius: 10px;
     transition: .8s;
 }
 
 .classes:hover{
-    background-color: #11d89625;
+    background-color: #79b4c7;
     transition: .8s;
 }
 
