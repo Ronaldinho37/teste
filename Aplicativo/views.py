@@ -173,9 +173,11 @@ def retornar_index(request):
     if menssagem['logado'][1] == 0:
         dados['message'] = menssagem['logado'][0]
         menssagem['logado'][1] += 1
-    elif menssagem['logado'][1] == 1:
+    else:
         menssagem.clear()
         menssagem['logado'] = ['','']
+        dados['message'] = ''
+    print(dados['user'])
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -263,7 +265,7 @@ def login_viwes(request):
         
         
     else:
-        dados = {}
+        dados = dados_universsais.copy()
         dados['message'] = ''
         return render(request,'principais/login.html',dados)
     

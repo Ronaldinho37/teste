@@ -18,3 +18,12 @@ sr.reveal('.card', {
     mobile: true
 });
 
+sr.reveal('#logo-div-tec', {
+    delay: 200,
+    duration: 2000,
+    origin:'top',
+    distance: '100px',
+    reset: true,
+    mobile: true
+});
+
