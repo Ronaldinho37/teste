@@ -207,7 +207,7 @@ def login_viwes(request):
                 request.session['user'] = 'ADMIN'
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
-                menssagem['logado'] = ['User logado com sucesso!',0]
+                menssagem['logado'] = ['Usuário logado com sucesso!',0]
                 return redirect(retornar_index)
         #caso o usuário a ser logado seja o Admin
         elif checkboxes['Admin'] == 'on':

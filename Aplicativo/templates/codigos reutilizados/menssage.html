@@ -1,169 +1,183 @@
 {% block menssagem %}
 <style>
+    /* Modal styles */
+    .modal {
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
 
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 400px;
+        margin: 20px 10px 10px 10px;
+        padding-top: 10px;
+    }
 
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        /* Modal styles */
-        .modal {
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
+    .modal-header h2 {
+        margin: 0;
+        color: #333;
+    }
+
+    .close {
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .modal-body {
+        margin: 20px 0;
+    }
+
+    .modal-footer {
+        text-align: right;
+    }
+
+    .modal-footer button {
+        display: none;
+    }
+
+    .modal-footer button:hover {
+        background-color: #0056b3;
+    }
+
+    #mensagem-final {
+        color: #000;
+    }
+
+    .border-modal {
+        background-color: #0056b3;
+        width: 410px;
+        border-radius: 10px;
+        display: flex;
+    }
+
+    :-ms-reveal {
+        border: 1px solid transparent;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
         }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            margin: 20px 10px 10px 10px;
-            padding-top: 10px;
+        to {
+            transform: translateY(0);
+            opacity: 1;
         }
+    }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+    @keyframes slideUp {
+        from {
+            transform: translateY(0);
+            opacity: 1;
         }
+        to {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+    }
 
-        .modal-header h2 {
-            margin: 0;
-            color: #333;
-        }
+    .div-log {
+        background-color: #250ff3;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        border-radius: 10px;
+        animation: slideDown 0.5s forwards; /* Animação para aparecer */
+        position: fixed; /* Torna a div fixa */
+        top: 10px; /* Ajuste a posição vertical conforme necessário */
+        left: 45%; /* Centraliza horizontalmente */
+        transform: translateX(-50%); /* Ajuste para centralizar corretamente */
+        z-index: 1000; /* Garante que a div fique sobre outros elementos */
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    }
 
-        .close {
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #333;
-        }
+    .message {
+        display: inline;
+        font-size: 12px;
+        font-family: "Poppins", sans-serif;
+        color: #fcff00;
+    }
 
-        .modal-body {
-            margin: 20px 0;
-        }
-
-        .modal-footer {
-            text-align: right;
-        }
-
-        .modal-footer button {
-            display: none;
-        }
-
-        .modal-footer button:hover {
-            background-color: #0056b3;
-        }
-
-        #mensagem-final{
-            color:#000;
-        }
-
-        .border-modal{
-            background-color: #0056b3;
-            width: 410px;
-            border-radius: 10px;
-            display: flex;
-            
-        }
-
-        :-ms-reveal{
-            border: 1px solid transparent;
-        }
-
-        .div-log{
-            background-color: #089432;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            border-radius: 10px;
-        }
-
-        .message{
-            display: inline;
-            font-size: 12px;
-            font-family: "Poppins", sans-serif;
-        }
-
-        .log{
-            display: flex;
-            justify-content: center;
-        }
+    .log {
+        display: flex;
+        justify-content: center;
+    }
 </style>
-{% if message != ''%}
-    {% if message == 'User logado com sucesso!'%}
-    <div class="log">
-    <div class="div-log">
-        <h1 class="message">{{message}}</h1>
-    </div>
-</div>
-    {% else %}
-    <div id="errorModal" class="modal">
-        <div class="border-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 style="color:red;" id="h2">Acesso Negado</h2>
-                <span class="close">&times;</span>
-            </div>
-            
-            <div class="modal-body">
-                <p id="mensagem-final">{{message}}</p>
-            </div>
-            <div class="modal-footer">
-                <button id="closeModal"></button>
+{% if message != '' %}
+    {% if message == 'User logado com sucesso!' %}
+        <div class="log">
+            <div class="div-log">
+                <h1 class="message"><strong>{{ message }}</strong></h1>
             </div>
         </div>
-    </div>
-    </div>
+    {% else %}
+        <div id="errorModal" class="modal">
+            <div class="border-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 style="color:red;" id="h2">Acesso Negado</h2>
+                        <span class="close">&times;</span>
+                    </div>
+
+                    <div class="modal-body">
+                        <p id="mensagem-final">{{ message }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closeModal"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endif %}
 <script>
-    window.onload = () => {
-        let pagina = document.querySelector('title').innerText;
-        if(pagina == 'Home'){
-            document.querySelector('h2[id="h2"]').innerText = ''
+    document.addEventListener("DOMContentLoaded", () => {
+        const divLog = document.querySelector('.div-log');
+
+        if (divLog) {
+            // Espera 3 segundos antes de iniciar a animação de desaparecimento
+            setTimeout(() => {
+                divLog.style.animation = 'slideUp 0.5s forwards'; // Animação para desaparecer
+                // Remove a div após a animação
+                setTimeout(() => {
+                    divLog.remove();
+                }, 500); // Tempo igual à duração da animação
+            }, 3000); // Tempo antes de começar a desaparecer
         }
-    }
-    let p = document.querySelector('p[id="mensagem-final"]').innerText
-    const modal = document.getElementById('errorModal');
-    if(p != ''){
-        modal.style.display = 'flex';
-    } else {
-        modal.style.display = 'none';
-    }
-    window.onclick = () =>{
-        modal.style.display = 'none';
-    }
-     
-        // const closeModalButton = document.getElementById('closeModal');
-        // const closeSpan = document.querySelector('.modal .close');
 
-        // function showErrorModal() {
-        //     modal.style.display = 'flex';
-        // }
+        const mensagemFinalElement = document.querySelector('p[id="mensagem-final"]');
+        const modal = document.getElementById('errorModal');
 
-        // function hideErrorModal() {
-        //     modal.style.display = 'none';
-        // }
-
-        // // Add event listeners to close the modal
-        // closeModalButton.onclick = hideErrorModal;
-        // closeSpan.onclick = hideErrorModal;
-
-        // // Close the modal if the user clicks outside of it
-        // window.onclick = function(event) {
-        //     if (event.target == modal) {
-        //         hideErrorModal();
-        //     }
-        // }
-
+        if (mensagemFinalElement) {
+            let p = mensagemFinalElement.innerText;
+            if (p != '') {
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
         
+        window.onclick = () => {
+            modal.style.display = 'none';
+        }
+    });
 </script>
-
-
 {% endblock %}

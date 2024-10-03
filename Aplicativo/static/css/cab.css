@@ -68,6 +68,20 @@ nav a:hover{
     align-items: center;
 }
 
+.btn-sair{
+    background-color: #250ff3;
+    display: block;
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    color:rgb(255, 230, 0);
+    border-radius: 5px;
+}
+
+.btn-sair:hover{
+    background-color: #260ff3a8;
+    color:rgb(255, 230, 0);
+}
+
 ul{
     list-style: none;
     padding: 10%;
@@ -106,7 +120,7 @@ nav {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-top: 2rem;
+    padding: 2rem;
     overflow-y: auto; /* Permite a rolagem do menu */
 }
 
