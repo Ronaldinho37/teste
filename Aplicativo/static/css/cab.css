@@ -134,13 +134,13 @@ nav {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 2rem;
+    padding-top: 4rem;
     overflow-y: auto; /* Permite a rolagem do menu */
 }
 
 /* Menu fechado */
 nav.closed {
-    right: -40px; /* Move o menu completamente para fora da tela */
+    right: -90px; /* Move o menu completamente para fora da tela */
 }
 
 /* Menu aberto */

@@ -16,8 +16,8 @@
     <nav id="side-nav">
         <button id="close-btn">&times;</button>
         <ul>
-            <li><a href="{% url 'eletivas' %}">Eletiva</a></li>
-            <li><a href="{% url 'tutoria' %}">Tutores</a></li>
+            <li><a href="{% url 'eletivas' %}" id="eletivaLink">Eletiva</a></li>
+            <li><a href="{% url 'tutoria' %}" id="tutorLink">Tutores</a></li>
             <li><a href="{% url 'sobre'%}" id="sobre">Sobre</a></li>
             {% if user != None%}
                 {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
@@ -63,7 +63,7 @@
         </ul>
 
         <div class="logo-container">
-            <a href="{% url 'index'%}"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
+            <a href="{% url 'index'%}" id="logoLink"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
         </div>
     </nav>
 

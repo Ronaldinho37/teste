@@ -28,6 +28,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const logoLink = document.getElementById('logoLink');
+    if (logoLink) {
+        logoLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
+            effect.classList.add('visible');
+            setTimeout(function() {
+                window.location.href = logoLink.href;
+            }, 3000);
+        });
+    }
+
+    const eletivasLink = document.getElementById('eletivaLink');
+    if (eletivasLink) {
+        eletivasLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
+            effect.classList.add('visible');
+            setTimeout(function() {
+                window.location.href = eletivasLink.href;
+            }, 3000);
+        });
+    }
+
+    
+
+    const tutorLink = document.getElementById('tutorLink');
+    if (tutorLink) {
+        tutorLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            sideNav.style.right = '-300px'; /* Alterado para fechar completamente o menu */
+            effect.classList.add('visible');
+            setTimeout(function() {
+                window.location.href = tutorLink.href;
+            }, 3000);
+        });
+    }
+
     const overlay = document.getElementById('overlay');
     menuBtn.addEventListener('click', function() {
         sideNav.style.right = '0'; /* Abrir o menu pela direita */
