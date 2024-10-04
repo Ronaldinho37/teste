@@ -5,6 +5,10 @@
     text-decoration: none;
 }
 
+::-webkit-scrollbar{
+    display: none;
+}
+
 #s1{
     text-align: center;
 }
@@ -43,14 +47,26 @@
 .pri{
     display: flex;
     flex-direction: column;
+    background-color: #66666659;
+    padding: 10px;
+    border-radius: 10px;
+    width: 50%;
 }
 .sec{
     display: flex;
     flex-direction: column;
+    background-color: #66666659;
+    padding: 10px;
+    border-radius: 10px;
+    width: 50%;
 }
 .ter{
     display: flex;
     flex-direction: column;
+    background-color: #66666659;
+    padding: 10px;
+    border-radius: 10px;
+    width: 50%;
 }
 
 .resto{
@@ -92,7 +108,7 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: #000;
+    background: #ebc405;
     transform: translateX(-50%);
 }
 

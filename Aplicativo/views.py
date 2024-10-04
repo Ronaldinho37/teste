@@ -11,7 +11,7 @@ from django.contrib import messages
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
-menssagem = {'logado':['','']}
+menssagem_var = {'mensagem':""}
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
 dados_universsais = {}
@@ -28,7 +28,7 @@ dados_universsais = {}
 # ciphertext = rsa.encrypt(m, publickey)
 # m2 = rsa.decrypt(ciphertext, privatekey)
 # print(ciphertext)
-def ver_se_a_pagina_pode_funcionar(pagina):
+def ver_se_a_pagina_pode_funcionar(pagina,dados):
     try:
         paginaModels = PaginasUtilizaveis.objects.values().get(id=1)
     except:
@@ -37,6 +37,8 @@ def ver_se_a_pagina_pode_funcionar(pagina):
         return False 
     
     if paginaModels[f'{pagina}'] != True:
+        dados['message'] = menssagem_var['mensagem']
+        menssagem_var['mensagem'] = ""
         return True
     else:
         return False
@@ -128,6 +130,7 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
     #False: não saia, pois, o usuário está abilitado a fazer seja lá o que foi requisitado
     #se o usuário não estiver logado retorna True ou seja: o usuário não pode fazer nada pois ainda não está logado
     if user == None or acao == 'definirpaginas' and user != 'ADMIN':
+        menssagem_var['mensagem'] = "Você não pode realizar a ação requisitada!"
         return True
     #caso o usuário for um admin tem que ser verificado se ele pode realizar a ação requisitada
     elif user == 'admin':
@@ -136,12 +139,14 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
         if acao in request.session['lista_de_acoes']:
             return False
         else: 
+            menssagem_var['mensagem'] = "Você não pode realizar a ação requisitada!"
             return True
     #caso o user seja o ADMIN ele poderá fazer qualquer coisa independentemente da ação requisitada
     elif user == 'ADMIN':
         return False
     else:
         #se nenhuma dos ifs anteriores der certo então retorne True
+        menssagem_var['mensagem'] = "Você não pode realizar a ação requisitada!"
         return True
     
 def retornar_index(request):
@@ -168,18 +173,16 @@ def retornar_index(request):
             dados['lista_de_acoes'] = request.session['lista_de_acoes']
     #atualizando a variável dos dados universsais para que eu possa acessar os valores adicionados de outras fuções
     dados_universsais.update(dados)
-    if ver_se_a_pagina_pode_funcionar('index') == True:
+    if ver_se_a_pagina_pode_funcionar('index',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     #variável que contém os cards de avisos
     dados['avisos'] = Anuncio.objects.all().order_by("-id")[:2]
-    if menssagem['logado'][1] == 0:
-        dados['message'] = menssagem['logado'][0]
-        menssagem['logado'][1] += 1
-    else:
-        menssagem.clear()
-        menssagem['logado'] = ['','']
-        dados['message'] = ''
-    print(dados['user'])
+    try:
+        dados['message'] = menssagem_var['mensagem']
+        menssagem_var['mensagem'] = ""
+    except:
+        dados['message'] = ""
+    
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -215,7 +218,7 @@ def login_viwes(request):
                 request.session['user'] = 'ADMIN'
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
-                menssagem['logado'] = ['Usuário logado com sucesso!',0]
+                menssagem_var['mensagem'] = "Usuário logado com sucesso!"
                 return redirect(retornar_index)
         #caso o usuário a ser logado seja o Admin
         elif checkboxes['Admin'] == 'on':
@@ -231,7 +234,7 @@ def login_viwes(request):
                     request.session['lista_de_acoes'] = acoes_lista
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
-                    menssagem['logado'] = ['User logado com sucesso!',0]
+                    menssagem_var['mensagem'] = "Usuário logado com sucesso!"
                     return redirect(retornar_index)
         #####################################################
         # #caso o usuário a ser logado seja o professor
@@ -279,7 +282,7 @@ def login_viwes(request):
 #função que retorna para a página das eletivas com as eletivas presentes no site
 def eletivas(request):
     dados = dados_universsais.copy()
-    if ver_se_a_pagina_pode_funcionar('eletiva') == True:
+    if ver_se_a_pagina_pode_funcionar('eletiva',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = "eletivas"
     dados['eletivas'] = Eletivas.objects.all().values()
@@ -294,6 +297,11 @@ def eletivas(request):
         todos_professores[f"professor_de_{i['titulo']}"] = Professores.objects.filter(eletiva=f"{i['titulo']}").values()
     #adiciono a variável 'todos_professores' a variável dados
     dados['todos_professores'] = todos_professores
+    try:
+        dados['message'] = menssagem_var['mensagem']
+        menssagem_var['mensagem'] = ""
+    except:
+        dados['message'] = ""
     return render(request,'eletiva/eletivas.html',dados)
 
 #função que desloga o usuário
@@ -313,6 +321,7 @@ def logout_viwes(request):
     dados_universsais.clear()
     #definindo o session 'user' como None, desta maneira o código saberá se o usuário está logado ou não
     request.session['user'] = None
+    menssagem_var['mensagem'] = "Deslogado com sucesso!"
     return redirect(retornar_index)
 
 #função que adiciona as eletivas
@@ -337,6 +346,7 @@ def add_eletivas(request):
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
             excluir_imagem("img_eletivas",Eletivas.objects.all().values())
+            menssagem_var['mensagem'] = "Eletiva Adicionada!"
             return redirect(add_professor,tipo_de_user='professor')
     else:
         dados = {}
@@ -386,11 +396,21 @@ def add_professor(request, tipo_de_user):
         #salvando-o
         professor.save()
         if tipo_de_user == 'tutor':
+            menssagem_var['mensagem'] = "Tutor adicionado!"
             return redirect(tutoria)
+        elif tipo_de_user == 'professor-tutor':
+            menssagem_var['mensagem'] = "Professor/tutor adicionado!"
+            return redirect(eletivas)
         else:
+            menssagem_var['mensagem'] = "Professor adicionado!"
             return redirect(eletivas)
     else:
         dados={}
+        try:
+            dados['message'] = menssagem_var['mensagem']
+            menssagem_var['mensagem'] = ""
+        except:
+            dados['message'] = ''
         #como essa função só adiciona professor ou tutor, se o 'tipo_de_user' for difente não poderá ser adicionado
         if tipo_de_user != 'professor' and tipo_de_user != 'tutor' and tipo_de_user != 'professor-tutor':
             return redirect(retornar_index)
@@ -414,8 +434,8 @@ def add_professor(request, tipo_de_user):
                     #se o tamanho da variável "dados['eletivas']" for igual a zero é porque não tem eletiva para ser adicionado um professor responsável
                     #logo, o professor não poderá ser adicionado
                     if len(dados['eletivas']) == 0:
-                        dados['message'] = "Todas as eletivas possuem seus respectivos professores"
-                        return redirect(retornar_index)
+                        menssagem_var['mensagem'] = "Todas as eletivas já possuem seus respectivos professores"
+                        return redirect(eletivas)
                 # elif len(p) == 0:
                 #     dados['eletivas'] = dados['eletivas'].all().values()
         #como eu tinha que executar o 'exclude' eu não podia obter os 'values' do models 'Eletivas', porém, agora posso
@@ -461,11 +481,16 @@ def add_professor(request, tipo_de_user):
 def tutoria(request):
     dados=dados_universsais.copy()
     #verificando se a página pode funcionar
-    if ver_se_a_pagina_pode_funcionar('tutoria') == True:
+    if ver_se_a_pagina_pode_funcionar('tutoria',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = 'tutoria' #excluir essa linha
     #pegue do models dos Professores somente onde tutor for igual a True
     dados['tutores'] = Professores.objects.filter(tutor=True)
+    try:
+        dados['message'] = menssagem_var['mensagem'] 
+        menssagem_var['mensagem'] = ""
+    except:
+        dados['message'] = ""
     #retornando para a página de tutoria
     return render(request,'principais/tutoria.html',dados)
 #função que edita e se ele não existir cria o aviso
@@ -542,44 +567,13 @@ def editar_aviso(request,id):
         return redirect(retornar_index)
 #função que atualiza a eletiva
 #excluir esta função
-def update_eletiva(request,id):
-    #verificando se o usuario pode realizar a ação requisitada
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
-        return redirect(retornar_index)
-    else:
-        eletiva = get_object_or_404(Eletivas, id=id)
-        eletiva_1 = str(eletiva.titulo)
-        
-        if request.method == 'POST':
-            form = UpdateEletiva(request.POST,request.FILES,instance=eletiva)
-            if form.is_valid():
-                if form.cleaned_data.get('titulo') != eletiva_1:
-                    professores = Professores.objects.filter(eletiva=eletiva_1)
-                    if len(professores) != 0:
-                        for professor in professores:
-                            professor.eletiva = form.cleaned_data.get('titulo')
-                            professor.save()
-                       
-                form.save()
-                return redirect(eletivas)
-            else:
-                dados = {}
-                dados['eletiva'] = Eletivas.objects.values().get(id=id)
-                dados['modo'] = "update"
-                dados['message'] = 'Dados inválidos'
-                return render(request,'eletiva/addeletiva.html',dados)
-        else:
-            dados = dados_universsais.copy()
-            dados['eletiva'] = Eletivas.objects.values().get(id=id)
-            dados['modo'] = "update"
-            dados['form'] = UpdateEletiva(instance=eletiva)
-            return render(request,'eletiva/addeletiva.html',dados)
+
         
 #função que retorna para a página sobre(about)
 def sobre(request):
     dados = dados_universsais.copy()
      #verificando se a página pode funcionar
-    if ver_se_a_pagina_pode_funcionar('sobre') == True:
+    if ver_se_a_pagina_pode_funcionar('sobre',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = 'sobre'#excluir essa linha
     return render(request,'principais/about.html',dados)
@@ -601,7 +595,7 @@ def deletar_com_ids(request,user,id):
             for i in dados['lista_id']:
                 #se o id passado como parâmetro for igual ao id do user logado, impessa que o delete aconteça
                 if int(i) == id_do_user_logado:
-                    dados['message'] = 'Você não pode se auto deletar'
+                    menssagem_var['mensagem'] = "Você não pode se auto deletar!"
                     return redirect(update_or_delete,u_or_d='deletar', user=user)
         
         if request.method == 'POST':
@@ -635,7 +629,7 @@ def deletar_com_ids(request,user,id):
                             #se o tamanho da variável 'user_da_vez' for igual a 0 é poque o id passado não é de um tutor
                             #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
-                                dados['message'] = 'User não é um tutor'
+                                menssagem_var['mensagem'] = "User não é um tutor"
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
                                  #tente pegar o object de id = i e delete-o
@@ -654,7 +648,7 @@ def deletar_com_ids(request,user,id):
                              #se o tamanho da variável 'user_da_vez' for igual a 0 é poque o id passado não é de um tutor
                             #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
-                                dados['message'] = 'User não é um professor'
+                                mensagem_var['mensagem'] = "User não é um professor"
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
                                 try:
@@ -686,7 +680,7 @@ def deletar_com_ids(request,user,id):
                         eletiva_a_ser_deletada.delete()
             #se ambos valores forem diferentes de 'on' é porque nenhum dos inputs foram marcados, por conguinte, saía daqui
             elif nao != "on" and sim != "on":
-                dados['message'] = "selecione um dos valores"
+                menssagem_var['mensagem'] = "selecione um dos valores"
                 return redirect(deletar_com_ids, user=user,id=id)
             else:
                 return redirect(update_or_delete,u_or_d='deletar',user=user)
@@ -696,10 +690,10 @@ def deletar_com_ids(request,user,id):
             #agora excluindo as imagens dos professores
             if dados['diretorio_user'] == 'img_eletivas':
                excluir_imagem(f"{dados['diretorio_user']}/img_professores_eletiva", dados['model_user'])
-            dados['message'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
+            menssagem_var['mensagem'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
             return redirect(update_or_delete,u_or_d='deletar',user=user)
         else:
-            dados['message'] = ''
+            dados['message'] = ""
             #esse if checa se o professor também é um tutor ou vice-versa e retorna uma mensagem informando ao usuário
             if user == 'professor' or user == 'tutor':
                 #loop que percorre a lista com ids
@@ -715,10 +709,11 @@ def deletar_com_ids(request,user,id):
                         user_da_vez += 'tutor'
                     else:
                         user_da_vez += 'professor'
-                    #se ambos campos 'tutor' e 'professor' forem True é porque ele é professor e tutor, logo, retorne uma menssagem
-                    if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True: 
-                        dados['message'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
+                    #se ambos campos 'tutor' e 'professor' forem True é porque ele é professor e tutor, logo, retorne uma mensagem
+                    if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True and menssagem_var['mensagem'] != "selecione um dos valores": 
+                        menssagem_var['mensagem'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
                         break
+            dados['message'] = menssagem_var['mensagem']
             return render(request,'deletar/deletar_com_ids.html',dados)
 #função que adiciona o admin
 def add_admin(request):
@@ -742,6 +737,7 @@ def add_admin(request):
                 acoes_permitidas += f' {i}'
         novo_adm = Admins(nome=nome,senha=senha,email=email,acoes=acoes_permitidas,imagem=imagem)
         novo_adm.save()
+        menssagem_var['menssagem'] = "Admin adicionado com sucesso!"
         return redirect(retornar_index)
     else:
         return render(request,'acoes_principais/template_add.html')
@@ -773,8 +769,10 @@ def update_or_delete(request,u_or_d,user):
     elif user.lower() == 'professor-tutor':
         dados['usuarios'] = Professores.objects.filter(professor=True,tutor=True)
     else:
-        dados['message'] = 'Usuário não identificado'
+        menssagem_var['mensagem'] = "Usuário não identificado"
         return redirect(retornar_index)
+    dados['message'] = menssagem_var['mensagem'] 
+    menssagem_var['mensagem'] = ""
     return render(request,f'{u_or_d}/{u_or_d}.html', dados)
 
 def update_com_id(request,user,id):
@@ -788,7 +786,7 @@ def update_com_id(request,user,id):
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
         except:
-            dados['message'] = "User não encontrado"
+            menssagem_var['mensagem'] = "User não encontrado"
             return redirect(update_or_delete,u_or_d='update', user=user)
         if user_a_ser_atualizado[0].tutor == True and user_a_ser_atualizado[0].professor == True and user != 'professor-tutor':
             return redirect(update_com_id, user='professor-tutor',id=id)
@@ -814,7 +812,7 @@ def update_com_id(request,user,id):
         except:
             return redirect(update_or_delete,u_or_d='update', user=user)
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
-            dados['message'] = "Você não pode se auto atualizar"
+            menssagem_var['mensagem'] = "Você não pode se auto atualizar"
             return redirect(update_or_delete,u_or_d='update', user=user)
         model.append(Admins.objects.all().values())
         model.append("imagem_admins")
@@ -909,11 +907,8 @@ def update_com_id(request,user,id):
         if user == 'eletiva':
             excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
         excluir_imagem(model[1],model[0])
+        menssagem_var['mensagem'] = "Atualizado com sucesso!"
         return redirect(update_or_delete,u_or_d='update',user=user)
-
-        
-
-
     else:
         
         dados['user'] = user
@@ -965,6 +960,7 @@ def definir_paginas_utilizaveis(request):
                 elif i == 'sobre':
                     ObjectPagina.sobre = False
         ObjectPagina.save()
+        menssagem_var['mensagem'] = "Alterações efetuadas com sucesso!"
         return redirect(retornar_index)
     else:
         dados = {}
