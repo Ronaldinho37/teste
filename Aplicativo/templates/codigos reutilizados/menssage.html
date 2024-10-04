@@ -3,7 +3,7 @@
     /* Modal styles */
     .modal {
         position: fixed;
-        z-index: 1;
+        z-index: 10;
         left: 0;
         top: 0;
         width: 100%;
@@ -122,7 +122,7 @@
     }
 </style>
 {% if message != '' %}
-    {% if message == "Usuário logado com sucesso!" %}
+    {% if message == "Usuário logado com sucesso!" or message == "Eletiva Adicionada!" or message == "Deslogado com sucesso!"%}
         <div class="log">
             <div class="div-log">
                 <h1 class="message"><strong>{{ message }}</strong></h1>

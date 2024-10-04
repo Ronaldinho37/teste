@@ -11,7 +11,6 @@ from django.contrib import messages
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
-
 menssagem = {'logado':['','']}
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
@@ -87,8 +86,11 @@ def checar_imagem_existente(imagem,pasta,acao):
 def excluir_imagem(dir,model):
     #variável que guarda as imagens que estão sendo utilizadas
     imagens_usuarios = []
-    #variável que guarda todas imagens da pasta media
-    imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+    try:
+        #variável que guarda todas imagens da pasta media
+        imagens_da_pasta_solicitada = os.listdir(f'{os.getcwd()}/media/{dir}')
+    except:
+        return
     #caso a pasta passada como parâmetro seja a 'pasta_da_velha_imagem' é necessário que se exclua a sub-pasta 'img_professores_eletiva', pois eu só preciso das imagens
     if dir == 'img_eletivas':
         imagens_da_pasta_solicitada.remove('img_professores_eletiva')
@@ -182,6 +184,10 @@ def retornar_index(request):
 
 #nesta função é feito o login dos usuários 
 def login_viwes(request):
+    try:
+        request.session['user']
+    except:
+        request.session['user'] = None
     #esse if verifica se já tem um usuário logado, se tiver é necessário que deslogue para logar de novo
     if request.session['user'] == 'ADMIN'or request.session['user'] != None:
         return redirect(retornar_index)
@@ -194,7 +200,7 @@ def login_viwes(request):
         #guardará o valor inserido pelo usuário referente a cada checkbox
         checkboxes = {}
         #lista de nomes de cada checkbox do html
-        lista_checkboxes = ['ADMIN','Admin','Professor','Aluno','Tutor']
+        lista_checkboxes = ['ADMIN','Admin']
         #for que armazena na variável 'checkboxes' os valores referentes a cada input do html
         for i in lista_checkboxes:
             checkboxes[f'{i}'] = request.POST.get(f'{i}')
@@ -227,34 +233,35 @@ def login_viwes(request):
                     request.session['senha_user_logado'] = password
                     menssagem['logado'] = ['User logado com sucesso!',0]
                     return redirect(retornar_index)
-        #caso o usuário a ser logado seja o professor
-        elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
-            #pegue todos os professores do meu site
-            professor = Professores.objects.all().values()
-            #percorra-os
-            for i in professor:
-                #se o nome e senha pegados do html forem iguais à nome e senha de algum professor então logue-o
-                if i['nome'].lower() == nome and i['senha'] == password:
-                    request.session['user'] = 'professor'
-                    request.session['nome_user_logado'] = nome
-                    request.session['senha_user_logado'] = password
-                    menssagem['logado'] = ['User logado com sucesso!',0]
-                    return redirect(retornar_index)
-        #caso o usuário a ser logado seja o aluno
-        elif checkboxes['Aluno'] == 'on':
-            #pegue todos os alunos do meu site
-            alunos = Alunos.objects.all().values()
-            #percorra-os
-            for i in alunos:
-                #se o nome e senha pegados do html forem iguais à nome e senha de algum aluno então logue-o
-                if i['nome'].lower() == nome and i['senha'] == password:
-                    request.session['user'] = 'aluno'
-                    request.session['nome_user_logado'] = nome
-                    request.session['senha_user_logado'] = password
-                    menssagem['logado'] = ['User logado com sucesso!',0]
-                    return redirect(retornar_index)
-                    
-            
+        #####################################################
+        # #caso o usuário a ser logado seja o professor
+        # elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
+        #     #pegue todos os professores do meu site
+        #     professor = Professores.objects.all().values()
+        #     #percorra-os
+        #     for i in professor:
+        #         #se o nome e senha pegados do html forem iguais à nome e senha de algum professor então logue-o
+        #         if i['nome'].lower() == nome and i['senha'] == password:
+        #             request.session['user'] = 'professor'
+        #             request.session['nome_user_logado'] = nome
+        #             request.session['senha_user_logado'] = password
+        #             menssagem['logado'] = ['User logado com sucesso!',0]
+        #             return redirect(retornar_index)
+        # #caso o usuário a ser logado seja o aluno
+        # elif checkboxes['Aluno'] == 'on':
+        #     #pegue todos os alunos do meu site
+        #     alunos = Alunos.objects.all().values()
+        #     #percorra-os
+        #     for i in alunos:
+        #         #se o nome e senha pegados do html forem iguais à nome e senha de algum aluno então logue-o
+        #         if i['nome'].lower() == nome and i['senha'] == password:
+        #             request.session['user'] = 'aluno'
+        #             request.session['nome_user_logado'] = nome
+        #             request.session['senha_user_logado'] = password
+        #             menssagem['logado'] = ['User logado com sucesso!',0]
+        #             return redirect(retornar_index)
+        ##################################################            
+        
         #se chegou até aqui é porque nenhum dos ifs anteriores foram iguais a True, logo a senha ou nome ou usuário escolhidos não coincidem
         dados = {}
         dados['message'] = "Usuário ou senha inválidos!, por favor, preencha noamente suas credenciais!!"
@@ -306,6 +313,7 @@ def logout_viwes(request):
     dados_universsais.clear()
     #definindo o session 'user' como None, desta maneira o código saberá se o usuário está logado ou não
     request.session['user'] = None
+    menssagem['logado'] = ['Deslogado com sucesso!',0]
     return redirect(retornar_index)
 
 #função que adiciona as eletivas
@@ -330,6 +338,7 @@ def add_eletivas(request):
             new.save()
             #redirecionando para a função que adiciona o professor responsável pela eletiva
             excluir_imagem("img_eletivas",Eletivas.objects.all().values())
+            menssagem['eletiva_adicionada'] = 'Eletiva Adicionada!'
             return redirect(add_professor,tipo_de_user='professor')
     else:
         dados = {}
@@ -337,18 +346,6 @@ def add_eletivas(request):
         dados['form'] = AddEletivaForm()
         dados['message'] = ''
         return render(request,'eletiva/addeletiva.html',dados)
-
-#função que retorna os alunos e professores presentes na eletiva
-def ver_eletiva(request,eletiva):
-    dados = {}
-    dados['alunos'] = Alunos.objects.filter(eletiva=eletiva).values()
-    try:
-        dados['professor'] = Professores.objects.filter(eletiva=eletiva)
-    except:
-        dados['message'] = 'Não professor responsável por essa eletiva'
-    if len(dados['alunos']) == 0:
-        dados['message'] = 'Não há alunos nesta eletiva'
-    return  render(request,'eletiva/eletiva.html',dados)
 
 #função que adiciona os professores e/ou tutores
 #tipo_de_user: tipo do user a ser adicionado(professor/tutor)
@@ -390,9 +387,17 @@ def add_professor(request, tipo_de_user):
         professor = Professores(eletiva=dados_do_ser_a_ser_adicionado['eletiva'],nome=dados_do_ser_a_ser_adicionado['nome'],email=dados_do_ser_a_ser_adicionado['email'],senha=dados_do_ser_a_ser_adicionado['password'],imagem=dados_do_ser_a_ser_adicionado['imagem'],professor=dados_do_ser_a_ser_adicionado['professor'],tutor=dados_do_ser_a_ser_adicionado['tutor'],descricao=dados_do_ser_a_ser_adicionado['descricao'])
         #salvando-o
         professor.save()
-        return redirect(eletivas)
+        if tipo_de_user == 'tutor':
+            return redirect(tutoria)
+        else:
+            return redirect(eletivas)
     else:
         dados={}
+        try:
+            menssagem.get('eletiva_adicionada')
+            dados['message'] = menssagem['eletiva_adicionada']
+        except:
+            dados['message'] = ''
         #como essa função só adiciona professor ou tutor, se o 'tipo_de_user' for difente não poderá ser adicionado
         if tipo_de_user != 'professor' and tipo_de_user != 'tutor' and tipo_de_user != 'professor-tutor':
             return redirect(retornar_index)
@@ -423,40 +428,42 @@ def add_professor(request, tipo_de_user):
         #como eu tinha que executar o 'exclude' eu não podia obter os 'values' do models 'Eletivas', porém, agora posso
         dados['eletivas'] = dados['eletivas'].values()
         return render(request,'professor/addprofessor.html',dados)
+######################################
 #função que adiciona o aluno
-def add_aluno(request):
-    #verificando se o usuario pode realizar a ação requisitada
-    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-        return redirect(retornar_index)
-    else:
-        if request.method == 'POST':
-            serie=request.POST.get('serie')
-            nome=request.POST.get('nome')
-            email=request.POST.get('email')
-            senha=request.POST.get('senha')
-            eletiva=request.POST.get('select')
-            imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
+# def add_aluno(request):
+#     #verificando se o usuario pode realizar a ação requisitada
+#     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
+#         return redirect(retornar_index)
+#     else:
+#         if request.method == 'POST':
+#             serie=request.POST.get('serie')
+#             nome=request.POST.get('nome')
+#             email=request.POST.get('email')
+#             senha=request.POST.get('senha')
+#             eletiva=request.POST.get('select')
+#             imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
             
 
-            campos = [serie,nome,email,senha,eletiva]
-            # checa se alguns dos valores acima e nulo, se for impede que o alun o seja adicionado
-            for i in campos:
-                if i == '':
-                    dados={}
-                    dados['eletivas'] = Eletivas.objects.all().values()
-                    dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
-                    return render(request,'aluno/addaluno.html',dados)
-            #se nenhum dos campos forem nulos então crie o novo aluno
-            aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
-            #salve-o
-            aluno.save()
+#             campos = [serie,nome,email,senha,eletiva]
+#             # checa se alguns dos valores acima e nulo, se for impede que o alun o seja adicionado
+#             for i in campos:
+#                 if i == '':
+#                     dados={}
+#                     dados['eletivas'] = Eletivas.objects.all().values()
+#                     dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
+#                     return render(request,'aluno/addaluno.html',dados)
+#             #se nenhum dos campos forem nulos então crie o novo aluno
+#             aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
+#             #salve-o
+#             aluno.save()
             
-            return redirect(ver_eletiva,eletiva=eletiva)
-        else:
-            dados={}
-            dados['eletivas'] = Eletivas.objects.all().values()
-            dados['message'] = 'A imagem de perfil é opcional'
-            return render(request,'aluno/addaluno.html',dados)
+#             return redirect(ver_eletiva,eletiva=eletiva)
+        # else:
+        #     dados={}
+        #     dados['eletivas'] = Eletivas.objects.all().values()
+        #     dados['message'] = 'A imagem de perfil é opcional'
+        #     return render(request,'aluno/addaluno.html',dados)
+#################################################
 #função que retorna para a página dos tutores
 def tutoria(request):
     dados=dados_universsais.copy()
@@ -555,17 +562,11 @@ def update_eletiva(request,id):
             if form.is_valid():
                 if form.cleaned_data.get('titulo') != eletiva_1:
                     professores = Professores.objects.filter(eletiva=eletiva_1)
-                    alunos = Alunos.objects.filter(eletiva=eletiva_1)
                     if len(professores) != 0:
                         for professor in professores:
                             professor.eletiva = form.cleaned_data.get('titulo')
                             professor.save()
                        
-                    if len(alunos) != 0:
-                        for aluno in alunos:
-                            aluno.eletiva = form.cleaned_data.get('titulo')
-                            aluno.save()
-        
                 form.save()
                 return redirect(eletivas)
             else:
@@ -616,27 +617,7 @@ def deletar_com_ids(request,user,id):
             nao = request.POST.get('nao')
             #if para deletar
             if sim == 'on' and nao != 'on':
-                #ifs que deletam pelo id de acordo com o models escolhido: user=models='aluno,eletivas,admin ou professor' 
-                 #ambos  passam 3 variáveis:
-                # dados['model_user']: recebe o models com todas imagens que estão sendo usadas
-                # dados['diretorio_user']: recebe o nome da pasta onde esta localizada a imagem
-                # dados['user']: recebe o tipo de user que foi deletado
-                #se o user for um aluno
-                if user == "aluno":
-                    dados['model_user'] = Alunos.objects.all().values()
-                    dados['diretorio_user'] = "imagem_alunos"
-                    #mudar esta linha em todos ifs
-                    dados['user'] = 'aluno(s)'
-                    #loop que percorre os ids
-                    for i in dados['lista_id']:
-                        #tente pegar o object de id = i e delete-o
-                        try:
-                            Alunos.objects.get(id=i).delete()
-                        #se não conseguir saía daqui
-                        except:
-                            return redirect(update_or_delete,u_or_d='deletar',user=user)
-                #se o user for um admin
-                elif user == "admin":
+                if user == "admin":
                     dados['model_user'] = Admins.objects.all().values()
                     dados['diretorio_user'] = "imagem_admins"
                     dados['user'] = 'admin(s)'
@@ -771,6 +752,7 @@ def add_admin(request):
         return redirect(retornar_index)
     else:
         return render(request,'acoes_principais/template_add.html')
+    
 def update_or_delete(request,u_or_d,user):
     if u_or_d != 'deletar' and u_or_d != 'update':
         return redirect(retornar_index)
@@ -785,9 +767,7 @@ def update_or_delete(request,u_or_d,user):
     dados['tabela_user_passado_como_parametro'] = user
 
     dados['modo'] = f'{u_or_d}'
-    if user.lower() == 'aluno':
-        dados['usuarios'] = Alunos.objects.all().values()
-    elif user.lower() == 'professor':
+    if user.lower() == 'professor':
         dados['usuarios'] = Professores.objects.exclude(professor=False)
     elif user.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()
@@ -811,18 +791,7 @@ def update_com_id(request,user,id):
     user_a_ser_atualizado = []
     campos_atigos_do_user = []
     model = []
-
-    #ifs para adcionar valores antigos do usuario
-    if user == 'aluno':
-        try:
-            user_a_ser_atualizado.append(Alunos.objects.get(id=id))
-        except:
-            return redirect(update_or_delete,u_or_d='update', user=user)
-        model.append(Alunos.objects.all().values())
-        model.append("imagem_alunos")
-        campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva,user_a_ser_atualizado[0].serie]
-
-    elif user == 'professor' or user == 'tutor' or user == 'professor-tutor':
+    if user == 'professor' or user == 'tutor' or user == 'professor-tutor':
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
         except:
@@ -869,12 +838,10 @@ def update_com_id(request,user,id):
             
         campos_atualizados_do_user = []
         #ifs que pegamm valores atuais dos usuarios
-        if user == 'aluno' or user == 'professor':
+        if user == 'professor': #user == 'aluno' or 
             eletiva = request.POST.get('eletiva')
             campos_atualizados_do_user = [nome,email,senha,imagem,eletiva]
-            if user == 'aluno':
-                serie = request.POST.get('serie')
-                campos_atualizados_do_user = [nome,email,senha,imagem,eletiva,serie]
+
         elif user == 'tutor' or user == 'professor-tutor':
             descricao = request.POST.get('descricao')
             if user == 'professor-tutor':
@@ -908,16 +875,12 @@ def update_com_id(request,user,id):
                 if tam == 0:
                     if user == 'eletiva':
                         professores = Professores.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
-                        alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
+                        # alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
                         if len(professores) != 0:
                             for e in professores:
                                 e.eletiva = i
                                 e.save()
 
-                        if len(alunos) != 0:
-                            for e in alunos:
-                                e.eletiva = i
-                                e.save()
                         user_a_ser_atualizado[0].titulo = i
                     else:
                         user_a_ser_atualizado[0].nome = i

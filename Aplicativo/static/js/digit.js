@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Função de validação do formulário
     function validateForm(event) {
+        console.log('aaaaa')
         event.preventDefault(); // Impede o envio do formulário para realizar validações
         errorMessage.style.display = "none"; // Limpa mensagens de erro anteriores
 

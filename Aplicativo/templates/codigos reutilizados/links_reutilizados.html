@@ -16,16 +16,14 @@
     <nav id="side-nav">
         <button id="close-btn">&times;</button>
         <ul>
-            <li><a href="{% url 'eletivas' %}">Eletiva</a></li>
-            <li><a href="{% url 'tutoria' %}">Tutores</a></li>
+            <li><a href="{% url 'eletivas' %}" id="eletivaLink">Eletiva</a></li>
+            <li><a href="{% url 'tutoria' %}" id="tutorLink">Tutores</a></li>
             <li><a href="{% url 'sobre'%}" id="sobre">Sobre</a></li>
             {% if user != None%}
-            
                 {% if user == 'ADMIN'  or 'deletar' in lista_de_acoes%}
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-delete dropdown-btn" data-target="home-dropdown">Deletar</a>
                     <ul class="dropdown-content" id="home-dropdown">
-                        <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='aluno'%}">Deletar Aluno </a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='professor'%}">Deletar Professor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='tutor'%}">Deletar Tutor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='deletar' user='eletiva'%}">Deletar Eletiva</a></li>
@@ -37,7 +35,6 @@
                     <li class="menu-item">
                         <a href="" class="dropdown-btn-add dropdown-btn" data-target="services-dropdown">Adicionar</a>
                         <ul class="dropdown-content" id="services-dropdown">
-                            <li><a href="{% url 'add-aluno'%}">Adicionar Aluno</a></li>
                             <li><a href="{% url 'add' tipo_de_user='professor'%}">Adicionar Professor</a></li>
                             <li><a href="{% url 'add' tipo_de_user='tutor'%}">Adicionar Tutor</a></li>
                             <li><a href="{% url 'add' tipo_de_user='professor-tutor'%}">Adicionar Professor/Tutor</a></li>
@@ -50,7 +47,6 @@
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-update dropdown-btn" data-target="contact-dropdown">Atualizar</a>
                     <ul class="dropdown-content" id="contact-dropdown">
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='aluno'%}">Atualizar  Aluno</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Atualizar  Professor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='tutor'%}">Atualizar  Tutor</a></li>
                         <li><a href="{% url 'update_or_delete' u_or_d='update' user='admin'%}">Atualizar  Admin</a></li>
@@ -58,6 +54,7 @@
                     </ul>
                 </li>
                 {% endif %}
+                <li><a href="{% url 'definir-paginas' %}">Definir Paginas</a></li>
                 <li><a href="{% url 'logout' %}" class="btn-sair"><strong> SAIR</strong></a></li>
             {% else %}
             <li><a href="{% url 'login' %}" class="btn-entrar"> ENTRAR</a></li>
@@ -66,7 +63,7 @@
         </ul>
 
         <div class="logo-container">
-            <a href="{% url 'index'%}"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
+            <a href="{% url 'index'%}" id="logoLink"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
         </div>
     </nav>
 
