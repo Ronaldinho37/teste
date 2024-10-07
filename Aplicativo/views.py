@@ -648,7 +648,7 @@ def deletar_com_ids(request,user,id):
                              #se o tamanho da variável 'user_da_vez' for igual a 0 é poque o id passado não é de um tutor
                             #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
-                                mensagem_var['mensagem'] = "User não é um professor"
+                                menssagem_var['mensagem'] = "User não é um professor"
                                 return redirect(update_or_delete,u_or_d='deletar',user=user)
                             else:
                                 try:
@@ -730,68 +730,90 @@ def add_admin(request):
 
         #checkboxes= inputs do html
         checkboxes = ['deletar','atualizar','cadastrar']
+        #variável que recebe em forma de string as ações que o admin pode realizar
         acoes_permitidas = ""
+        #loop que percorre os checkboxes e se algun deles estiver marcado então irá adiciona-lo na variável acima
         for i in checkboxes:
             checkbox = request.POST.get(i)
             if checkbox == 'on':
                 acoes_permitidas += f' {i}'
+        #criando o novo admin 
         novo_adm = Admins(nome=nome,senha=senha,email=email,acoes=acoes_permitidas,imagem=imagem)
         novo_adm.save()
+        #retornado a respectiva menssagem
         menssagem_var['menssagem'] = "Admin adicionado com sucesso!"
         return redirect(retornar_index)
     else:
         return render(request,'acoes_principais/template_add.html')
-    
+#função que direciona o usuário para a página de Deletar ou Atualizar, com respectivas variáveis necessárias
 def update_or_delete(request,u_or_d,user):
-    if u_or_d != 'deletar' and u_or_d != 'update':
+    #caso a variável passada na url seja diferente das ações que esta função pode realizar
+    if u_or_d != 'deletar' and u_or_d != 'atualizar':
         return redirect(retornar_index)
 
-    if u_or_d == 'update': 
-        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
-            return redirect(retornar_index)
-    else:
-        if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
-            return redirect(retornar_index)
+    if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,f'{u_or_d}') == True:
+        return redirect(retornar_index)
+   
     dados = dados_universsais.copy()
+    #esta variável nos dirá qual tabela deverá ser usada no html
     dados['tabela_user_passado_como_parametro'] = user
-
+    #dirá se no html usará os templates de deletar ou od de atualizar 
     dados['modo'] = f'{u_or_d}'
+    #caso seja professor
     if user.lower() == 'professor':
         dados['usuarios'] = Professores.objects.exclude(professor=False)
+    #caso seja admin
     elif user.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()
+        #para impedir que o usuário não se auto-delete ou auto-atualize eu pego o id do user que está logado
+        #e mais a frente compararei este id com os ids selecionados pelo usuário
         if dados['user'] == 'admin' and u_or_d == 'deletar' : 
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
+    #caso seja eletiva
     elif user.lower() == 'eletiva':
             dados['usuarios'] = Eletivas.objects.all().values()
+    #caso seja tutor
     elif user.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
+    #caso seja professor/tutor
     elif user.lower() == 'professor-tutor':
         dados['usuarios'] = Professores.objects.filter(professor=True,tutor=True)
+    #caso seja nenhum dos acima
     else:
         menssagem_var['mensagem'] = "Usuário não identificado"
         return redirect(retornar_index)
+    #pegando a menssagem
     dados['message'] = menssagem_var['mensagem'] 
+    #apagando-a da variável "menssagem_var", isso significa que ela já foi usada
     menssagem_var['mensagem'] = ""
+    #retornando para a respectiva página
     return render(request,f'{u_or_d}/{u_or_d}.html', dados)
-
+#função que atualiza 
 def update_com_id(request,user,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
     dados = {}
+    #variável que recebe o user a ser atualizar, está como lista pois assim eu posso editá-lo 
     user_a_ser_atualizado = []
+    #variável que receberá todos os campos antigos do usuário a ser atualizado
     campos_atigos_do_user = []
+    #recebe o miodel no qual o user esta situado e a pasta osta esta localizada sua imagem de perfil
     model = []
     if user == 'professor' or user == 'tutor' or user == 'professor-tutor':
+        #tente adicionar o user
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
+        #se não conseguir saía daqui
         except:
             menssagem_var['mensagem'] = "User não encontrado"
-            return redirect(update_or_delete,u_or_d='update', user=user)
+            return redirect(update_or_delete,u_or_d='atualizar', user=user)
         if user_a_ser_atualizado[0].tutor == True and user_a_ser_atualizado[0].professor == True and user != 'professor-tutor':
             return redirect(update_com_id, user='professor-tutor',id=id)
+        #já que chegou até aqui é porque está dando certo
+        #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Professores.objects.all().values())
         model.append("imagem_professores")
+        #como tutores, professores e professores-tutores têm campos diferentes, estes ifs adicionam somente os campos necessários 
         if user == 'tutor':
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].descricao]
         elif user == 'professor-tutor':
@@ -799,87 +821,121 @@ def update_com_id(request,user,id):
         else:
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
     elif user == 'eletiva':
+         #tente adicionar o user
         try:
             user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
+        #se não conseguir saía daqui
         except:
-            return redirect(update_or_delete,u_or_d='update', user=user)
+            menssagem_var['mensagem'] = "User não encontrado"
+            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+        #já que chegou até aqui é porque está dando certo
+        #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Eletivas.objects.all().values())
         model.append("img_eletivas")
+        #adicionandos os campos antigos do usuário
         campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].img_professores_eletiva,user_a_ser_atualizado[0].link]
     elif user == 'admin':
+         #tente pegar o user
         try:
             admin_a_ser_atualizado = Admins.objects.get(id=id)
+        #se não conseguir saía daqui
         except:
-            return redirect(update_or_delete,u_or_d='update', user=user)
+            menssagem_var['mensagem'] = "User não encontrado"
+            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+        #aqui é feita a verificação se o admin logado é o mesmo que será atualizado
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
             menssagem_var['mensagem'] = "Você não pode se auto atualizar"
-            return redirect(update_or_delete,u_or_d='update', user=user)
+            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+         #já que chegou até aqui é porque está dando certo
+        #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Admins.objects.all().values())
         model.append("imagem_admins")
+        #adicionando à variável "user_a_ser_atualizado" o user a ser atualizado
         user_a_ser_atualizado.append(admin_a_ser_atualizado)
         campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].acoes]
  
     if request.method == 'POST':
+        #pegando os novos valores, estes aqui são padrão(têm na maioria dos users)
         nome = request.POST.get('nome')
         email = request.POST.get('email')
         senha = request.POST.get('senha')
         imagem = request.FILES.get('imagem')
+        #caso seja eletivas eu preciso saber se o usuário quer deixar sem imagens ou não
         pergunta_imagem = request.POST.get('pergunta_imagem')
         pergunta_imagem_professores = request.POST.get('pergunta_imagem_professores')
-            
+        #vaiável que recebe os novos campos do user
         campos_atualizados_do_user = []
-        #ifs que pegamm valores atuais dos usuarios
-        if user == 'professor': #user == 'aluno' or 
+        #ifs que pegão valores atuais dos usuarios
+        if user == 'professor': 
+            #pegue a nova eletiva
             eletiva = request.POST.get('eletiva')
+            #atualizando a variável "campos_atualizados_do_user"
             campos_atualizados_do_user = [nome,email,senha,imagem,eletiva]
 
         elif user == 'tutor' or user == 'professor-tutor':
+            #pegue a nova descrição
             descricao = request.POST.get('descricao')
             if user == 'professor-tutor':
+                #pegue a nova eletiva
                 eletiva = request.POST.get('eletiva')
+                #campo caso seja professor-tutor
                 campos_atualizados_do_user = [nome,email,senha,imagem,descricao,eletiva]
-
             else:
+                #campo caso seja tutor
                 campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
         elif user == 'eletiva':
+            #a eletiva é o único "user" com campos diferentes, por isso a variável "campos_atualizados_do_user" é diferente das demais
             titulo = request.POST.get('titulo')
             link = request.POST.get('link')
             descricao = request.POST.get('descricao')
             img_professores = request.FILES.get('img_professores')
             campos_atualizados_do_user = [titulo,descricao,imagem,img_professores,link]
         elif user == 'admin':
+            #checkboxes do admin
             checkboxes = ['deletar','atualizar','cadastrar']
             acoes_permitidas = ""
+            #loop que pega os respectivos valores dos checkboxes no html
             for i in checkboxes:
                 checkbox = request.POST.get(i)
                 if checkbox == 'on':
                     acoes_permitidas += f' {i}'
-            
+            #atualizando a variável "campos_atualizados_do_user"
             campos_atualizados_do_user = [nome,email,senha,imagem,acoes_permitidas]
-        
-
+        #esta variável é quem diz qual campo esta sendo atualizado no momento, por exemplo:
+        #0: nome, 1: email ...
         tam = 0
-        
-        #for que percorre os valores do usuario e checa se o nome atual do usuario e uigual ao antigo e se for diferente altera ele 
+        #for que percorre os novos valores inseridos pelo usuário 
         for i in campos_atualizados_do_user:
-            if i != campos_atigos_do_user[0]:
+            #se o campo da vez for diferente do campo antigo, então...
+            if i != campos_atigos_do_user[tam]:
+                #se tam == 0 ou seja "nome"
                 if tam == 0:
+                    #se for eletiva
                     if user == 'eletiva':
+                        #muda também o nome no campo "eletiva" no models dos Professores
                         professores = Professores.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
                         # alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
+                        #se o tamanho desta variável for diferente de 0 é porque há professores nesta eletiva e por isso devem ser alterados
                         if len(professores) != 0:
-                            for e in professores:
-                                e.eletiva = i
-                                e.save()
-
+                            for p in professores:
+                                p.eletiva = i
+                                p.save()
+                        #atualizando o título da eletiva
                         user_a_ser_atualizado[0].titulo = i
                     else:
+                        #atualizando o nome do user
                         user_a_ser_atualizado[0].nome = i
+                #tam == 1  and user != 'eletiva': email
                 elif tam == 1 and user != 'eletiva':
                     user_a_ser_atualizado[0].email = i
+                #tam == 2  and user != 'eletiva': senha
                 elif tam == 2 and user != 'eletiva':
                     user_a_ser_atualizado[0].senha = i
+                #tam == 1  and user == 'eletiva': foto de fundo da eletiva
+                #tam == 3  and user != 'eletiva': foto de perfil do usuário
                 elif tam == 3 and user != 'eletiva' or tam == 2 and user == 'eletiva' :
+                    #se não for passada imagem nova ou se for e o input que diz se o usuário quer ou não deixar sem imagem
+                    #estiver marcado então chamará a função "checar_imagem_existente" como None
                     if imagem != None and pergunta_imagem == 'on' or imagem == None and pergunta_imagem == 'on':
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
                     elif imagem != None and pergunta_imagem == None:
@@ -894,6 +950,7 @@ def update_com_id(request,user,id):
                     user_a_ser_atualizado[0].eletiva = i
                 elif tam == 4 and user == 'admin':
                     user_a_ser_atualizado[0].acoes = i
+                    #tam == 1  and user == 'eletiva': descrição
                 elif tam == 4 and user == 'tutor' or  tam == 4 and user == 'professor-tutor' or user == 'eletiva' and tam == 1:
                     user_a_ser_atualizado[0].descricao = i
                 elif tam == 5 and user != 'professor-tutor':
@@ -908,7 +965,7 @@ def update_com_id(request,user,id):
             excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
         excluir_imagem(model[1],model[0])
         menssagem_var['mensagem'] = "Atualizado com sucesso!"
-        return redirect(update_or_delete,u_or_d='update',user=user)
+        return redirect(update_or_delete,u_or_d='atualizar',user=user)
     else:
         
         dados['user'] = user
@@ -930,7 +987,7 @@ def update_com_id(request,user,id):
             for i in acoes_lista:
                 dados[f'{i}'] = 'checked'
         
-        return render(request, 'update/update_com_id.html', dados)
+        return render(request, 'atualizar/atualizar_com_id.html', dados)
     
 def definir_paginas_utilizaveis(request):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'definirpaginas') == True:

@@ -25,25 +25,25 @@
             <input type="checkbox" name="pergunta_imagem" id="">
         </div>
         {% if user == 'aluno' or user == 'professor' or user == 'professor-tutor'%}
-            {% include 'update/update_professor.html' %}
+            {% include 'atualizar/atualizar_professor.html' %}
             {% block eletiva %}
             {% endblock %}
             {% if user == 'aluno' %}
-                {% include 'update/update_aluno.html' %}
+                {% include 'atualizar/atualizar_aluno.html' %}
                 {% block serie %}
                 {% endblock %}
             {% endif %}
         {% elif user == 'admin' %}
-            {% include 'update/update_admin.html' %}
+            {% include 'atualizar/atualizar_admin.html' %}
             {% block acoes_do_admin %}
             {% endblock %}
         {% endif %}
         {% if user == 'tutor' or user == 'eletiva' or user == 'professor-tutor' %}
-            {% include 'update/update_tutor.html' %}
+            {% include 'atualizar/atualizar_tutor.html' %}
             {% block descricao %}
             {% endblock %}
             {% if user == 'eletiva' %}
-                {% include 'update/update_eletiva.html' %}
+                {% include 'atualizar/atualizar_eletiva.html' %}
                 {% block eletiva_da_eletiva %}
                 {% endblock %}
             {% endif %}

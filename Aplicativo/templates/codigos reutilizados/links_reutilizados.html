@@ -47,10 +47,10 @@
                 <li class="menu-item">
                     <a href="#" class="dropdown-btn-update dropdown-btn" data-target="contact-dropdown">Atualizar</a>
                     <ul class="dropdown-content" id="contact-dropdown">
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='professor'%}">Atualizar  Professor</a></li>
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='tutor'%}">Atualizar  Tutor</a></li>
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='admin'%}">Atualizar  Admin</a></li>
-                        <li><a href="{% url 'update_or_delete' u_or_d='update' user='eletiva'%}">Atualizar  Eletiva</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='atualizar' user='professor'%}">Atualizar  Professor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='atualizar' user='tutor'%}">Atualizar  Tutor</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='atualizar' user='admin'%}">Atualizar  Admin</a></li>
+                        <li><a href="{% url 'update_or_delete' u_or_d='atualizar' user='eletiva'%}">Atualizar  Eletiva</a></li>
                     </ul>
                 </li>
                 {% endif %}
