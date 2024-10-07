@@ -11,7 +11,7 @@ function adicionar_linha(x){
         } else {
             users_a_serem_excluidos.push(x.id)
             span.innerText = users_a_serem_excluidos.length
-            x.style.border = "0px solid red"
+            x.style.border = "1px solid red"
         }
         
     } else {

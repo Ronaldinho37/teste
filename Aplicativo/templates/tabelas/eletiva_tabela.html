@@ -1,10 +1,24 @@
 {% block tabela_eletiva %}
-<div id="table-py">
-    <div id="form-div">
+<div id="table-py" class="p-3">
+    <style>
+        ::-webkit-scrollbar{
+            display: none;
+        }
+    </style>
+    <div id="form-div" class="d-flex flex-column justify-content-center align-items-center mb-4">
+
+        <div class="bg-secondary rounded d-flex align-items-center flex-column p-3 m-3 shadow-lg opacity-50">
+            <img src="../../../media/img_fixas/logo-asn.png" alt="" width="180">
+            <h1 class="text-white">ATENÇÃO!!!</h1>
+            <p  class="text-white">Nesta área você poderá as eletivas que atualmente estão ativas, <br> 
+            Selecione a eletiva que deseja deletar e logo após clique no botão <br> vermelho "DELETAR"</p>
+
+        </div>
+
         <label for="ordem">Procurar por:</label>
-        <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)">
+        <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)" class="form-control w-50 my-2 shadow-sm">
         <label for="coluna"> na coluna</label>
-        <select name="coluna" id="coluna">
+        <select name="coluna" id="coluna" class="form-select w-50 my-2 shadow-sm">
             <option value="id" selected>id</option>
             <option value="nome">nome</option>
             <option value="eletiva">eletiva</option>
@@ -13,33 +27,36 @@
                 <option value="serie">série</option>
             {% endif %}
         </select>
-        {%if modo == "deletar" %}
+        {% if modo == "deletar" %}
             <h3>Selecionados: <span id="numero_selecionados">0</span></h3>
-            <button onclick="ir_para_o_site()">Submit</button>
+            <button onclick="ir_para_o_site()" class="btn btn-danger shadow-sm">DELETAR</button>
         {% endif %}
     </div>
-    <table id="tabela" class="table table-dark" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="None">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Imagem</th>
-            <th scope="col">Descrição</th>
-            <th scope="col">Link</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for i in usuarios %}
-                <tr id="{{i.id}}" onclick="adicionar_linha(this)">
-                    <th scope="row" class="id" data-id="{{i.id}}">{{i.id}}</th>
-                    <td class="nome" data-id="{{i.id}}">{{i.titulo}}</td>
-                    <td class="imagem" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt=""></td>
-                    <td class="descricao" data-id="{{i.id}}">{{i.descricao}}</td>
-                    <td class="link" data-id="{{i.id}}">{{i.link}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-      </table>
+    
+    <div class="d-flex justify-content-center">
+        <table id="tabela" class="table table-hover w-75" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="None">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Imagem</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Link</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in usuarios %}
+                    <tr id="{{i.id}}" onclick="adicionar_linha(this)" style="cursor: pointer;">
+                        <th scope="row" class="id" data-id="{{i.id}}">{{i.id}}</th>
+                        <td class="nome" data-id="{{i.id}}">{{i.titulo}}</td>
+                        <td class="imagem" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt="" width="50"></td>
+                        <td class="descricao" data-id="{{i.id}}">{{i.descricao}}</td>
+                        <td class="link" data-id="{{i.id}}">{{i.link}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+    </div>
 </div>
 
 {% endblock %}
