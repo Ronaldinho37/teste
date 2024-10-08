@@ -7,9 +7,7 @@
     <title>Document</title>
 </head>
 <body class="d-flex justify-content-center align-content-center " style="margin-top:4%">
-    {% include 'codigos reutilizados/menssage.html' %}
-    {% block menssagem %}
-    {% endblock %}
+ 
     <form class="bg-light w-25 d-flex flex-column align-content-center p-3 rounded" action="{{ update_com_id }}" method="post" enctype="multipart/form-data" > {% csrf_token %}
         {% if user == 'eletiva' %}
             <input type="text" name="titulo" id="titulo" value="{{tabela.titulo}}" required>

@@ -1,6 +1,9 @@
 {% load static %}
 {% block tabela_eletiva %}
-<div id="table-py" class="p-3">
+{% include 'codigos reutilizados/links_reutilizados.html' %}
+{% block links %}
+{% endblock %}
+<div id="table-py" class="p-3" style=font-family:Poppins sans-serif;>
     <style>
         ::-webkit-scrollbar{
             display: none;
@@ -8,18 +11,26 @@
     </style>
     <div id="form-div" class="d-flex flex-column justify-content-center align-items-center mb-4">
 
-        <div id="div-alert-tables" class=" rounded d-flex align-items-center flex-column p-3 m-3 shadow-lg" style="background-color: rgba(105, 105, 105, 0.39);">
+        <div id="text-del">
+            <h2 class="text-center mb-4 p-3 rounded text-warning " style="background-color: rgb(8, 83, 196);">DELEÇÃO DE ELETIVAS</h2>
+        </div>
+
+        <div style="position: absolute; top:18%;" class="bg-warning p-2 rounded" id="text-area-res">
+            <h5>Area Restrita</h5>
+        </div>
+
+        <div id="div-alert-tables" class=" rounded d-flex align-items-center flex-column p-3  shadow-lg"style="background-color: rgb(8, 83, 196); margin:5% 0%;">
             <img src="../../../media/img_fixas/logo-asn.png" alt="" width="180">
             <h1 class="text-white">ATENÇÃO!!!</h1>
-            <p  class="text-white">Nesta área você poderá as eletivas que atualmente estão ativas, <br> 
+            <p  class="text-white" style="text-align: center;">Nesta área você poderá deletar as eletivas que atualmente estão ativas, <br> 
             Selecione a eletiva que deseja deletar e logo após clique no botão <br> vermelho "DELETAR"</p>
 
         </div>
 
         <label for="ordem" id="search-for">Procurar por:</label>
-        <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)" class="form-control w-50 my-2 shadow-sm">
+        <input type="text" id="ordem" name="ordem" class="input-group-text" onkeyup="pesquisar(this)" class="form-control w-50 my-2 shadow-sm">
         <label for="coluna" id="in-the-column"> na coluna</label>
-        <select name="coluna" id="coluna" class="form-select w-50 my-2 shadow-sm">
+        <select name="coluna" id="coluna" class="my-2 shadow-sm">
             <option value="id" selected>id</option>
             <option value="nome">nome</option>
             <option value="eletiva">eletiva</option>
@@ -30,7 +41,7 @@
         </select>
         {% if modo == "deletar" %}
             <h3 id="selects">Selecionados: <span id="numero_selecionados">0</span></h3>
-            <button id="btn-del" onclick="ir_para_o_site()" class="btn btn-danger shadow-sm">DELETAR</button>
+            <button id="btn-del" onclick="ir_para_o_site()" class="btn btn-danger " style="margin: 0;">DELETAR</button>
         {% endif %}
     </div>
     

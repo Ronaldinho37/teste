@@ -62,4 +62,21 @@ ScrollReveal().reveal('#tabela', {
     reset: true
 });
 
+ScrollReveal().reveal('#text-area-res', {
+    duration: 1200,
+    origin: 'top',
+    distance: '50px',
+    easing: 'ease-in-out',
+    reset: true
+});
+
+ScrollReveal().reveal('#text-del', {
+    duration: 1000,
+    origin: 'top',
+    distance: '50px',
+    easing: 'ease-in-out',
+    reset: true
+});
+
+
 
