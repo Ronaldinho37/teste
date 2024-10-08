@@ -15,27 +15,19 @@ menssagem_var = {'mensagem':""}
 #esta variável receberá o valor que eu precisarei em todas as funções, ela server para eu não ter que ficar
 #repetindo linhas de código. Em quase todas as funções a variável 'dados' hospedará o valor dela.
 dados_universsais = {}
-# roni
-# r@ni
-# ImgCarrossel.objects.all().delete()
-#1920 x 695 
-# Create your views here.
 
-#como codificar palavras
-# import rsa
-# (publickey, privatekey) = rsa.newkeys(100)
-# m = "oi".encode('utf8')
-# ciphertext = rsa.encrypt(m, publickey)
-# m2 = rsa.decrypt(ciphertext, privatekey)
-# print(ciphertext)
 def ver_se_a_pagina_pode_funcionar(pagina,dados):
+    #false: não saía
+    #true: saía
+    #tente pegar os valores do object
     try:
         paginaModels = PaginasUtilizaveis.objects.values().get(id=1)
+    #se não conseguir é porque não existe, então crie-o
     except:
         p1 = PaginasUtilizaveis(tutoria=True,eletiva=True,index=True,sobre=True)
         p1.save()
         return False 
-    
+    #pegua o valor referente a página passada como parâmetro, se for diferente de true é porque ela não pode ser utilizada 
     if paginaModels[f'{pagina}'] != True:
         dados['message'] = menssagem_var['mensagem']
         menssagem_var['mensagem'] = ""
@@ -578,7 +570,7 @@ def sobre(request):
     dados['pagina'] = 'sobre'#excluir essa linha
     return render(request,'principais/about.html',dados)
         
-def deletar_com_ids(request,user,id):
+def deletar_com_ids(request,user_a_ser_atualizado_arg,id):
         #verificando se o usuário pode deletar
         if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'deletar') == True:
             return redirect(retornar_index)
@@ -588,7 +580,7 @@ def deletar_com_ids(request,user,id):
         #variável que recebe o tamanho da lista de ids
         dados['tam_lista_id'] = len(dados['lista_id'])
        #se o user a ser deletado for um 'admin' e o user logado for o mesmo admin ele não poderá se auto deletar
-        if dados['user'] == 'admin' and user == 'admin':
+        if dados['user'] == 'admin' and user_a_ser_atualizado_arg == 'admin':
             #pego o id referente ao admin logado
             id_do_user_logado = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
             #loop para percorrer os ids
@@ -596,7 +588,7 @@ def deletar_com_ids(request,user,id):
                 #se o id passado como parâmetro for igual ao id do user logado, impessa que o delete aconteça
                 if int(i) == id_do_user_logado:
                     menssagem_var['mensagem'] = "Você não pode se auto deletar!"
-                    return redirect(update_or_delete,u_or_d='deletar', user=user)
+                    return redirect(update_or_delete,u_or_d='deletar', user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
         
         if request.method == 'POST':
             #pegando os valores dos inputs do html
@@ -604,7 +596,7 @@ def deletar_com_ids(request,user,id):
             nao = request.POST.get('nao')
             #if para deletar
             if sim == 'on' and nao != 'on':
-                if user == "admin":
+                if user_a_ser_atualizado_arg == "admin":
                     dados['model_user'] = Admins.objects.all().values()
                     dados['diretorio_user'] = "imagem_admins"
                     dados['user'] = 'admin(s)'
@@ -612,13 +604,13 @@ def deletar_com_ids(request,user,id):
                         try:
                             Admins.objects.get(id=i).delete()
                         except:
-                            return redirect(update_or_delete,u_or_d='deletar',user=user)
-                #se o user for um professor ou tutor
-                elif user == "professor" or user == "tutor":
+                            return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
+                #se o user_a_ser_atualizado_arg for um professor ou tutor
+                elif user_a_ser_atualizado_arg == "professor" or user_a_ser_atualizado_arg == "tutor":
                     dados['model_user'] = Professores.objects.all().values()
                     dados['diretorio_user'] = "imagem_professores"
                     #se o user for tutor
-                    if user == 'tutor':
+                    if user_a_ser_atualizado_arg == 'tutor':
                         #variável que recebe somente os objects que são tutores
                         os_que_podem_ser_deletados = Professores.objects.filter(tutor=True)
                         dados['user'] = 'tutor(es)'
@@ -630,14 +622,14 @@ def deletar_com_ids(request,user,id):
                             #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
                                 menssagem_var['mensagem'] = "User não é um tutor"
-                                return redirect(update_or_delete,u_or_d='deletar',user=user)
+                                return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                             else:
                                  #tente pegar o object de id = i e delete-o
                                 try:
                                     Professores.objects.get(id=i).delete()
                                 except:
                                      #se não conseguir saía daqui
-                                    return redirect(update_or_delete,u_or_d='deletar',user=user)
+                                    return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                     else:
                         dados['user'] = 'professor(es)'
                         #variável que recebe somente os objects que são professores
@@ -649,14 +641,14 @@ def deletar_com_ids(request,user,id):
                             #logo, ele não poderá ser deletado
                             if len(user_da_vez) == 0:
                                 menssagem_var['mensagem'] = "User não é um professor"
-                                return redirect(update_or_delete,u_or_d='deletar',user=user)
+                                return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                             else:
                                 try:
                                     Professores.objects.get(id=i).delete()
                                 except:
-                                    return redirect(update_or_delete,u_or_d='deletar',user=user)
+                                    return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                 #se o user passado como parâmetro for igual a eletiva
-                elif user == "eletiva":
+                elif user_a_ser_atualizado_arg == "eletiva":
                     dados['model_user'] = Eletivas.objects.all().values()
                     dados['diretorio_user'] = "img_eletivas"
                     dados['user'] = 'eletiva(s)'
@@ -664,7 +656,7 @@ def deletar_com_ids(request,user,id):
                         try:
                             eletiva_a_ser_deletada = Eletivas.objects.get(id=i) #.delete()
                         except:
-                            return redirect(update_or_delete,u_or_d='deletar',user=user)
+                            return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                       #como têm professores e alunos nas eletivas, para apaga-la será necessário retira-los desta. Esta variável
                         #recebe uma lista com professores e alunos da referente eletiva
                         alunos_e_professores = [Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo),Professores.objects.filter(eletiva=eletiva_a_ser_deletada.titulo)]
@@ -681,9 +673,9 @@ def deletar_com_ids(request,user,id):
             #se ambos valores forem diferentes de 'on' é porque nenhum dos inputs foram marcados, por conguinte, saía daqui
             elif nao != "on" and sim != "on":
                 menssagem_var['mensagem'] = "selecione um dos valores"
-                return redirect(deletar_com_ids, user=user,id=id)
+                return redirect(deletar_com_ids, user_a_ser_atualizado_arg=user_a_ser_atualizado_arg,id=id)
             else:
-                return redirect(update_or_delete,u_or_d='deletar',user=user)
+                return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
             
             excluir_imagem(dados['diretorio_user'],dados['model_user'])
             #como a eletiva tem dois campos que requerem imagens, é necessário que a função 'excluir_imagem' seja chamada novamente, 
@@ -691,27 +683,27 @@ def deletar_com_ids(request,user,id):
             if dados['diretorio_user'] == 'img_eletivas':
                excluir_imagem(f"{dados['diretorio_user']}/img_professores_eletiva", dados['model_user'])
             menssagem_var['mensagem'] = f'Todo(s) o(s) {dados["tam_lista_id"]} {dados["user"]} deletado(s)'
-            return redirect(update_or_delete,u_or_d='deletar',user=user)
+            return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
         else:
             dados['message'] = ""
             #esse if checa se o professor também é um tutor ou vice-versa e retorna uma mensagem informando ao usuário
-            if user == 'professor' or user == 'tutor':
+            if user_a_ser_atualizado_arg == 'professor' or user_a_ser_atualizado_arg == 'tutor':
                 #loop que percorre a lista com ids
                 for i in dados['lista_id']:
                     #pega o professor/tutor
                     try:   
                         professor_ou_tutor = Professores.objects.get(id=i)
                     except:
-                        return redirect(update_or_delete,u_or_d='deletar',user=user)
+                        return redirect(update_or_delete,u_or_d='deletar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
                     #variável que recebe o valor contrário ao user passado como parâmetro
                     user_da_vez = ''
-                    if user == 'professor':
+                    if user_a_ser_atualizado_arg == 'professor':
                         user_da_vez += 'tutor'
                     else:
                         user_da_vez += 'professor'
                     #se ambos campos 'tutor' e 'professor' forem True é porque ele é professor e tutor, logo, retorne uma mensagem
                     if professor_ou_tutor.tutor == True and professor_ou_tutor.professor == True and menssagem_var['mensagem'] != "selecione um dos valores": 
-                        menssagem_var['mensagem'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user} também irá apaga-lo como {user_da_vez}'
+                        menssagem_var['mensagem'] = f'Dentre os selecionados está um {user_da_vez}, se apaga-lo como {user_a_ser_atualizado_arg} também irá apaga-lo como {user_da_vez}'
                         break
             dados['message'] = menssagem_var['mensagem']
             return render(request,'deletar/deletar_com_ids.html',dados)
@@ -746,7 +738,7 @@ def add_admin(request):
     else:
         return render(request,'acoes_principais/template_add.html')
 #função que direciona o usuário para a página de Deletar ou Atualizar, com respectivas variáveis necessárias
-def update_or_delete(request,u_or_d,user):
+def update_or_delete(request,u_or_d,user_a_ser_atualizado_arg):
     #caso a variável passada na url seja diferente das ações que esta função pode realizar
     if u_or_d != 'deletar' and u_or_d != 'atualizar':
         return redirect(retornar_index)
@@ -756,27 +748,27 @@ def update_or_delete(request,u_or_d,user):
    
     dados = dados_universsais.copy()
     #esta variável nos dirá qual tabela deverá ser usada no html
-    dados['tabela_user_passado_como_parametro'] = user
+    dados['tabela_user_passado_como_parametro'] = user_a_ser_atualizado_arg
     #dirá se no html usará os templates de deletar ou od de atualizar 
     dados['modo'] = f'{u_or_d}'
     #caso seja professor
-    if user.lower() == 'professor':
+    if user_a_ser_atualizado_arg.lower() == 'professor':
         dados['usuarios'] = Professores.objects.exclude(professor=False)
     #caso seja admin
-    elif user.lower() == 'admin':
+    elif user_a_ser_atualizado_arg.lower() == 'admin':
         dados['usuarios'] = Admins.objects.all().values()
         #para impedir que o usuário não se auto-delete ou auto-atualize eu pego o id do user que está logado
         #e mais a frente compararei este id com os ids selecionados pelo usuário
         if dados['user'] == 'admin' and u_or_d == 'deletar' : 
                 dados['id_do_user_logado'] = Admins.objects.get(nome=dados['nome_user_logado'],senha=dados['senha_user_logado']).id
     #caso seja eletiva
-    elif user.lower() == 'eletiva':
+    elif user_a_ser_atualizado_arg.lower() == 'eletiva':
             dados['usuarios'] = Eletivas.objects.all().values()
     #caso seja tutor
-    elif user.lower() == 'tutor':
+    elif user_a_ser_atualizado_arg.lower() == 'tutor':
         dados['usuarios'] = Professores.objects.filter(tutor=True)
     #caso seja professor/tutor
-    elif user.lower() == 'professor-tutor':
+    elif user_a_ser_atualizado_arg.lower() == 'professor-tutor':
         dados['usuarios'] = Professores.objects.filter(professor=True,tutor=True)
     #caso seja nenhum dos acima
     else:
@@ -789,7 +781,7 @@ def update_or_delete(request,u_or_d,user):
     #retornando para a respectiva página
     return render(request,f'{u_or_d}/{u_or_d}.html', dados)
 #função que atualiza 
-def update_com_id(request,user,id):
+def update_com_id(request,user_a_ser_atualizado_arg,id):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'atualizar') == True:
         return redirect(retornar_index)
     dados = {}
@@ -799,53 +791,53 @@ def update_com_id(request,user,id):
     campos_atigos_do_user = []
     #recebe o miodel no qual o user esta situado e a pasta osta esta localizada sua imagem de perfil
     model = []
-    if user == 'professor' or user == 'tutor' or user == 'professor-tutor':
+    if user_a_ser_atualizado_arg == 'professor' or user_a_ser_atualizado_arg == 'tutor' or user_a_ser_atualizado_arg == 'professor-tutor':
         #tente adicionar o user
         try:
             user_a_ser_atualizado.append(Professores.objects.get(id=id))
         #se não conseguir saía daqui
         except:
             menssagem_var['mensagem'] = "User não encontrado"
-            return redirect(update_or_delete,u_or_d='atualizar', user=user)
-        if user_a_ser_atualizado[0].tutor == True and user_a_ser_atualizado[0].professor == True and user != 'professor-tutor':
-            return redirect(update_com_id, user='professor-tutor',id=id)
+            return redirect(update_or_delete,u_or_d='atualizar', user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
+        if user_a_ser_atualizado[0].tutor == True and user_a_ser_atualizado[0].professor == True and user_a_ser_atualizado_arg != 'professor-tutor':
+            return redirect(update_com_id, user_a_ser_atualizado_arg='professor-tutor',id=id)
         #já que chegou até aqui é porque está dando certo
         #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Professores.objects.all().values())
         model.append("imagem_professores")
         #como tutores, professores e professores-tutores têm campos diferentes, estes ifs adicionam somente os campos necessários 
-        if user == 'tutor':
+        if user_a_ser_atualizado_arg == 'tutor':
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].descricao]
-        elif user == 'professor-tutor':
+        elif user_a_ser_atualizado_arg == 'professor-tutor':
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].eletiva]
         else:
             campos_atigos_do_user = [user_a_ser_atualizado[0].nome,user_a_ser_atualizado[0].email,user_a_ser_atualizado[0].senha,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].eletiva]
-    elif user == 'eletiva':
+    elif user_a_ser_atualizado_arg == 'eletiva':
          #tente adicionar o user
         try:
             user_a_ser_atualizado.append(Eletivas.objects.get(id=id))
         #se não conseguir saía daqui
         except:
             menssagem_var['mensagem'] = "User não encontrado"
-            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+            return redirect(update_or_delete,u_or_d='atualizar', user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
         #já que chegou até aqui é porque está dando certo
         #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Eletivas.objects.all().values())
         model.append("img_eletivas")
         #adicionandos os campos antigos do usuário
         campos_atigos_do_user = [user_a_ser_atualizado[0].titulo,user_a_ser_atualizado[0].descricao,user_a_ser_atualizado[0].imagem,user_a_ser_atualizado[0].img_professores_eletiva,user_a_ser_atualizado[0].link]
-    elif user == 'admin':
+    elif user_a_ser_atualizado_arg == 'admin':
          #tente pegar o user
         try:
             admin_a_ser_atualizado = Admins.objects.get(id=id)
         #se não conseguir saía daqui
         except:
             menssagem_var['mensagem'] = "User não encontrado"
-            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+            return redirect(update_or_delete,u_or_d='atualizar', user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
         #aqui é feita a verificação se o admin logado é o mesmo que será atualizado
         if admin_a_ser_atualizado.nome == request.session['nome_user_logado'] and 'atualizar' in request.session['lista_de_acoes'] :
             menssagem_var['mensagem'] = "Você não pode se auto atualizar"
-            return redirect(update_or_delete,u_or_d='atualizar', user=user)
+            return redirect(update_or_delete,u_or_d='atualizar', user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
          #já que chegou até aqui é porque está dando certo
         #entã, adicione à variável "model" o models do usuário e a pasta
         model.append(Admins.objects.all().values())
@@ -866,16 +858,16 @@ def update_com_id(request,user,id):
         #vaiável que recebe os novos campos do user
         campos_atualizados_do_user = []
         #ifs que pegão valores atuais dos usuarios
-        if user == 'professor': 
+        if user_a_ser_atualizado_arg == 'professor': 
             #pegue a nova eletiva
             eletiva = request.POST.get('eletiva')
             #atualizando a variável "campos_atualizados_do_user"
             campos_atualizados_do_user = [nome,email,senha,imagem,eletiva]
 
-        elif user == 'tutor' or user == 'professor-tutor':
+        elif user_a_ser_atualizado_arg == 'tutor' or user_a_ser_atualizado_arg == 'professor-tutor':
             #pegue a nova descrição
             descricao = request.POST.get('descricao')
-            if user == 'professor-tutor':
+            if user_a_ser_atualizado_arg == 'professor-tutor':
                 #pegue a nova eletiva
                 eletiva = request.POST.get('eletiva')
                 #campo caso seja professor-tutor
@@ -883,14 +875,14 @@ def update_com_id(request,user,id):
             else:
                 #campo caso seja tutor
                 campos_atualizados_do_user = [nome,email,senha,imagem,descricao]
-        elif user == 'eletiva':
+        elif user_a_ser_atualizado_arg == 'eletiva':
             #a eletiva é o único "user" com campos diferentes, por isso a variável "campos_atualizados_do_user" é diferente das demais
             titulo = request.POST.get('titulo')
             link = request.POST.get('link')
             descricao = request.POST.get('descricao')
             img_professores = request.FILES.get('img_professores')
             campos_atualizados_do_user = [titulo,descricao,imagem,img_professores,link]
-        elif user == 'admin':
+        elif user_a_ser_atualizado_arg == 'admin':
             #checkboxes do admin
             checkboxes = ['deletar','atualizar','cadastrar']
             acoes_permitidas = ""
@@ -911,7 +903,7 @@ def update_com_id(request,user,id):
                 #se tam == 0 ou seja "nome"
                 if tam == 0:
                     #se for eletiva
-                    if user == 'eletiva':
+                    if user_a_ser_atualizado_arg == 'eletiva':
                         #muda também o nome no campo "eletiva" no models dos Professores
                         professores = Professores.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
                         # alunos = Alunos.objects.filter(eletiva=str(user_a_ser_atualizado[0].titulo))
@@ -926,79 +918,99 @@ def update_com_id(request,user,id):
                         #atualizando o nome do user
                         user_a_ser_atualizado[0].nome = i
                 #tam == 1  and user != 'eletiva': email
-                elif tam == 1 and user != 'eletiva':
+                elif tam == 1 and user_a_ser_atualizado_arg != 'eletiva':
                     user_a_ser_atualizado[0].email = i
                 #tam == 2  and user != 'eletiva': senha
-                elif tam == 2 and user != 'eletiva':
+                elif tam == 2 and user_a_ser_atualizado_arg != 'eletiva':
                     user_a_ser_atualizado[0].senha = i
-                #tam == 1  and user == 'eletiva': foto de fundo da eletiva
+                #tam == 2  and user == 'eletiva': foto de fundo da eletiva
                 #tam == 3  and user != 'eletiva': foto de perfil do usuário
-                elif tam == 3 and user != 'eletiva' or tam == 2 and user == 'eletiva' :
+                elif tam == 3 and user_a_ser_atualizado_arg != 'eletiva' or tam == 2 and user_a_ser_atualizado_arg == 'eletiva' :
                     #se não for passada imagem nova ou se for e o input que diz se o usuário quer ou não deixar sem imagem
                     #estiver marcado então chamará a função "checar_imagem_existente" como None
                     if imagem != None and pergunta_imagem == 'on' or imagem == None and pergunta_imagem == 'on':
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(None,model[1],'atualizar')
+                    #do contrário chamará a função "checar_imagem_existente" com a nova imagem 
                     elif imagem != None and pergunta_imagem == None:
                         user_a_ser_atualizado[0].imagem = checar_imagem_existente(imagem,model[1],'atualizar')
-                elif tam == 3 and user == 'eletiva':
+                #tam == 3  and user == 'eletiva': foto dos professores
+                elif tam == 3 and user_a_ser_atualizado_arg == 'eletiva':
+                    #se for inserida uma imagem ou não e o input que diz que o usuário quer deixar sem imagem estiver marcado então chamará a função "checar_imagem_existente" como None
                     if img_professores != None and pergunta_imagem_professores == 'on' or img_professores == None and pergunta_imagem_professores == 'on':
                         user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(None,f'img_eletivas/img_professores_eletiva','atualizar')
+                    #caso contrário chamará "checar_imagem_existente" com a nova imagem 
                     elif img_professores != None and pergunta_imagem_professores == None:
                         user_a_ser_atualizado[0].img_professores_eletiva = checar_imagem_existente(img_professores,f'img_eletivas/img_professores_eletiva','atualizar')
-                  
-                elif tam == 4 and user != 'admin' and user != 'tutor' and user != 'professor-tutor':
+                #na posição 4 da variável "campos_atualizados_do_user" do admin, tutor e professor-tutor esta localizado o campo diferente de "eletiva"
+                elif tam == 4 and user_a_ser_atualizado_arg != 'admin' and user_a_ser_atualizado_arg != 'tutor' and user_a_ser_atualizado_arg != 'professor-tutor' or tam == 5 and user_a_ser_atualizado_arg == 'professor-tutor':
                     user_a_ser_atualizado[0].eletiva = i
-                elif tam == 4 and user == 'admin':
+                #a posição 4 da variável "campos_atualizados_do_user" do admin é equivalente ao campo "acoes"
+                elif tam == 4 and user_a_ser_atualizado_arg == 'admin':
                     user_a_ser_atualizado[0].acoes = i
-                    #tam == 1  and user == 'eletiva': descrição
-                elif tam == 4 and user == 'tutor' or  tam == 4 and user == 'professor-tutor' or user == 'eletiva' and tam == 1:
+                #a posição 4 da variável "campos_atualizados_do_user" do tutor e professor-tutor é equivalente ao campo "descricao"
+                #a posição 1 da variável "campos_atualizados_do_user" da eletiva também é equivalente ao campo "descricao"
+                elif tam == 4 and user_a_ser_atualizado_arg == 'tutor' or  tam == 4 and user_a_ser_atualizado_arg == 'professor-tutor' or user_a_ser_atualizado_arg == 'eletiva' and tam == 1:
                     user_a_ser_atualizado[0].descricao = i
-                elif tam == 5 and user != 'professor-tutor':
-                    user_a_ser_atualizado[0].serie = i
-                elif tam == 5 and user == 'professor-tutor':
-                    user_a_ser_atualizado[0].eletiva = i
-                    
+            #aumentando o valor da variável "tam" para que seja mantido o fluxo
             tam += 1
+        #salvando as alterações efetuadas
         user_a_ser_atualizado[0].save()
-        
-        if user == 'eletiva':
+        #como a eletiva possui 2 cmpos com imagens, eu presciso chamar o campo "img_professores_eletiva"
+        if user_a_ser_atualizado_arg == 'eletiva':
             excluir_imagem(f'{model[1]}/img_professores_eletiva',model[0])
+        #excluindo as imagens que não estão sendo mais utilizadas. model[1]: Todos os valores do models no qual está indserido o user que foi atualizado, model[0]: Pasta no qual esta situada as imagens do models
         excluir_imagem(model[1],model[0])
+        #adicionado uma nova mensagem
         menssagem_var['mensagem'] = "Atualizado com sucesso!"
-        return redirect(update_or_delete,u_or_d='atualizar',user=user)
+        return redirect(update_or_delete,u_or_d='atualizar',user_a_ser_atualizado_arg=user_a_ser_atualizado_arg)
     else:
-        
-        dados['user'] = user
+        #tipo do user a ser atualizado, o user passado como parâmetro
+        dados['user_a_ser_atualizado_arg'] = user_a_ser_atualizado_arg
+        #recebe o user que será atualizado
         dados['tabela'] = user_a_ser_atualizado[0]
         dados['eletivas'] = Eletivas.objects
         dados['eletivas_para_for'] = Eletivas.objects.all().values()
-        if user == 'professor' or user == 'professor-tutor':
-            #este for verifica se tem alguma eletiva sem professor
+        #só se o tipo de user for um "professor" ou um "professor-tutor" será necessário verificar as eletivas
+        if user_a_ser_atualizado_arg == 'professor' or user_a_ser_atualizado_arg == 'professor-tutor':
+            #percorre os valores das eletivas
             for i in dados['eletivas_para_for']:
+                #pega os professores que estão cadastrados na eletiva da vez
                 p = Professores.objects.filter(eletiva=i['titulo'])
+                #se for igual a 2 é porque a eletiva esta completa
                 if len(p) == 2:
                     dados['eletivas'] = dados['eletivas'].exclude(titulo=i['titulo'])
-
+        #atualizando a variável "dados['eletivas']" para receber os valores dos objects e não os objects
         dados['eletivas'] = dados['eletivas'].values()
+        #tamanho equivalente ao total de eletivas não completas
         dados['tamanho_eletivas'] = len(dados['eletivas'])
         dados['message'] = ''
-        if user == 'admin':
+        #caso o "user_a_ser_atualizado_arg" seja um admin é necessário que maque os inputs que equivalem as ações que ele pode efetuar
+        if user_a_ser_atualizado_arg == 'admin':
+            #passando as ações do admin para list
             acoes_lista = campos_atigos_do_user[4].split()
+            #percorrendo a lista acima
             for i in acoes_lista:
+                #checked, no html equivale a "marcado"
                 dados[f'{i}'] = 'checked'
-        
         return render(request, 'atualizar/atualizar_com_id.html', dados)
     
 def definir_paginas_utilizaveis(request):
     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'definirpaginas') == True:
         return redirect(retornar_index)
+    #recebe todos os objects presentes no models "PaginasUtilizaveis"
     ObjectPagina = PaginasUtilizaveis.objects
     if request.method == 'POST':
+        #O models "PaginasUtilizaveis" só tem um valor
         ObjectPagina = ObjectPagina.get(id=1)
+        #lista com todas as páginas
         paginas_list = ['tutoria','eletiva','index','sobre']
+        #percorrendo as páginas
         for i in paginas_list:
+            #pegando os valores dos inputs no html
             request_da_vez = request.POST.get(f'{i}')
+            #se for igual a 'on' é porque ele foi marcado
             if request_da_vez == 'on':
+                #se a página da vez for tutoria então altere-a, e assim por diante. True: página pode ser utilizada, False: página não pode ser utilizada.
                 if i == 'tutoria':
                     ObjectPagina.tutoria = True
                 elif i == 'eletiva':
@@ -1016,13 +1028,18 @@ def definir_paginas_utilizaveis(request):
                     ObjectPagina.index = False
                 elif i == 'sobre':
                     ObjectPagina.sobre = False
+        #salvando as alterações
         ObjectPagina.save()
+        #dizendo que alterções foram feitas
         menssagem_var['mensagem'] = "Alterações efetuadas com sucesso!"
         return redirect(retornar_index)
     else:
         dados = {}
+        #pegando os valores do object de id igual a 1
         valores_do_object = ObjectPagina.values().get(id=1)
+        #percorrendo os valores
         for i in valores_do_object:
+            #se for igual a true, crie uma variável no dict dados e defina-a como "checked", no html isso equivale a "marcado"
             if valores_do_object[f'{i}'] == True:
                 dados[f'{i}'] = 'checked'
             else:

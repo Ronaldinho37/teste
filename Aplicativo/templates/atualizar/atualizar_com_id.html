@@ -10,7 +10,7 @@
     {% block menssagem %}
     {% endblock %}
     <form action="{{ update_com_id }}" method="post" enctype="multipart/form-data" > {% csrf_token %}
-        {% if user == 'eletiva' %}
+        {% if user_a_ser_atualizado_arg  == 'eletiva' %}
             <input type="text" name="titulo" id="titulo" value="{{tabela.titulo}}" required>
         {% else %}
             <input type="text" name="nome" id="nome" value="{{tabela.nome}}" required>
@@ -24,25 +24,25 @@
             <label for="pergunta">Deixar sem imagem</label>
             <input type="checkbox" name="pergunta_imagem" id="">
         </div>
-        {% if user == 'aluno' or user == 'professor' or user == 'professor-tutor'%}
+        {% if user_a_ser_atualizado_arg == 'aluno' or user_a_ser_atualizado_arg == 'professor' or user_a_ser_atualizado_arg == 'professor-tutor'%}
             {% include 'atualizar/atualizar_professor.html' %}
             {% block eletiva %}
             {% endblock %}
-            {% if user == 'aluno' %}
+            {% if user_a_ser_atualizado_arg == 'aluno' %}
                 {% include 'atualizar/atualizar_aluno.html' %}
                 {% block serie %}
                 {% endblock %}
             {% endif %}
-        {% elif user == 'admin' %}
+        {% elif user_a_ser_atualizado_arg == 'admin' %}
             {% include 'atualizar/atualizar_admin.html' %}
             {% block acoes_do_admin %}
             {% endblock %}
         {% endif %}
-        {% if user == 'tutor' or user == 'eletiva' or user == 'professor-tutor' %}
+        {% if user_a_ser_atualizado_arg == 'tutor' or user_a_ser_atualizado_arg == 'eletiva' or user_a_ser_atualizado_arg == 'professor-tutor' %}
             {% include 'atualizar/atualizar_tutor.html' %}
             {% block descricao %}
             {% endblock %}
-            {% if user == 'eletiva' %}
+            {% if user_a_ser_atualizado_arg == 'eletiva' %}
                 {% include 'atualizar/atualizar_eletiva.html' %}
                 {% block eletiva_da_eletiva %}
                 {% endblock %}
