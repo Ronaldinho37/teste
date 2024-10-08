@@ -80,3 +80,13 @@ ScrollReveal().reveal('#text-del', {
 
 
 
+ScrollReveal().reveal('#text-professores', {
+    duration: 1000,
+    origin: 'top',
+    distance: '50px',
+    easing: 'ease-in-out',
+    reset: true
+});
+
+
+

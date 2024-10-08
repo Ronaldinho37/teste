@@ -1,5 +1,7 @@
 {%block tabela_admin%}
-
+{% include 'codigos reutilizados/links_reutilizados.html' %}
+{% block links %}
+{% endblock %}
 <style>
     .coluna{
         color: blueviolet;
@@ -22,7 +24,7 @@
         <button onclick="ir_para_o_site()">Submit</button>
     {% endif %}
     </div>
-    <table id="tabela" class="table table-dark" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="{{id_do_user_logado}}">
+    <table id="tabela" class="table table-hover" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="{{id_do_user_logado}}">
         <thead>
           <tr>
             <th scope="col">id</th>
@@ -37,7 +39,7 @@
                 <tr id="{{i.id}}" onclick="adicionar_linha(this)">
                     <th scope="row" class="id" data-id="{{i.id}}">{{i.id}}</th>
                     <td class="nome" data-id="{{i.id}}">{{i.nome}}</td>
-                    <td class="nome" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt=""></td>
+                    <td class="nome" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt="" width="50"></td>
                     <td class="email" data-id="{{i.id}}">{{i.email}}</td>
                     <td class="acoes" data-id="{{i.id}}">{{i.acoes}}</td>
                 </tr>

@@ -26,14 +26,7 @@ header {
     
 }
 
-.dropdown-btn-delete:hover{
-    border: 2px solid red;
-    color: red;
-    padding: 5px;
-    transition: .5s;
-    display: block;
 
-}
 
 #effect {
     position: fixed;
