@@ -1,6 +1,19 @@
 {% block tabela_aluno_professor %}
+{% load static %}
+{% include 'codigos reutilizados/links_reutilizados.html' %}
+{% block links %}
+{% endblock %}
 <div id="table-py">
-    <div id="form-div">
+    <div id="form-div " class="d-flex flex-column justify-content-center align-items-center mb-4">
+
+        <div id="div-alert-tables" class=" rounded d-flex align-items-center flex-column p-3 m-3 shadow-lg" style="background-color: rgba(105, 105, 105, 0.39);">
+            <img src="../../../media/img_fixas/logo-asn.png" alt="" width="180">
+            <h1 class="text-white">ATENÇÃO!!!</h1>
+            <p  class="text-white">Nesta área você poderá atualizar eletivas que atualmente estão ativas, <br> 
+            Selecione a eletiva que deseja atualizar </p>
+
+        </div>
+
         <label for="ordem">Procurar por:</label>
         <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)">
         <label for="coluna"> na coluna</label>
@@ -20,7 +33,7 @@
             <button onclick="ir_para_o_site()">Submit</button>
         {% endif %}
     </div>
-    <table id="tabela" class="table table-dark" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="None">
+    <table id="tabela" class="table table-hover" data-user="{{tabela_user_passado_como_parametro}}" data-id_do_user_logado="None">
         <thead>
           <tr>
             <th scope="col">id</th>
@@ -40,7 +53,7 @@
                 <tr id="{{i.id}}" onclick="adicionar_linha(this)">
                     <th scope="row" class="id" data-id="{{i.id}}">{{i.id}}</th>
                     <td class="nome" data-id="{{i.id}}">{{i.nome}}</td>
-                    <td class="imagem" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt=""></td>
+                    <td class="imagem" data-id="{{i.id}}"><img src="../../../media/{{i.imagem}}" alt="" width="50"></td>
                     {% if tabela_user_passado_como_parametro == 'professor' or tabela_user_passado_como_parametro == 'aluno' %}
                         <td class="eletiva" data-id="{{i.id}}">{{i.eletiva}}</td>
                     {% endif %}
@@ -53,5 +66,9 @@
         </tbody>
       </table>
 </div>
+
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="{% static 'js/R_tables.js' %}"></script>
+
 
 {% endblock %}

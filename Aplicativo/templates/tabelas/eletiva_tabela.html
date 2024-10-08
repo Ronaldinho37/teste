@@ -1,3 +1,4 @@
+{% load static %}
 {% block tabela_eletiva %}
 <div id="table-py" class="p-3">
     <style>
@@ -7,7 +8,7 @@
     </style>
     <div id="form-div" class="d-flex flex-column justify-content-center align-items-center mb-4">
 
-        <div class="bg-secondary rounded d-flex align-items-center flex-column p-3 m-3 shadow-lg opacity-50">
+        <div id="div-alert-tables" class=" rounded d-flex align-items-center flex-column p-3 m-3 shadow-lg" style="background-color: rgba(105, 105, 105, 0.39);">
             <img src="../../../media/img_fixas/logo-asn.png" alt="" width="180">
             <h1 class="text-white">ATENÇÃO!!!</h1>
             <p  class="text-white">Nesta área você poderá as eletivas que atualmente estão ativas, <br> 
@@ -15,9 +16,9 @@
 
         </div>
 
-        <label for="ordem">Procurar por:</label>
+        <label for="ordem" id="search-for">Procurar por:</label>
         <input type="text" id="ordem" name="ordem" onkeyup="pesquisar(this)" class="form-control w-50 my-2 shadow-sm">
-        <label for="coluna"> na coluna</label>
+        <label for="coluna" id="in-the-column"> na coluna</label>
         <select name="coluna" id="coluna" class="form-select w-50 my-2 shadow-sm">
             <option value="id" selected>id</option>
             <option value="nome">nome</option>
@@ -28,8 +29,8 @@
             {% endif %}
         </select>
         {% if modo == "deletar" %}
-            <h3>Selecionados: <span id="numero_selecionados">0</span></h3>
-            <button onclick="ir_para_o_site()" class="btn btn-danger shadow-sm">DELETAR</button>
+            <h3 id="selects">Selecionados: <span id="numero_selecionados">0</span></h3>
+            <button id="btn-del" onclick="ir_para_o_site()" class="btn btn-danger shadow-sm">DELETAR</button>
         {% endif %}
     </div>
     
@@ -59,4 +60,8 @@
     </div>
 </div>
 
+<script src="https://unpkg.com/scrollreveal"></script>
+<script src="{% static 'js/R_tables.js' %}"></script>
+
 {% endblock %}
+

@@ -1,12 +1,14 @@
 {% block eletiva %}
-<select name="eletiva" id="eletiva" required>
-    <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
-    {% if tamanho_eletivas != 0 %}
-        {% for i in eletivas %}
-            <option value="{{i.titulo}}">{{i.titulo}}</option>
-        {% endfor %}
-    {% endif %}
-    <option value="">Deixar sem</option>
-</select>
-
+<div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+    <label for="eletiva" style="margin-bottom: 10px;">Escolha a Eletiva:</label>
+    <select name="eletiva" id="eletiva" required style="padding: 10px; font-size: 16px;">
+        <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
+        {% if tamanho_eletivas != 0 %}
+            {% for i in eletivas %}
+                <option value="{{i.titulo}}">{{i.titulo}}</option>
+            {% endfor %}
+        {% endif %}
+        <option value="">Deixar sem</option>
+    </select>
+</div>
 {% endblock %}
