@@ -26,6 +26,7 @@
                 </div>
                 {% load pesquisa_de_professores %}
                 <div class="align">
+                    <!-- chamando uma tag que retorna somente os professores que estão na eletiva -->
                     <h2>{{todos_professores|pesquisar_professor:i.titulo}}</h2>
                     <p>{{i.descricao}}</p>
                 </div>
