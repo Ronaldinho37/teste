@@ -2,13 +2,19 @@
 <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
     <label for="eletiva" style="margin-bottom: 10px;">Escolha a Eletiva:</label>
     <select name="eletiva" id="eletiva" required style="padding: 10px; font-size: 16px;">
-        <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
         {% if tamanho_eletivas != 0 %}
             {% for i in eletivas %}
-                <option value="{{i.titulo}}">{{i.titulo}}</option>
+                {% if i.titulo != tabela.eletiva %}
+                    <option value="{{i.titulo}}">{{i.titulo}}</option>
+                {% endif %}
             {% endfor %}
         {% endif %}
-        <option value="">Deixar sem</option>
+        {% if tabela.eletiva == "" or tabela.eletiva == "None" %}
+            <option value="None" selected>Sem eletiva</option>
+        {% else %}
+            <option value="{{tabela.eletiva}}" selected>{{tabela.eletiva}}</option>
+            <option value="None">Deixar sem</option>
+        {% endif %}
     </select>
 </div>
 {% endblock %}
