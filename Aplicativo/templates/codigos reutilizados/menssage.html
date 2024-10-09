@@ -140,6 +140,25 @@
                 </div>
             </div>
         </div> 
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const mensagemFinalElement = document.querySelector('p[id="mensagem-final"]');
+                const modal = document.getElementById('errorModal');
+
+                if (mensagemFinalElement) {
+                    let p = mensagemFinalElement.innerText;
+                    if (p != '') {
+                        modal.style.display = 'flex';
+                    } else {
+                        modal.style.display = 'none';
+                    }
+                }
+                
+                window.onclick = () => {
+                    modal.style.display = 'none';
+                }
+                    })
+        </script>
     {% else %}
     <div class="log">
         <div class="div-log">
@@ -164,21 +183,6 @@
             }, 3000); // Tempo antes de começar a desaparecer
         }
 
-        const mensagemFinalElement = document.querySelector('p[id="mensagem-final"]');
-        const modal = document.getElementById('errorModal');
-
-        if (mensagemFinalElement) {
-            let p = mensagemFinalElement.innerText;
-            if (p != '') {
-                modal.style.display = 'flex';
-            } else {
-                modal.style.display = 'none';
-            }
-        }
-        
-        window.onclick = () => {
-            modal.style.display = 'none';
-        }
     });
 </script>
 {% endblock %}
