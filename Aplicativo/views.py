@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from .models import *
 from django.contrib import messages
+import json
+import ast
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
@@ -147,6 +149,7 @@ def retornar_index(request):
         request.session['user'] = 'ADMIN'
         request.session['nome_user_logado'] = ''
         request.session['senha_user_logado'] = ''
+ 
     dados = {}
     #como a session do Django dura enquanto o navegador estiver aberto(eu abilitei para isso) 
     #quando o usuário abrir o site pela primeira vez vai dar erro, por isso esse try
@@ -174,7 +177,12 @@ def retornar_index(request):
         menssagem_var['mensagem'] = ""
     except:
         dados['message'] = ""
-    
+     # Abre o arquivo JSON em modo de leitura
+    with open('Aplicativo/templates/principais/logado.json', 'w') as arquivo:
+        # Carrega os dados JSON
+        arquivo.write(f"\"{dados_universsais}\"")
+        arquivo.close()
+        # dados_json = ast.literal_eval(json.load(arquivo))
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -1047,4 +1055,5 @@ def definir_paginas_utilizaveis(request):
        
         return render(request,'definir_as_paginas/definir_paginas.html',dados)
 
-
+def retornar_json(request):
+    return render(request,'principais/logado.json',)

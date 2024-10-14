@@ -86,9 +86,14 @@
     <script>
 
         console.log(document.querySelector('body').dataset.status)
+
         function marcar_chackbox(x){
-            let ip = document.querySelector(`input[name=${x}]`).checked = true
-            {% comment %} console.log(ip) {% endcomment %}
+            document.querySelector(`input[name=${x}]`).checked = true
+            let body = document.querySelector('body')
+            setTimeout(()=>{
+                console.log(document.querySelector('body').dataset.status)
+            },2000)
+    
         }
 
         var senha = $('#password');
@@ -108,6 +113,9 @@ $( "#olho" ).mouseout(function() {
 });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script type="module" src="{% static 'js/teste_json.js' %}"></script>
+    
 </body>
+
 </html>
 
