@@ -13,7 +13,7 @@
     </header>
     <div id="effect"></div>
 
-    <nav id="side-nav">
+    <nav id="side-nav" data-user="{{user}}" data-versao="1">
         <button id="close-btn">&times;</button>
         <ul>
             <li><a href="{% url 'eletivas' %}" id="eletivaLink">Eletiva</a></li>
@@ -57,9 +57,9 @@
                 {% if user == 'ADMIN' %}
                     <li><a href="{% url 'definir-paginas' %}">Definir Paginas</a></li>
                 {% endif %}
-                <li><a href="{% url 'logout' %}" class="btn-sair"><strong> SAIR</strong></a></li>
+                <li><button class="btn-sair" onclick="deslogar()"><strong> SAIR</strong></button></li>
             {% else %}
-            <li><a href="{% url 'login' %}" class="btn-entrar"> ENTRAR</a></li>
+            <li><a href="{% url 'login' %}" class="btn-entrar" onclick="definir_pagina_antiga()"> ENTRAR</a></li>
             {% endif %}
             
         </ul>
@@ -68,10 +68,46 @@
             <a href="{% url 'index'%}" id="logoLink"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
         </div>
     </nav>
-
+    <form action="{% url 'logout' %}" method="post" id="form_link" style="visibility:hidden;">{% csrf_token %}
+        <input type="text" id="link_antigo" name="link_antigo">
+        <input type="submit" id="submit" value="submit">
+    </form>
     <div id="overlay"></div>
 
     <script src="{% static 'js/cab.js' %}"></script>
     <script src="{% static 'js/transition.js' %}"></script>
+    <script>
+        function deslogar(){
+            document.querySelector("#link_antigo").value = String(window.location.href).replace(`${window.location.protocol}//${window.location.host}`,"");
+            document.querySelector("#submit").click()
+        }
+        function definir_pagina_antiga(){
+            let link = String(window.location.href)
+            sessionStorage.setItem('link',link.replace(`${window.location.protocol}//${window.location.host}`,""))
+        
+        }
+        window.onload = () =>{
+            sessionStorage.setItem('user',`${document.querySelector("#side-nav").dataset.user}`)
+            
+            // let link_antigo = sessionStorage.getItem('deslogado')
+            // if(link_antigo != window.location.href && link_antigo != null && link_antigo != "null"){
+            //     window.location.href = link_antigo;
+            //     sessionStorage.setItem('deslogado',"null")
+            // }
+    
+    
+        }
+        setInterval(()=>{
+            let user = sessionStorage.getItem('user');
+            let nav = document.querySelector("#side-nav");
+            let nav_user = nav.dataset.user;
+            if(user != nav_user){
+                window.location.reload()
+            }
+
+            
+        },1000)
+      
+    </script>
     {% endblock %}
 

@@ -26,6 +26,7 @@
                 <div id="carai">
                     <label for="nome" style="color: rgb(154, 156, 158);">Nome</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome" value="{{nome}}">
+                <input type="text" id="link_antigo" name="link_antigo" style="visibility: hidden;position: absolute;">
                 
                 <label for="password" style="color: rgb(154, 156, 158);" >Senha</label>
                 <input type="password" id="password" name="password" placeholder="Password" value="{{password}}">
@@ -83,16 +84,12 @@
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="{% static 'js/digit.js' %}"></script>
     <script src="{% static 'js/R_login.js'%}"></script>
+    <script type="module" src="{% static 'js/teste_json.js' %}"></script>
     <script>
-
-        console.log(document.querySelector('body').dataset.status)
-
         function marcar_chackbox(x){
             document.querySelector(`input[name=${x}]`).checked = true
-            let body = document.querySelector('body')
-            setTimeout(()=>{
-                console.log(document.querySelector('body').dataset.status)
-            },2000)
+            document.querySelector('#link_antigo').value = sessionStorage.getItem('link')
+            
     
         }
 
@@ -113,7 +110,6 @@ $( "#olho" ).mouseout(function() {
 });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-    <script type="module" src="{% static 'js/teste_json.js' %}"></script>
     
 </body>
 

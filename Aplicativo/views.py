@@ -142,9 +142,8 @@ def verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,acao):
         #se nenhuma dos ifs anteriores der certo então retorne True
         menssagem_var['mensagem'] = "Você não pode realizar a ação requisitada!"
         return True
-    
-def retornar_index(request):
-    #if que verifica se o ADMIN já estava logado
+def definir_user(request):
+       #if que verifica se o ADMIN já estava logado
     if request.user.is_authenticated:
         request.session['user'] = 'ADMIN'
         request.session['nome_user_logado'] = ''
@@ -168,6 +167,24 @@ def retornar_index(request):
             dados['lista_de_acoes'] = request.session['lista_de_acoes']
     #atualizando a variável dos dados universsais para que eu possa acessar os valores adicionados de outras fuções
     dados_universsais.update(dados)
+    return dados
+def para_onde_vou(request,link_antigo):
+    if "eletivas" in link_antigo:
+        return redirect(eletivas)
+    elif "sobre" in link_antigo:
+        return redirect(sobre)
+    elif "tutoria" in link_antigo:
+        return redirect(tutoria)
+    else:
+        return redirect(retornar_index)
+def retornar_index(request):
+    try:
+        if request.session['user'] != dados_universsais['user']:
+            dados = definir_user(request)
+        else:
+            dados=dados_universsais.copy()
+    except:
+        dados = definir_user(request)
     if ver_se_a_pagina_pode_funcionar('index',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     #variável que contém os cards de avisos
@@ -177,12 +194,6 @@ def retornar_index(request):
         menssagem_var['mensagem'] = ""
     except:
         dados['message'] = ""
-     # Abre o arquivo JSON em modo de leitura
-    with open('Aplicativo/templates/principais/logado.json', 'w') as arquivo:
-        # Carrega os dados JSON
-        arquivo.write(f"\"{dados_universsais}\"")
-        arquivo.close()
-        # dados_json = ast.literal_eval(json.load(arquivo))
     return render(request,'principais/index.html',dados)
 
 #nesta função é feito o login dos usuários 
@@ -200,6 +211,7 @@ def login_viwes(request):
         nome = request.POST.get('nome').lower()
         #variável que guarda a senha inserida no input do login
         password = request.POST.get('password')
+        link_antigo = request.POST.get('link_antigo')
         #guardará o valor inserido pelo usuário referente a cada checkbox
         checkboxes = {}
         #lista de nomes de cada checkbox do html
@@ -219,7 +231,7 @@ def login_viwes(request):
                 request.session['nome_user_logado'] = nome
                 request.session['senha_user_logado'] = password
                 menssagem_var['mensagem'] = "Usuário logado com sucesso!"
-                return redirect(retornar_index)
+                return para_onde_vou(request,link_antigo)
         #caso o usuário a ser logado seja o Admin
         elif checkboxes['Admin'] == 'on':
             #pegue todos os admin do meu site
@@ -235,7 +247,7 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     menssagem_var['mensagem'] = "Usuário logado com sucesso!"
-                    return redirect(retornar_index)
+                    return para_onde_vou(request,link_antigo)
         #####################################################
         # #caso o usuário a ser logado seja o professor
         # elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
@@ -281,7 +293,13 @@ def login_viwes(request):
     
 #função que retorna para a página das eletivas com as eletivas presentes no site
 def eletivas(request):
-    dados = dados_universsais.copy()
+    try:
+        if request.session['user'] != dados_universsais['user']:
+            dados = definir_user(request)
+        else:
+            dados=dados_universsais.copy()
+    except:
+        dados = definir_user(request)
     if ver_se_a_pagina_pode_funcionar('eletiva',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
     dados['pagina'] = "eletivas"
@@ -306,23 +324,25 @@ def eletivas(request):
 
 #função que desloga o usuário
 def logout_viwes(request):
-    user = request.session['user'] 
-    #o admin supremo(ADMIN) é o único que foi criado como um user no django e por isso ele recebe um 
-    #tratamento diferente dos demais, a função logout() é própria do Django ela server para deslogar o user que esta logado
-    if user == 'ADMIN':
-        logout(request)
-    #se o usuário for um admin e quer deslogar-se então primeiro eu apago as sessions que comtém os valores 
-    #das ações que ele pode realizar 
-    elif user == 'admin':
-        del request.session['lista_de_acoes']
+    if request.method == "POST":
+        user = request.session['user'] 
+        #o admin supremo(ADMIN) é o único que foi criado como um user no django e por isso ele recebe um 
+        #tratamento diferente dos demais, a função logout() é própria do Django ela server para deslogar o user que esta logado
+        if user == 'ADMIN':
+            logout(request)
+        #se o usuário for um admin e quer deslogar-se então primeiro eu apago as sessions que comtém os valores 
+        #das ações que ele pode realizar 
+        elif user == 'admin':
+            del request.session['lista_de_acoes']
 
-    #por conseguinte eu limpo os valores da variável dos dados universais, pois ela guarda valores referentes
-    # ao usuário e já que ele não está mais logado eu não preciso mais delas 
-    dados_universsais.clear()
-    #definindo o session 'user' como None, desta maneira o código saberá se o usuário está logado ou não
-    request.session['user'] = None
-    menssagem_var['mensagem'] = "Deslogado com sucesso!"
-    return redirect(retornar_index)
+        #por conseguinte eu limpo os valores da variável dos dados universais, pois ela guarda valores referentes
+        # ao usuário e já que ele não está mais logado eu não preciso mais delas 
+        dados_universsais.clear()
+        #definindo o session 'user' como None, desta maneira o código saberá se o usuário está logado ou não
+        request.session['user'] = None
+        menssagem_var['mensagem'] = "Deslogado com sucesso!"
+        link = request.POST.get('link_antigo')
+        return para_onde_vou(request,link)
 
 #função que adiciona as eletivas
 def add_eletivas(request):
@@ -479,7 +499,13 @@ def add_professor(request, tipo_de_user):
 #################################################
 #função que retorna para a página dos tutores
 def tutoria(request):
-    dados=dados_universsais.copy()
+    try:
+        if request.session['user'] != dados_universsais['user']:
+            dados = definir_user(request)
+        else:
+            dados=dados_universsais.copy()
+    except:
+        dados = definir_user(request)
     #verificando se a página pode funcionar
     if ver_se_a_pagina_pode_funcionar('tutoria',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)
@@ -571,7 +597,13 @@ def editar_aviso(request,id):
         
 #função que retorna para a página sobre(about)
 def sobre(request):
-    dados = dados_universsais.copy()
+    try:
+        if request.session['user'] != dados_universsais['user']:
+            dados = definir_user(request)
+        else:
+            dados=dados_universsais.copy()
+    except:
+        dados = definir_user(request)
      #verificando se a página pode funcionar
     if ver_se_a_pagina_pode_funcionar('sobre',dados) == True:
         return render(request,'definir_as_paginas/acesso_bloqueado.html',dados)

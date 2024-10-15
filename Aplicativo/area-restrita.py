@@ -17,7 +17,5 @@ urlpatterns = [
     path('definir-paginas/',definir_paginas_utilizaveis,name='definir-paginas'),
     path('editar_aviso/<int:id>',editar_aviso,name='editar_aviso'),
     path('deletar/<str:user_a_ser_atualizado_arg>/<str:id>',deletar_com_ids,name='deletar_com_ids'),
-    path('json/',retornar_json,name="retornar_json"),
-
     
 ]
