@@ -1,5 +1,5 @@
 from django.urls import path,include
-from Aplicativo.views import sobre,tutoria,retornar_index,eletivas,logout_viwes,retornar_json
+from Aplicativo.views import sobre,tutoria,retornar_index,eletivas,logout_viwes
 
 urlpatterns = [
     path('', retornar_index,name='index'),

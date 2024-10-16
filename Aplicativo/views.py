@@ -1086,6 +1086,3 @@ def definir_paginas_utilizaveis(request):
                 dados[f'{i}'] = ''
        
         return render(request,'definir_as_paginas/definir_paginas.html',dados)
-
-def retornar_json(request):
-    return render(request,'principais/logado.json',)

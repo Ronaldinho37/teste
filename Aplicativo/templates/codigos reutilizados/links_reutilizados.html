@@ -68,6 +68,7 @@
             <a href="{% url 'index'%}" id="logoLink"><img src="../../../media/img_fixas/logo-asn.png" alt="Logo ASN" ></a>
         </div>
     </nav>
+    <!-- Form  que salva onde o usuário estava -->
     <form action="{% url 'logout' %}" method="post" id="form_link" style="visibility:hidden;">{% csrf_token %}
         <input type="text" id="link_antigo" name="link_antigo">
         <input type="submit" id="submit" value="submit">
