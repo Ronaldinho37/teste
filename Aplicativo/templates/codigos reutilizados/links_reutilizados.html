@@ -80,6 +80,7 @@
     <script>
         function deslogar(){
             document.querySelector("#link_antigo").value = String(window.location.href).replace(`${window.location.protocol}//${window.location.host}`,"");
+            console.log(String(window.location.href).replace(`${window.location.protocol}//${window.location.host}`,""))
             document.querySelector("#submit").click()
         }
         function definir_pagina_antiga(){

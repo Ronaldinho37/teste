@@ -1,15 +1,7 @@
-import django
-import django.contrib
-import django.contrib.messages
-from django.shortcuts import render,redirect,get_object_or_404
-from .forms import LoginForm,AddEletivaForm, AnuncioForm, UpdateEletiva
-from django.http import HttpResponse
-from django.contrib.auth.models import User
+from django.shortcuts import render,redirect
+from .forms import LoginForm,AddEletivaForm, AnuncioForm
 from django.contrib.auth import login, authenticate, logout
 from .models import *
-from django.contrib import messages
-import json
-import ast
 import os
 from PIL import Image
 #pip freeze > requiriments.txt
@@ -175,7 +167,7 @@ def para_onde_vou(request,link_antigo):
         return redirect(sobre)
     elif "tutoria" in link_antigo:
         return redirect(tutoria)
-    else:
+    elif  link_antigo == "/" or "update_or_delete" in link_antigo and "atualizar" in link_antigo or "deletar" in link_antigo:
         return redirect(retornar_index)
 def retornar_index(request):
     try:
@@ -247,36 +239,7 @@ def login_viwes(request):
                     request.session['nome_user_logado'] = nome
                     request.session['senha_user_logado'] = password
                     menssagem_var['mensagem'] = "Usuário logado com sucesso!"
-                    return para_onde_vou(request,link_antigo)
-        #####################################################
-        # #caso o usuário a ser logado seja o professor
-        # elif checkboxes['Professor'] == 'on' or checkboxes['Tutor'] == 'on':
-        #     #pegue todos os professores do meu site
-        #     professor = Professores.objects.all().values()
-        #     #percorra-os
-        #     for i in professor:
-        #         #se o nome e senha pegados do html forem iguais à nome e senha de algum professor então logue-o
-        #         if i['nome'].lower() == nome and i['senha'] == password:
-        #             request.session['user'] = 'professor'
-        #             request.session['nome_user_logado'] = nome
-        #             request.session['senha_user_logado'] = password
-        #             menssagem['logado'] = ['User logado com sucesso!',0]
-        #             return redirect(retornar_index)
-        # #caso o usuário a ser logado seja o aluno
-        # elif checkboxes['Aluno'] == 'on':
-        #     #pegue todos os alunos do meu site
-        #     alunos = Alunos.objects.all().values()
-        #     #percorra-os
-        #     for i in alunos:
-        #         #se o nome e senha pegados do html forem iguais à nome e senha de algum aluno então logue-o
-        #         if i['nome'].lower() == nome and i['senha'] == password:
-        #             request.session['user'] = 'aluno'
-        #             request.session['nome_user_logado'] = nome
-        #             request.session['senha_user_logado'] = password
-        #             menssagem['logado'] = ['User logado com sucesso!',0]
-        #             return redirect(retornar_index)
-        ##################################################            
-        
+                    return para_onde_vou(request,link_antigo) 
         #se chegou até aqui é porque nenhum dos ifs anteriores foram iguais a True, logo a senha ou nome ou usuário escolhidos não coincidem
         dados = {}
         dados['message'] = "Usuário ou senha inválidos!, por favor, preencha noamente suas credenciais!!"
@@ -342,6 +305,7 @@ def logout_viwes(request):
         request.session['user'] = None
         menssagem_var['mensagem'] = "Deslogado com sucesso!"
         link = request.POST.get('link_antigo')
+        print(link)
         return para_onde_vou(request,link)
 
 #função que adiciona as eletivas
@@ -461,42 +425,6 @@ def add_professor(request, tipo_de_user):
         #como eu tinha que executar o 'exclude' eu não podia obter os 'values' do models 'Eletivas', porém, agora posso
         dados['eletivas'] = dados['eletivas'].values()
         return render(request,'professor/addprofessor.html',dados)
-######################################
-#função que adiciona o aluno
-# def add_aluno(request):
-#     #verificando se o usuario pode realizar a ação requisitada
-#     if verificar_se_o_usuario_pode_realizar_a_acao_equisitada(request,'cadastrar') == True:
-#         return redirect(retornar_index)
-#     else:
-#         if request.method == 'POST':
-#             serie=request.POST.get('serie')
-#             nome=request.POST.get('nome')
-#             email=request.POST.get('email')
-#             senha=request.POST.get('senha')
-#             eletiva=request.POST.get('select')
-#             imagem=checar_imagem_existente(request.FILES.get('imagem'),'imagem_alunos',None)
-            
-
-#             campos = [serie,nome,email,senha,eletiva]
-#             # checa se alguns dos valores acima e nulo, se for impede que o alun o seja adicionado
-#             for i in campos:
-#                 if i == '':
-#                     dados={}
-#                     dados['eletivas'] = Eletivas.objects.all().values()
-#                     dados['message'] = 'A imagem de perfil é opcional porém os outros campos são obrigatórios'
-#                     return render(request,'aluno/addaluno.html',dados)
-#             #se nenhum dos campos forem nulos então crie o novo aluno
-#             aluno = Alunos(serie=serie,nome=nome,email=email,senha=senha,eletiva=eletiva, imagem=imagem)
-#             #salve-o
-#             aluno.save()
-            
-#             return redirect(ver_eletiva,eletiva=eletiva)
-        # else:
-        #     dados={}
-        #     dados['eletivas'] = Eletivas.objects.all().values()
-        #     dados['message'] = 'A imagem de perfil é opcional'
-        #     return render(request,'aluno/addaluno.html',dados)
-#################################################
 #função que retorna para a página dos tutores
 def tutoria(request):
     try:
